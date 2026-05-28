@@ -112,44 +112,7 @@
   <!-- HubSpot Tracking Code (Portal 47184540) -->
   <script type="text/javascript" id="hs-script-loader" async defer src="//js.hs-scripts.com/47184540.js"></script>
   <script type="module" src="/src/index.tsx"></script>
-  <script src="https://widgets.leadconnectorhq.com/loader.js" data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js" data-widget-id="6a0f6457f44c74840a13a3d7" data-source="WEB_USER"></script>
-  <script>
-    (function () {
-      function positionWidget(widget) {
-        const shadow = widget.shadowRoot;
-        if (!shadow) return false;
-        const target = shadow.querySelector('#lc_text-widget, #lc_text-widget--btn');
-        if (!target) return false;
-        const style = document.createElement('style');
-        style.textContent = `
-          #lc_text-widget {
-            right: unset !important;
-            top: unset !important;
-            bottom: 20px !important;
-            left: 20px !important;
-            transform: none !important;
-          }
-          #lc_text-widget--btn {
-            right: unset !important;
-            top: unset !important;
-            bottom: 20px !important;
-            left: 20px !important;
-            transform: none !important;
-          }
-        `;
-        shadow.appendChild(style);
-        return true;
-      }
 
-      const observer = new MutationObserver(function () {
-        const widget = document.querySelector('chat-widget');
-        if (widget && positionWidget(widget)) {
-          observer.disconnect();
-        }
-      });
-      observer.observe(document.body, { childList: true, subtree: true });
-    })();
-  </script>
 </body>
 
 </html>
