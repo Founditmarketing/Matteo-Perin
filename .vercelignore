@@ -1,0 +1,13 @@
+node_modules
+.git
+source_images
+source_videos
+*.mkv
+*.raw
+*.CR2
+*.tiff
+*.tif
+*.psd
+*.ai
+.vscode
+.env.local

@@ -1,0 +1,345 @@
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+
+interface StyleGroup {
+    styleName: string;
+    firstImage: string; // First image URL for this color/style
+    images: { Title: string; Url: string }[];
+    Category?: string;
+    Price?: string;
+    Stock?: string;
+}
+
+interface GroupedProduct {
+    parentName: string;
+    parentImage?: string;
+    parentAdditionalImages?: string;
+    description?: string;
+    gender?: string;
+    variations: any[];
+    // Derived: unique color/style groups
+    styleGroups: StyleGroup[];
+}
+
+export const HiddenInventoryTest: React.FC = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
+    const basePath = location.pathname.startsWith('/inventory-test-hidden') ? '/inventory-test-hidden' : '/shop';
+    const [groupedInventory, setGroupedInventory] = useState<GroupedProduct[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [activeCardImage, setActiveCardImage] = useState<Record<number, number>>({});
+    const isEmbedded = location.pathname === '/';
+
+    // Angle words to strip when determining style/color name
+    const angleWords = ['back', 'front', 'side', 'top', 'bottom', 'internal', 'inside', 'handle', 'zippers', 'pockets', 'logo', 'detail'];
+
+    const getStyleName = (title: string) => {
+        let words = (title || '').trim().split(/\s+/);
+        while (words.length > 1 && angleWords.includes(words[words.length - 1].toLowerCase().replace(/[^a-z]/g, ''))) {
+            words.pop();
+        }
+        return words.join(' ');
+    };
+
+    useEffect(() => {
+        const fetchInventory = async () => {
+            try {
+                const response = await fetch('/api/inventory');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const result = await response.json();
+                
+                const grouped: GroupedProduct[] = [];
+                let currentParent: GroupedProduct | null = null;
+
+                (result.data || []).forEach((row: any) => {
+                    // Check if completely empty
+                    const isRowEmpty = !row.Title && !row.Category && !row.Price && !row.Stock && !row['Main Image Link'];
+                    if (isRowEmpty) return;
+
+                    const hasTitle = row.Title && String(row.Title).trim() !== '';
+                    const hasCategory = row.Category && String(row.Category).trim() !== '';
+                    const hasPrice = row.Price && String(row.Price).trim() !== '';
+
+                    if (hasTitle && !hasCategory && !hasPrice) {
+                        // It's a parent product
+                        currentParent = {
+                            parentName: row.Title,
+                            parentImage: row['Main Image Link'],
+                            parentAdditionalImages: row['Additional Image Links'],
+                            description: row.Description,
+                            gender: row.Gender,
+                            variations: [],
+                            styleGroups: []
+                        };
+                        grouped.push(currentParent);
+                    } else if (hasCategory || hasPrice || row.Stock) {
+                        // It's a variation row
+                        if (currentParent) {
+                            currentParent.variations.push(row);
+                        } else {
+                            // If there's no parent yet, create a default one
+                            currentParent = {
+                                parentName: 'Other Items',
+                                variations: [row],
+                                styleGroups: []
+                            };
+                            grouped.push(currentParent);
+                        }
+                    }
+                });
+
+                // Build styleGroups for each grouped product
+                grouped.forEach(group => {
+                    const stylesMap = new Map<string, StyleGroup>();
+                    
+                    group.variations.forEach(v => {
+                        const styleName = getStyleName(v.Title || '');
+                        if (!stylesMap.has(styleName)) {
+                            stylesMap.set(styleName, {
+                                styleName,
+                                firstImage: v['Main Image Link'] || '',
+                                images: [],
+                                Category: v.Category,
+                                Price: v.Price,
+                                Stock: v.Stock
+                            });
+                        }
+                        const sg = stylesMap.get(styleName)!;
+                        if (v['Main Image Link']) {
+                            sg.images.push({ Title: v.Title, Url: v['Main Image Link'] });
+                        }
+                    });
+                    
+                    group.styleGroups = Array.from(stylesMap.values());
+                });
+
+                setGroupedInventory(grouped);
+            } catch (err: any) {
+                console.error("Error fetching inventory:", err);
+                setError(err.message || 'Failed to load inventory.');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchInventory();
+    }, []);
+
+    const getImageUrl = (url: string) => {
+        if (!url) return '';
+        const trimmed = url.trim();
+        // Handle standard /d/ID format (both /view and /file paths)
+        let match = trimmed.match(/\/d\/([a-zA-Z0-9_-]+)/);
+        // Handle id=ID format
+        if (!match) {
+            match = trimmed.match(/id=([a-zA-Z0-9_-]+)/);
+        }
+        if (match && match[1]) {
+            // lh3.googleusercontent.com is the most reliable for publicly shared Drive files
+            return `https://lh3.googleusercontent.com/d/${match[1]}=w1200`;
+        }
+        return trimmed;
+    };
+
+    // Get the first image of each unique color/style for card arrow navigation
+    const getColorPreviewImages = (group: GroupedProduct) => {
+        const images: string[] = [];
+        
+        // Start with parent image if available
+        if (group.parentImage) {
+            images.push(getImageUrl(group.parentImage));
+        }
+
+        // Add the first image of each unique style group
+        group.styleGroups.forEach(sg => {
+            if (sg.firstImage) {
+                const url = getImageUrl(sg.firstImage);
+                if (!images.includes(url)) {
+                    images.push(url);
+                }
+            }
+        });
+
+        return images;
+    };
+
+    // Calculate price range
+    const getPriceRange = (variations: any[]) => {
+        if (!variations || variations.length === 0) return 'Price upon request';
+        const prices = variations
+            .map(v => String(v.Price).replace(/[^0-9.]/g, ''))
+            .filter(v => v !== '')
+            .map(Number);
+        
+        if (prices.length === 0) return 'Price upon request';
+        const min = Math.min(...prices);
+        const max = Math.max(...prices);
+        if (min === max) return `$${min.toLocaleString()}`;
+        return `$${min.toLocaleString()} - $${max.toLocaleString()}`;
+    };
+
+    // Check if all variations are out of stock
+    const isAllSoldOut = (group: GroupedProduct) => {
+        if (group.variations.length === 0) return false;
+        return group.variations.every(v => {
+            const stock = String(v.Stock || '').trim().toLowerCase();
+            return stock === '0' || stock === 'out of stock' || stock === 'sold out' || stock === 'unavailable';
+        });
+    };
+
+    return (
+        <div className="min-h-screen bg-matteo-cream dark:bg-matteo-black py-32 px-6 md:px-16 flex flex-col items-center relative">
+            <div className="w-full">
+                <div className="mb-16 text-center">
+                    <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-matteo-orange mb-4 block">Live Availability</span>
+                    <h1 className="font-serif text-4xl md:text-5xl text-matteo-charcoal dark:text-white mb-4">The Current Edit</h1>
+                </div>
+
+                {loading ? (
+                    !isEmbedded ? (
+                    <div className="flex flex-col items-center justify-center py-20">
+                        <div className="w-8 h-8 border-2 border-matteo-orange border-t-transparent rounded-full animate-spin mb-4"></div>
+                        <p className="font-sans text-xs uppercase tracking-widest text-matteo-charcoal/60 dark:text-white/60">Loading live inventory...</p>
+                    </div>
+                    ) : null
+                ) : error ? (
+                    !isEmbedded ? (
+                    <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 p-6 text-center">
+                        <p className="font-sans text-sm uppercase tracking-wider mb-2">Connection Error</p>
+                        <p className="font-serif">{error}</p>
+                    </div>
+                    ) : null
+                ) : (
+                    <div 
+                        className="w-full pb-4" 
+                        style={{ 
+                            display: 'flex',
+                            flexDirection: 'row',
+                            flexWrap: 'nowrap',
+                            gap: '24px',
+                            overflowX: 'auto',
+                            scrollbarWidth: 'thin',
+                        }}
+                    >
+                        {groupedInventory.length > 0 ? (
+                            groupedInventory.map((group, groupIdx) => {
+                                const previewImages = getColorPreviewImages(group);
+                                const colorCount = group.styleGroups.length;
+                                const soldOut = isAllSoldOut(group);
+                                
+                                return (
+                                    <div 
+                                        key={groupIdx} 
+                                        className={`group flex flex-col bg-white dark:bg-[#0a0a0a] border border-matteo-charcoal/10 dark:border-white/10 overflow-hidden transition-colors duration-300 animate-fade-in-up ${soldOut ? 'opacity-50 pointer-events-none' : 'hover:border-matteo-orange/50'}`}
+                                        style={{ 
+                                            flex: `1 1 0%`,
+                                            minWidth: '220px',
+                                            animationDelay: `${groupIdx * 50}ms`,
+                                        }}
+                                    >
+                                        {/* Image Area with Arrow Navigation */}
+                                        <div 
+                                            className="w-full aspect-square bg-[#f0f0f0] dark:bg-[#111] overflow-hidden relative cursor-pointer group/card"
+                                            onClick={() => !soldOut && navigate(`${basePath}/${encodeURIComponent(group.parentName)}`)}
+                                        >
+                                            {previewImages.length > 0 ? (
+                                                <>
+                                                    <img 
+                                                        src={previewImages[activeCardImage[groupIdx] || 0]} 
+                                                        alt={`${group.parentName} view ${(activeCardImage[groupIdx] || 0) + 1}`}
+                                                        className="w-full h-full object-cover mix-blend-multiply dark:mix-blend-normal transition-opacity duration-300"
+                                                        onError={(e) => {
+                                                            (e.target as HTMLImageElement).src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-300"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>';
+                                                            (e.target as HTMLImageElement).className = "w-1/2 h-1/2 mx-auto mt-[25%] object-contain opacity-20";
+                                                        }}
+                                                    />
+
+                                                    {/* Sold Out Badge */}
+                                                    {soldOut && (
+                                                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center z-20">
+                                                            <span className="font-sans text-[11px] uppercase tracking-[0.3em] text-white bg-black/70 px-6 py-2 backdrop-blur-sm">
+                                                                Sold Out
+                                                            </span>
+                                                        </div>
+                                                    )}
+
+                                                    {/* Left Arrow */}
+                                                    {previewImages.length > 1 && (activeCardImage[groupIdx] || 0) > 0 && (
+                                                        <button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                setActiveCardImage(prev => ({ ...prev, [groupIdx]: (prev[groupIdx] || 0) - 1 }));
+                                                            }}
+                                                            className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/80 dark:bg-black/60 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover/card:opacity-100 transition-opacity duration-200 hover:bg-white dark:hover:bg-black/80 shadow-md z-10"
+                                                            aria-label="Previous color"
+                                                        >
+                                                            <svg className="w-4 h-4 text-matteo-charcoal dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"/></svg>
+                                                        </button>
+                                                    )}
+                                                    {/* Right Arrow */}
+                                                    {previewImages.length > 1 && (activeCardImage[groupIdx] || 0) < previewImages.length - 1 && (
+                                                        <button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                setActiveCardImage(prev => ({ ...prev, [groupIdx]: (prev[groupIdx] || 0) + 1 }));
+                                                            }}
+                                                            className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/80 dark:bg-black/60 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover/card:opacity-100 transition-opacity duration-200 hover:bg-white dark:hover:bg-black/80 shadow-md z-10"
+                                                            aria-label="Next color"
+                                                        >
+                                                            <svg className="w-4 h-4 text-matteo-charcoal dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"/></svg>
+                                                        </button>
+                                                    )}
+                                                </>
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center">
+                                                    <span className="font-sans text-[10px] uppercase tracking-widest opacity-30">No Image</span>
+                                                </div>
+                                            )}
+                                            {/* Dot indicators */}
+                                            {previewImages.length > 1 && (
+                                                <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5 pointer-events-none">
+                                                    {previewImages.map((_, i) => (
+                                                        <div key={i} className={`w-1.5 h-1.5 rounded-full transition-all duration-200 ${i === (activeCardImage[groupIdx] || 0) ? 'bg-white w-3 shadow-sm' : 'bg-white/40'}`}></div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                        
+                                        {/* Card Info Area */}
+                                        <div 
+                                            className="p-6 flex flex-col flex-grow cursor-pointer"
+                                            onClick={() => {
+                                                if (!soldOut) navigate(`${basePath}/${encodeURIComponent(group.parentName)}`);
+                                            }}
+                                        >
+                                            <div className="flex justify-between items-start mb-2">
+                                                <span className="font-sans text-[10px] uppercase tracking-widest text-matteo-charcoal/50 dark:text-gray-400">
+                                                    {colorCount} {colorCount === 1 ? 'Color' : 'Colors'}
+                                                </span>
+                                                <span className="font-sans text-[10px] tracking-widest text-matteo-charcoal/80 dark:text-gray-300">
+                                                    {getPriceRange(group.variations)}
+                                                </span>
+                                            </div>
+                                            <h3 className="font-serif text-xl text-matteo-charcoal dark:text-white leading-tight mb-4 group-hover:text-matteo-orange transition-colors">{group.parentName}</h3>
+                                            
+                                            <button className="mt-auto self-start font-sans text-[9px] uppercase tracking-[0.2em] border-b border-matteo-charcoal/30 dark:border-white/30 pb-1 group-hover:border-matteo-orange transition-colors">
+                                                {soldOut ? 'Unavailable' : 'View Colors'}
+                                            </button>
+                                        </div>
+                                    </div>
+                                );
+                            })
+                        ) : (
+                            <div className="col-span-full py-20 text-center">
+                                <p className="font-serif text-matteo-charcoal/60 dark:text-gray-500">No inventory available at the moment.</p>
+                            </div>
+                        )}
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};

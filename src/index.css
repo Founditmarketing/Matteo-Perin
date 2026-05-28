@@ -1,0 +1,117 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.animate-cinematic-reveal {
+  animation: cinematicReveal 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity, filter;
+}
+
+html {
+  -webkit-tap-highlight-color: transparent;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html.lenis {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+body {
+  /* Editorial Typography */
+  font-variant-ligatures: discretionary-ligatures;
+  hanging-punctuation: first last;
+
+  background-color: #F2EFE9;
+  color: #1C1C1C;
+  transition: background-color 0.7s cubic-bezier(0.32, 0.72, 0, 1), color 0.7s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* Optical Alignment for Headlines */
+h1,
+.font-serif.text-5xl,
+.font-serif.text-6xl,
+.font-serif.text-7xl {
+  margin-left: -0.04em;
+}
+
+/* Dark mode body transition override via class */
+html.dark body {
+  background-color: #0A0A0A;
+  color: #F2EFE9;
+}
+
+
+/* Hide Scrollbar for Luxury Feel */
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 1s cubic-bezier(0.2, 1, 0.2, 1) forwards;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Reveal On Scroll Animation Classes — visible by default to prevent Lenis scroll issues */
+.reveal-hidden {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.6s ease-out, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stagger Delays */
+.delay-100 {
+  transition-delay: 0.1s;
+}
+
+.delay-200 {
+  transition-delay: 0.15s;
+}
+
+.delay-300 {
+  transition-delay: 0.2s;
+}
