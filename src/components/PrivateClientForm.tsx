@@ -33,7 +33,7 @@ const INITIAL: FormData = {
 // ─── Slide transition ────────────────────────────────────────
 const slideVariants = {
   enter: { opacity: 0, y: 40 },
-  center: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } },
+  center: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as any } },
   exit: { opacity: 0, y: -30, transition: { duration: 0.35 } },
 };
 

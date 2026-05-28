@@ -20,7 +20,7 @@ export const GenderSplit: React.FC = () => {
                 {/* Background Image */}
                 <div className="absolute inset-0 bg-matteo-charcoal">
                     <img
-                        src=MENS_LOOKBOOK_IMAGES[0]
+                        src={MENS_LOOKBOOK_IMAGES[0]}
                         alt="Man"
                         className="w-full h-full object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-105 opacity-80 group-hover:opacity-100"
                         style={{ objectPosition: 'center 20%' }}
@@ -59,7 +59,7 @@ export const GenderSplit: React.FC = () => {
                 {/* Background Image */}
                 <div className="absolute inset-0 bg-matteo-charcoal">
                     <img
-                        src=WOMENS_LOOKBOOK_IMAGES[0]
+                        src={WOMENS_LOOKBOOK_IMAGES[0]}
                         alt="Woman"
                         className="w-full h-full object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-105 opacity-80 group-hover:opacity-100"
                         style={{ objectPosition: 'center 20%' }}
