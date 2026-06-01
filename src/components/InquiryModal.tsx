@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useInquiry } from '../context/InquiryContext';
+import { reportInquiryConversion } from '@/lib/gtagConversion';
 
 const FloatingInput: React.FC<{
     label: string;
@@ -93,9 +94,7 @@ export const InquiryModal: React.FC = () => {
             console.error("HubSpot submission failed:", err);
         } finally {
             // Fire Google Ads conversion
-            if (typeof (window as any).gtag_report_conversion === 'function') {
-                (window as any).gtag_report_conversion();
-            }
+            reportInquiryConversion();
             setIsSubmitting(false);
             setIsSuccess(true);
             setTimeout(() => {

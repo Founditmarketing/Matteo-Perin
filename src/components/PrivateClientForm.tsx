@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
+import { reportInquiryConversion } from '@/lib/gtagConversion';
 
 // ─── Types ───────────────────────────────────────────────────
 interface FormData {
@@ -163,9 +164,7 @@ export const PrivateClientForm: React.FC = () => {
       // Silent — don't block the UX
     }
     // Fire Google Ads conversion
-    if (typeof (window as any).gtag_report_conversion === 'function') {
-      (window as any).gtag_report_conversion();
-    }
+    reportInquiryConversion();
     setSubmitting(false);
     next();
   };

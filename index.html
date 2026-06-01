@@ -12,23 +12,7 @@
     gtag('config', 'AW-17701157571');
   </script>
 
-  <!-- Google Ads: Email Inquiry Click conversion -->
-  <script>
-    function gtag_report_conversion(url) {
-      var callback = function () {
-        if (typeof(url) != 'undefined') {
-          window.location = url;
-        }
-      };
-      gtag('event', 'conversion', {
-        'send_to': 'AW-17701157571/7bczCMWv35kcEMP1yPhB',
-        'event_callback': callback
-      });
-      return false;
-    }
-    // Expose globally for React components
-    window.gtag_report_conversion = gtag_report_conversion;
-  </script>
+  <!-- Base tag includes AW-17701157571 -->
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />

@@ -9,6 +9,7 @@ import { Material } from '@/types';
 import { Logo } from './Logo';
 import { RevealOnScroll } from './RevealOnScroll';
 import { Magnetic } from './Magnetic';
+import { reportInquiryConversion } from '@/lib/gtagConversion';
 
 const PROCESS_STEPS = [
     {
@@ -124,9 +125,7 @@ export const Bespoke: React.FC = () => {
             // Don't block UX
         }
         // Fire Google Ads conversion
-        if (typeof (window as any).gtag_report_conversion === 'function') {
-            (window as any).gtag_report_conversion();
-        }
+        reportInquiryConversion();
         setIsSubmitted(true);
     };
 

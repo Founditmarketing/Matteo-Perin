@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-
+import { Helmet } from 'react-helmet-async';
+import { reportInquiryConversion } from '@/lib/gtagConversion';
 import { PRODUCTS } from '../constants';
 import { useNavigate } from 'react-router-dom';
 import { useInquiry } from '../context/InquiryContext';
 import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
 
 // --- Animation Variants ---
 const fadeUpVariant = {
@@ -107,9 +107,7 @@ export const CrocJacketLanding: React.FC = () => {
         }
     };
     const fireConversion = () => {
-        if (typeof (window as any).gtag_report_conversion === 'function') {
-            (window as any).gtag_report_conversion();
-        }
+        reportInquiryConversion();
     };
 
     useEffect(() => {

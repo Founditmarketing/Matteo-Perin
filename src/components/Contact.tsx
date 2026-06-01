@@ -1,7 +1,7 @@
-
 import React, { useState, useEffect, useCallback, memo } from 'react';
 import { IMAGES } from '../constants';
 import { RevealOnScroll } from './RevealOnScroll';
+import { reportInquiryConversion } from '@/lib/gtagConversion';
 
 // Visual ambiance images for the left side
 const AMBIANCE_IMAGE = {
@@ -128,9 +128,7 @@ const ContactForm = memo(() => {
             // Don't block UX
         }
         // Fire Google Ads conversion
-        if (typeof (window as any).gtag_report_conversion === 'function') {
-            (window as any).gtag_report_conversion();
-        }
+        reportInquiryConversion();
         setIsSubmitting(false);
         setIsSuccess(true);
     };
