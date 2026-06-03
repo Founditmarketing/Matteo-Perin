@@ -1,0 +1,23 @@
+
+{
+  "short_name": "Matteo Perin",
+  "name": "Matteo Perin | Bespoke Lifestyle",
+  "description": "A modern, high-end digital experience for Matteo Perin, inspired by Italian craftsmanship and rugged luxury.",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#F2EFE9",
+  "background_color": "#F2EFE9",
+  "orientation": "portrait"
+}
