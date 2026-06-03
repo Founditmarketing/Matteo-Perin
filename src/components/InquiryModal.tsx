@@ -167,6 +167,11 @@ export const InquiryModal: React.FC = () => {
                                 <p className="font-serif text-matteo-charcoal/60 dark:text-gray-400 text-xs md:text-sm mb-6 md:mb-10 leading-relaxed hidden sm:block">
                                     Please provide your contact details. Due to the exclusive nature of our pieces, all acquisitions are handled via private consultation to ensure exact specifications and availability.
                                 </p>
+                                {selectedProduct?.title === 'Bespoke Crocodile Jacket' && (
+                                    <p className="font-sans text-[10px] uppercase tracking-widest text-matteo-orange mb-6 -mt-4">
+                                        * Note: Serious Inquiries Only
+                                    </p>
+                                )}
 
                                 <form className="space-y-2" onSubmit={handleSubmit}>
                                     <FloatingInput id="name" label="Full Name" value={formData.name} onChange={handleChange} required />
