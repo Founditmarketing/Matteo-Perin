@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { createPortal } from 'react-dom';
 import { RevealOnScroll } from './RevealOnScroll';
 import { useNavigate } from 'react-router-dom';
@@ -172,6 +173,17 @@ export const WomensLookbook: React.FC = () => {
     return (
         <div className="bg-matteo-cream dark:bg-matteo-black min-h-screen relative transition-colors duration-700">
 
+            <Helmet>
+                <title>Luxury Women's Clothing in Jackson, WY | Matteo Perin</title>
+                <meta name="description" content="Discover luxury women's clothing in Jackson, Wyoming. Matteo Perin's women's lookbook features bespoke outerwear, exotic leather, and one-of-a-kind pieces, handcrafted in Italy and available at our Jackson Hole showroom on 164 E Deloney Ave." />
+                <meta name="keywords" content="luxury womens clothing jackson wy, womens designer clothing jackson hole, bespoke womenswear jackson wyoming, luxury womens jackets jackson hole, Matteo Perin womens" />
+                <link rel="canonical" href="https://www.matteoperin.com/lookbook/women" />
+                <meta property="og:title" content="Luxury Women's Clothing in Jackson, WY | Matteo Perin" />
+                <meta property="og:description" content="Bespoke women's outerwear, exotic leather, and one-of-a-kind pieces, handcrafted in Italy. Luxury womenswear in Jackson Hole, Wyoming." />
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content="https://www.matteoperin.com/lookbook/women" />
+            </Helmet>
+
             {/* --- Header Section --- */}
             <div className="pt-48 pb-24 px-6 md:px-12 text-center relative z-10">
                 <RevealOnScroll>
@@ -184,6 +196,9 @@ export const WomensLookbook: React.FC = () => {
                             Women's Lookbook
                         </span>
                         <div className="w-12 h-[1px] bg-matteo-orange" />
+                        <span className="font-sans text-[10px] uppercase tracking-[0.25em] text-matteo-stone">
+                            Luxury Women's Clothing &middot; Jackson Hole, Wyoming
+                        </span>
                     </div>
                     
                     {/* View Toggle */}

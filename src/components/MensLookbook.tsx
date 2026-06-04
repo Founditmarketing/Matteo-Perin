@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { createPortal } from 'react-dom';
 import { RevealOnScroll } from './RevealOnScroll';
 import { Link, useNavigate } from 'react-router-dom';
@@ -173,6 +174,17 @@ export const MensLookbook: React.FC = () => {
     return (
         <div className="bg-matteo-cream dark:bg-matteo-black min-h-screen relative transition-colors duration-700">
 
+            <Helmet>
+                <title>Luxury Men's Clothing in Jackson, WY | Matteo Perin</title>
+                <meta name="description" content="Discover luxury men's clothing in Jackson, Wyoming. Matteo Perin's men's lookbook features bespoke jackets, suits, and exotic outerwear, handcrafted in Italy and available at our Jackson Hole showroom on 164 E Deloney Ave." />
+                <meta name="keywords" content="luxury mens clothing jackson wy, mens designer clothing jackson hole, bespoke menswear jackson wyoming, luxury mens jackets jackson hole, Matteo Perin mens" />
+                <link rel="canonical" href="https://www.matteoperin.com/lookbook/men" />
+                <meta property="og:title" content="Luxury Men's Clothing in Jackson, WY | Matteo Perin" />
+                <meta property="og:description" content="Bespoke men's jackets, suits, and exotic outerwear, handcrafted in Italy. Luxury menswear in Jackson Hole, Wyoming." />
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content="https://www.matteoperin.com/lookbook/men" />
+            </Helmet>
+
             {/* --- Header Section --- */}
             <div className="pt-48 pb-24 px-6 md:px-12 text-center relative z-10">
                 <RevealOnScroll>
@@ -185,6 +197,9 @@ export const MensLookbook: React.FC = () => {
                             Men's Lookbook
                         </span>
                         <div className="w-12 h-[1px] bg-matteo-orange" />
+                        <span className="font-sans text-[10px] uppercase tracking-[0.25em] text-matteo-stone">
+                            Luxury Men's Clothing &middot; Jackson Hole, Wyoming
+                        </span>
                     </div>
                     
                     {/* View Toggle */}
