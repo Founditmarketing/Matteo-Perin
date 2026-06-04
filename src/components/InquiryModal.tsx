@@ -142,7 +142,7 @@ export const InquiryModal: React.FC = () => {
                     <div className="max-w-md w-full mx-auto my-auto">
                         <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-matteo-orange mb-2 md:mb-4 block">Concierge Intake</span>
                         <h2 className="font-serif text-2xl md:text-4xl mb-6 md:mb-6 text-matteo-charcoal dark:text-white">
-                            {selectedProduct?.title === 'Bespoke Crocodile Jacket' ? 'Request Serious Inquiry' : 'Request a Bespoke Look'}
+                            {selectedProduct?.title === 'Bespoke Crocodile Jacket' ? 'SERIOUS INQUIRIES ONLY' : 'Request a Bespoke Look'}
                         </h2>
                         {selectedProduct && (
                             <div className="md:hidden flex items-center gap-4 mb-6 pb-6 border-b border-matteo-charcoal/10 dark:border-white/10">

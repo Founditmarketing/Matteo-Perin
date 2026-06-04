@@ -549,7 +549,7 @@ export const CrocJacketLanding: React.FC = () => {
                                 }}
                                 className={`w-full py-4 border font-sans text-xs uppercase tracking-[0.2em] transition-all duration-500 border-matteo-charcoal/30 dark:border-white/30 text-matteo-charcoal dark:text-white hover:border-matteo-orange hover:text-matteo-orange`}
                             >
-                                Request Serious Inquiry
+                                SERIOUS INQUIRIES ONLY
                             </button>
 
                             {/* Deposit Info */}
