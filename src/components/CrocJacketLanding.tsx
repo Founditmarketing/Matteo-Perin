@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { reportInquiryConversion } from '@/lib/gtagConversion';
 import { PRODUCTS } from '../constants';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useInquiry } from '../context/InquiryContext';
 import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'framer-motion';
 
@@ -192,8 +192,8 @@ export const CrocJacketLanding: React.FC = () => {
 
             <Helmet>
                 <title>Bespoke Crocodile Jacket | Handcrafted in Italy | Matteo Perin</title>
-                <meta name="description" content="Commission a one-of-one bespoke crocodile jacket by Matteo Perin. Hand-selected Nile or Porosus crocodile, hand-developed patina, 100+ hours of artisanal craftsmanship in Verona, Italy. Secure your commission with a $25,000 deposit. Full price $185,000." />
-                <meta name="keywords" content="bespoke crocodile jacket, luxury crocodile jacket, exotic leather jacket, Niloticus crocodile jacket, Porosus crocodile jacket, Matteo Perin, bespoke leather jacket, custom crocodile coat, luxury menswear, Italian leather jacket, handmade crocodile jacket, exotic skin jacket, designer crocodile jacket, crocodile outerwear, luxury commission jacket, bespoke outerwear Italy, Jackson Wyoming luxury, high end exotic jacket" />
+                <meta name="description" content="Commission a 1-of-1 bespoke Porosus crocodile jacket by Matteo Perin — a hand-painted Nile crocodile coat finished with a hand-developed patina over 100+ hours of artisanal hand-stitching in Verona, Italy, using certified CITES-regulated hides. Full commission $185,000; secure your slot with a $25,000 deposit." />
+                <meta name="keywords" content="bespoke porosus crocodile jacket, hand-painted nile crocodile coat, 1-of-1 custom exotic outerwear, bespoke crocodile jacket, luxury custom alligator coat, CITES certified crocodile jacket, hand-stitched exotic leather jacket Italy, Niloticus crocodile jacket, Porosus crocodile jacket, Matteo Perin, custom crocodile coat, made to order crocodile outerwear, luxury commission jacket, high end exotic jacket" />
                 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
                 <link rel="canonical" href="https://www.matteoperin.com/bespoke-crocodile-jacket" />
 
@@ -206,7 +206,7 @@ export const CrocJacketLanding: React.FC = () => {
                 <meta property="og:url" content="https://www.matteoperin.com/bespoke-crocodile-jacket" />
                 <meta property="og:type" content="product" />
                 <meta property="og:site_name" content="Matteo Perin" />
-                <meta property="product:price:amount" content="25000" />
+                <meta property="product:price:amount" content="185000" />
                 <meta property="product:price:currency" content="USD" />
                 <meta property="product:availability" content="in stock" />
                 <meta property="product:condition" content="new" />
@@ -226,7 +226,7 @@ export const CrocJacketLanding: React.FC = () => {
                         "@type": "Product",
                         "name": "Bespoke Crocodile Jacket",
                         "image": GALLERY_IMAGES.map(img => `https://www.matteoperin.com${img.replace(/ /g, '%20')}`),
-                        "description": "One-of-one bespoke crocodile field jacket. Crafted from hand-selected Nile or Porosus crocodile, each piece features a hand-developed patina, pure silk lining, and custom palladium hardware. Over 100 hours of artisanal craftsmanship in Verona, Italy. Offered exclusively by commission.",
+                        "description": "A 1-of-1 bespoke crocodile field jacket. Crafted from hand-selected, certified CITES-regulated Nile (Niloticus) or Porosus crocodile hides, each piece features a hand-developed patina, pure silk lining, and custom cast palladium hardware. Over 100 hours of artisanal hand-stitching in Verona, Italy justify the $185,000 commission price. Offered exclusively by private commission.",
                         "sku": "MP-CROC-JACKET-001",
                         "mpn": "MP-CROC-2026",
                         "gtin14": "",
@@ -253,9 +253,9 @@ export const CrocJacketLanding: React.FC = () => {
                         },
                         "offers": {
                             "@type": "Offer",
-                            "url": "https://www.matteoperin.com/#/bespoke-crocodile-jacket",
+                            "url": "https://www.matteoperin.com/bespoke-crocodile-jacket",
                             "priceCurrency": "USD",
-                            "price": "25000",
+                            "price": "185000",
                             "priceValidUntil": "2027-12-31",
                             "availability": "https://schema.org/InStock",
                             "itemCondition": "https://schema.org/NewCondition",
@@ -328,8 +328,8 @@ export const CrocJacketLanding: React.FC = () => {
                         "@type": "BreadcrumbList",
                         "itemListElement": [
                             { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.matteoperin.com/" },
-                            { "@type": "ListItem", "position": 2, "name": "Bespoke", "item": "https://www.matteoperin.com/#/bespoke" },
-                            { "@type": "ListItem", "position": 3, "name": "Bespoke Crocodile Jacket", "item": "https://www.matteoperin.com/#/bespoke-crocodile-jacket" }
+                            { "@type": "ListItem", "position": 2, "name": "Bespoke", "item": "https://www.matteoperin.com/bespoke" },
+                            { "@type": "ListItem", "position": 3, "name": "Bespoke Crocodile Jacket", "item": "https://www.matteoperin.com/bespoke-crocodile-jacket" }
                         ]
                     })}
                 </script>
@@ -345,7 +345,7 @@ export const CrocJacketLanding: React.FC = () => {
                                 "name": "What type of crocodile is used in the Matteo Perin bespoke jacket?",
                                 "acceptedAnswer": {
                                     "@type": "Answer",
-                                    "text": "Each jacket is crafted from hand-selected Nile or Porosus crocodile, sourced from certified farms. The skins are chosen for their symmetry, scale pattern, and suppleness before being hand-finished with a proprietary patina."
+                                    "text": "Each jacket is crafted from hand-selected Nile (Niloticus) or Porosus crocodile, sourced from certified, CITES-regulated farms. The skins are chosen for their symmetry, scale pattern, and suppleness before being hand-finished with a proprietary hand-painted patina."
                                 }
                             },
                             {
@@ -393,9 +393,9 @@ export const CrocJacketLanding: React.FC = () => {
                 {/* Breadcrumbs */}
                 <nav className="mb-8 md:mb-12">
                     <ol className="flex items-center gap-2 font-sans text-[10px] uppercase tracking-[0.2em] text-matteo-stone">
-                        <li><a href="#/" className="hover:text-matteo-orange transition-colors">Home</a></li>
+                        <li><Link to="/" className="hover:text-matteo-orange transition-colors">Home</Link></li>
                         <li className="text-matteo-charcoal/20 dark:text-white/20">/</li>
-                        <li><a href="#/collection" className="hover:text-matteo-orange transition-colors">Collection</a></li>
+                        <li><Link to="/collection" className="hover:text-matteo-orange transition-colors">Collection</Link></li>
                         <li className="text-matteo-charcoal/20 dark:text-white/20">/</li>
                         <li className="text-matteo-charcoal dark:text-white">Bespoke Crocodile Jacket</li>
                     </ol>
@@ -514,7 +514,7 @@ export const CrocJacketLanding: React.FC = () => {
 
                         {/* Short Description */}
                         <motion.p variants={fadeUpVariant} className="font-serif text-base md:text-lg text-matteo-charcoal/70 dark:text-white/60 leading-relaxed mb-8 max-w-lg">
-                            Crafted from hand-selected Nile or Porosus crocodile, each piece is finished with a hand-developed patina and shaped over 100+ hours of artisanal work. Offered exclusively by commission, reserved for the atelier's most considered works.
+                            A 1-of-1 commission in certified, CITES-regulated Nile (Niloticus) or Porosus crocodile. Each piece is finished with a hand-painted patina and shaped over 100+ hours of artisanal hand-stitching in our Verona, Italy atelier. The $185,000 price reflects the rarity of the hides, the labor, and the truly singular nature of custom exotic outerwear — no two are alike.
                         </motion.p>
 
                         {/* Availability Indicator */}
@@ -599,7 +599,11 @@ export const CrocJacketLanding: React.FC = () => {
                                 <ul className="space-y-2 list-none">
                                     <li className="flex items-start gap-2">
                                         <span className="w-1 h-1 rounded-full bg-matteo-orange mt-2 shrink-0"></span>
-                                        Hand-selected Nile or Porosus crocodile — only 1 in 100 skins qualifies
+                                        Certified, CITES-regulated Nile (Niloticus) or Porosus crocodile hides — only 1 in 100 skins qualifies
+                                    </li>
+                                    <li className="flex items-start gap-2">
+                                        <span className="w-1 h-1 rounded-full bg-matteo-orange mt-2 shrink-0"></span>
+                                        100+ hours of artisanal hand-stitching in Verona, Italy
                                     </li>
                                     <li className="flex items-start gap-2">
                                         <span className="w-1 h-1 rounded-full bg-matteo-orange mt-2 shrink-0"></span>

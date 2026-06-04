@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+# Internal / non-indexable routes
+Disallow: /dossier
+Disallow: /dossier-dashboard
+Disallow: /portal
+Disallow: /checkout
+Disallow: /thank-you
+Disallow: /private-client
+Disallow: /inventory-test-hidden
+Disallow: /api/
+
+Sitemap: https://www.matteoperin.com/sitemap.xml

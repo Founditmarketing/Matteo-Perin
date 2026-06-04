@@ -33,6 +33,14 @@ class ErrorBoundary extends React.Component<any, { hasError: boolean, error: any
 
 import { HelmetProvider } from 'react-helmet-async';
 
+// Legacy hash-URL redirect: BrowserRouter ignores the old `/#/path` URLs that may
+// still be indexed or shared. Rewrite them to clean paths before the app mounts so
+// those visitors (and any cached SERP links) land on the correct route.
+if (window.location.hash.startsWith('#/')) {
+  const cleanPath = window.location.hash.slice(1) + window.location.search;
+  window.history.replaceState(null, '', cleanPath);
+}
+
 const rootElement = document.getElementById('root');
 if (!rootElement) {
   throw new Error("Could not find root element to mount to");

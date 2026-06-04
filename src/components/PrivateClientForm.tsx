@@ -507,7 +507,7 @@ export const PrivateClientForm: React.FC = () => {
                     All information is held in the strictest confidence.
                   </p>
                   <a
-                    href="#/shop"
+                    href="/shop"
                     className="group inline-flex items-center gap-4 px-12 py-5 bg-[#c49a6c] text-white font-sans text-[12px] uppercase tracking-[0.3em] hover:bg-[#2a2520] dark:hover:bg-white dark:hover:text-[#0e0d0c] transition-all duration-500 shadow-lg hover:shadow-xl"
                   >
                     <span>View Available Creations</span>

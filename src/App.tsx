@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Suspense } from 'react';
-import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, Link } from 'react-router-dom';
 import { Navigation } from './components/Navigation';
 import { Footer } from './components/Footer';
 import { InquiryProvider } from './context/InquiryContext';
@@ -84,9 +84,9 @@ const ThankYouPage: React.FC = () => {
                         : 'A senior Matteo Perin advisor will contact you within 24 hours to arrange your private consultation.'
                     }
                 </p>
-                <a href="/#/bespoke-crocodile-jacket" className="font-sans text-[10px] uppercase tracking-widest border-b border-matteo-orange text-matteo-orange pb-1 hover:opacity-70 transition-opacity">
+                <Link to="/bespoke-crocodile-jacket" className="font-sans text-[10px] uppercase tracking-widest border-b border-matteo-orange text-matteo-orange pb-1 hover:opacity-70 transition-opacity">
                     Return to Bespoke Crocodile Jacket
-                </a>
+                </Link>
             </div>
         </div>
     );

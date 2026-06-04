@@ -45,8 +45,8 @@ export default async function handler(req, res) {
       payment_method_types: ['card'],
       line_items: lineItems,
       mode: 'payment',
-      success_url: `https://www.matteoperin.com/#/thank-you?deposit=true`,
-      cancel_url: `https://www.matteoperin.com/#/bespoke-crocodile-jacket`,
+      success_url: `https://www.matteoperin.com/thank-you?deposit=true`,
+      cancel_url: `https://www.matteoperin.com/bespoke-crocodile-jacket`,
       // Store item info in session metadata for the webhook
       metadata: {
         item_titles: items.map(i => i.title).join(' | '),

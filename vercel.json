@@ -1,8 +1,4 @@
 {
-  "redirects": [
-    { "source": "/bespoke-crocodile-jacket", "destination": "/#/bespoke-crocodile-jacket", "permanent": false },
-    { "source": "/thank-you", "destination": "/#/thank-you", "permanent": false }
-  ],
   "rewrites": [
     { "source": "/assets/(.*)", "destination": "/assets/$1" },
     { "source": "/((?!api/|assets/).*)", "destination": "/index.html" }
