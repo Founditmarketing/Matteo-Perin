@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { PRODUCTS } from "../constants";
+import { PRODUCTS } from "../src/constants";
 
-export default async function handler(req, res) {
+export default async function handler(req: any, res: any) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
     return res.status(405).end('Method Not Allowed');
@@ -24,7 +24,7 @@ export default async function handler(req, res) {
             title: p.title,
             category: p.category,
             price: p.price,
-            link: `/#/collection/${p.id}`,
+            link: `/collection/${p.id}`,
             description: p.description
         }))
     );
@@ -58,7 +58,7 @@ When suggesting pieces, add their exact numeric \`id\` into the \`suggestedProdu
 If you are not suggesting a catalog item, leave \`suggestedProducts\` as [].${contextInstruction}`;
 
     const model = genAI.getGenerativeModel({
-        model: "gemini-2.5-flash",
+        model: "gemini-2.0-flash",
         systemInstruction: systemInstruction,
         generationConfig: {
             maxOutputTokens: 800,
@@ -72,7 +72,7 @@ If you are not suggesting a catalog item, leave \`suggestedProducts\` as [].${co
 
     return res.status(200).json({ text: responseText });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error("Vercel Function Error (Gemini):", error);
     return res.status(500).json({ error: error.message || "Failed to generate AI response." });
   }
