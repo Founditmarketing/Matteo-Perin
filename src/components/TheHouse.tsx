@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { motion, useScroll, useTransform, useSpring, useMotionValue } from 'framer-motion';
 import { IMAGES, TEXTS } from '../constants';
 import { RevealOnScroll } from './RevealOnScroll';
@@ -59,6 +60,16 @@ export const TheHouse: React.FC = () => {
 
     return (
         <div className="bg-matteo-cream dark:bg-matteo-black min-h-screen transition-colors duration-700">
+            <Helmet>
+                <title>The House — The Matteo Perin Story | Luxury Atelier in Jackson, WY</title>
+                <meta name="description" content="The story of Matteo Perin — an Italian bespoke luxury house rooted in Verona craftsmanship and based in Jackson, Wyoming. Discover the philosophy, the atelier, and the design code behind the brand." />
+                <meta name="keywords" content="Matteo Perin, about Matteo Perin, Italian luxury designer, bespoke atelier Jackson Wyoming, luxury fashion house Jackson Hole" />
+                <link rel="canonical" href="https://www.matteoperin.com/the-house" />
+                <meta property="og:title" content="The House — The Matteo Perin Story" />
+                <meta property="og:description" content="An Italian bespoke luxury house rooted in Verona craftsmanship, based in Jackson, Wyoming." />
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content="https://www.matteoperin.com/the-house" />
+            </Helmet>
 
             {/* 1. FIXED HERO (Parallax Effect) */}
             <div className="relative h-screen w-full overflow-hidden sticky top-0 z-0 bg-matteo-black" style={{ transform: 'translateZ(0)', willChange: 'transform' }}>

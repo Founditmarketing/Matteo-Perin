@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { RevealOnScroll } from './RevealOnScroll';
 import { Logo } from './Logo';
 
@@ -10,6 +11,16 @@ export const Journal: React.FC = () => {
 
     return (
         <div className="bg-matteo-cream dark:bg-matteo-black min-h-screen flex flex-col items-center justify-center transition-colors duration-700 relative overflow-hidden">
+            <Helmet>
+                <title>Journal — Notes on Craft, Style & Travel | Matteo Perin</title>
+                <meta name="description" content="The Matteo Perin Journal — essays on the art of patina, bespoke craftsmanship, exotic materials, and the lifestyle of considered luxury, from the atelier in Verona to Jackson Hole." />
+                <meta name="keywords" content="Matteo Perin journal, luxury craftsmanship blog, bespoke fashion editorial, art of patina, luxury lifestyle Jackson Hole" />
+                <link rel="canonical" href="https://www.matteoperin.com/journal" />
+                <meta property="og:title" content="Journal — Notes on Craft, Style & Travel | Matteo Perin" />
+                <meta property="og:description" content="Essays on craftsmanship, exotic materials, and the lifestyle of considered luxury." />
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content="https://www.matteoperin.com/journal" />
+            </Helmet>
 
             {/* grain removed */}
 

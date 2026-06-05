@@ -39,12 +39,26 @@ async function launchBrowser() {
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const distDir = path.resolve(__dirname, '..', 'dist');
 
-// Routes to prerender. Keep these to high-value, mostly-static pages.
+// Routes to prerender. Keep these to high-value pages with their own SEO (Helmet).
 const ROUTES = [
   '/',
   '/bespoke-crocodile-jacket',
   '/lookbook/men',
   '/lookbook/women',
+  '/the-house',
+  '/bespoke',
+  '/press',
+  '/journal',
+  '/lifestyle',
+  '/furniture',
+  '/collection',
+  // Journal articles (keep in sync with ARTICLES slugs in src/constants.ts)
+  '/journal/art-of-patina',
+  '/journal/dolomites-notes',
+  '/journal/private-air-essentials',
+  '/journal/vicuna-commission',
+  '/journal/silent-stitch',
+  '/journal/urban-armor',
 ];
 
 function outPathForRoute(route) {

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useParams, Link } from 'react-router-dom';
 import { IMAGES } from '../constants';
 import { ProductService } from '@/services/productService';
@@ -94,6 +95,35 @@ export const ArticleDetail: React.FC = () => {
 
     return (
         <article className="bg-matteo-cream dark:bg-matteo-black min-h-screen relative transition-colors duration-700 animate-fade-in-up">
+
+            <Helmet>
+                <title>{`${article.title} | Matteo Perin Journal`}</title>
+                <meta name="description" content={article.excerpt || `${article.title} — from the Matteo Perin Journal.`} />
+                <link rel="canonical" href={`https://www.matteoperin.com/journal/${article.slug}`} />
+                <meta property="og:title" content={`${article.title} | Matteo Perin Journal`} />
+                <meta property="og:description" content={article.excerpt || ''} />
+                <meta property="og:type" content="article" />
+                <meta property="og:url" content={`https://www.matteoperin.com/journal/${article.slug}`} />
+                {article.image && <meta property="og:image" content={`https://www.matteoperin.com${article.image}`} />}
+                <script type="application/ld+json">
+                    {JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "Article",
+                        "headline": article.title,
+                        "description": article.excerpt || "",
+                        "image": article.image ? `https://www.matteoperin.com${article.image}` : undefined,
+                        "datePublished": article.date || undefined,
+                        "articleSection": article.category || undefined,
+                        "author": { "@type": "Organization", "name": "Matteo Perin" },
+                        "publisher": {
+                            "@type": "Organization",
+                            "name": "Matteo Perin",
+                            "url": "https://www.matteoperin.com"
+                        },
+                        "mainEntityOfPage": `https://www.matteoperin.com/journal/${article.slug}`
+                    })}
+                </script>
+            </Helmet>
 
             {/* Reading Progress Indicator */}
             <div className="fixed top-0 left-0 h-1 bg-matteo-orange z-[60] transition-all duration-100 ease-out" style={{ width: `${readingProgress * 100}%` }}></div>

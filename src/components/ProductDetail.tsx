@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useParams, Link } from 'react-router-dom';
 import { ProductService } from '@/services/productService';
 import { Product } from '../types';
@@ -69,6 +70,37 @@ export const ProductDetail: React.FC = () => {
 
     return (
         <div className="bg-matteo-cream dark:bg-matteo-black text-matteo-charcoal dark:text-white min-h-screen pt-32 pb-32 transition-colors duration-700 animate-fade-in-up">
+
+            <Helmet>
+                <title>{`${product.title} — ${product.category} | Matteo Perin`}</title>
+                <meta name="description" content={product.description || `${product.title} by Matteo Perin — Italian bespoke luxury.`} />
+                <link rel="canonical" href={`https://www.matteoperin.com/collection/${product.id}`} />
+                <meta property="og:title" content={`${product.title} — ${product.category} | Matteo Perin`} />
+                <meta property="og:description" content={product.description || ''} />
+                <meta property="og:type" content="product" />
+                <meta property="og:url" content={`https://www.matteoperin.com/collection/${product.id}`} />
+                {product.image && <meta property="og:image" content={`https://www.matteoperin.com${product.image}`} />}
+                <script type="application/ld+json">
+                    {JSON.stringify({
+                        "@context": "https://schema.org/",
+                        "@type": "Product",
+                        "name": product.title,
+                        "category": product.category,
+                        "description": product.description || "",
+                        "image": product.image ? `https://www.matteoperin.com${product.image}` : undefined,
+                        "brand": { "@type": "Brand", "name": "Matteo Perin" },
+                        "offers": {
+                            "@type": "Offer",
+                            "url": `https://www.matteoperin.com/collection/${product.id}`,
+                            "priceCurrency": "USD",
+                            "price": String(product.price ?? ""),
+                            "availability": "https://schema.org/InStock",
+                            "itemCondition": "https://schema.org/NewCondition",
+                            "seller": { "@type": "Organization", "name": "Matteo Perin" }
+                        }
+                    })}
+                </script>
+            </Helmet>
 
             <div className="max-w-[1400px] mx-auto px-6 md:px-12">
 

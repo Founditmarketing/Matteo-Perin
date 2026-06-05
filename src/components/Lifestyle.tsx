@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Helmet } from 'react-helmet-async';
 import { IMAGES } from '../constants';
 import { RevealOnScroll } from './RevealOnScroll';
 import { Link } from 'react-router-dom';
@@ -34,6 +35,16 @@ const SECTIONS = [
 export const Lifestyle: React.FC = () => {
     return (
         <div className="bg-matteo-black text-white relative">
+            <Helmet>
+                <title>The Lifestyle | Considered Luxury by Matteo Perin</title>
+                <meta name="description" content="The Matteo Perin lifestyle — where Italian craftsmanship meets the adventurous spirit of Jackson Hole. Exotic outerwear, bespoke leather, and pieces made for a life well lived." />
+                <meta name="keywords" content="luxury lifestyle Jackson Hole, Matteo Perin lifestyle, considered luxury, bespoke leather goods Wyoming" />
+                <link rel="canonical" href="https://www.matteoperin.com/lifestyle" />
+                <meta property="og:title" content="The Lifestyle | Considered Luxury by Matteo Perin" />
+                <meta property="og:description" content="Where Italian craftsmanship meets the adventurous spirit of Jackson Hole." />
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content="https://www.matteoperin.com/lifestyle" />
+            </Helmet>
 
             {/* Introductory Header (Fixed behind the scroll) */}
             <div className="min-h-[50vh] flex flex-col justify-center items-center text-center px-6 pt-32 pb-12 sticky top-0 z-0 bg-matteo-black">

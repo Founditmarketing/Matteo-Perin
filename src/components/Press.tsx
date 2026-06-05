@@ -1,10 +1,21 @@
 import React from 'react';
+import { Helmet } from 'react-helmet-async';
 import { RevealOnScroll } from './RevealOnScroll';
 import { PRESS_ARTICLES } from '../constants';
 
 export const Press: React.FC = () => {
     return (
         <div className="bg-matteo-cream dark:bg-matteo-black min-h-screen pt-32 pb-32 transition-colors duration-700">
+            <Helmet>
+                <title>Press & Media Coverage | Matteo Perin</title>
+                <meta name="description" content="Matteo Perin in the press — featured in Robb Report, Private Air Magazine, JH Style, and more. Coverage of the Italian bespoke luxury designer based in Jackson Hole, Wyoming." />
+                <meta name="keywords" content="Matteo Perin press, Matteo Perin media, luxury designer Jackson Hole press, bespoke designer features" />
+                <link rel="canonical" href="https://www.matteoperin.com/press" />
+                <meta property="og:title" content="Press & Media Coverage | Matteo Perin" />
+                <meta property="og:description" content="Featured coverage of Matteo Perin, the Italian bespoke luxury designer based in Jackson Hole, Wyoming." />
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content="https://www.matteoperin.com/press" />
+            </Helmet>
             <div className="max-w-[1920px] mx-auto px-6 md:px-12">
 
                 {/* --- Header --- */}
