@@ -1,5 +1,25 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { PRODUCTS } from "../src/constants";
+
+// NOTE: This catalog is intentionally inlined and self-contained. Vercel's ESM
+// serverless runtime does not bundle files outside the /api directory, so importing
+// from ../src/constants fails at runtime (ERR_MODULE_NOT_FOUND). Keep the ids in
+// sync with src/constants.ts PRODUCTS. Only the fields the AI needs are included.
+const CATALOG = [
+  { id: 1, title: 'Spring Look 01', category: 'Travel / Leisure', price: 4200, link: '/collection/1', description: 'Tuscan vegetable-tanned leather. 48-hour capacity. Solid brass hardware. Engineered for the departure.' },
+  { id: 2, title: 'Spring Look 02', category: 'Outerwear', price: 3850, link: '/collection/2', description: 'Goat suede. Horn buttons. Silk-blend lining. Transitions effortlessly from city streets to alpine retreats.' },
+  { id: 3, title: 'Spring Look 03', category: 'Accessories', price: 1250, link: '/collection/3', description: 'Hand-stitched construction. Signature edge painting. An evening essential.' },
+  { id: 4, title: 'Spring Look 04', category: 'Tailoring', price: 2100, link: '/collection/4', description: 'Biella-sourced cashmere. Unstructured. Warmth without weight. Available for commission.' },
+  { id: 5, title: 'Spring Look 05', category: 'Couture', price: 650, link: '/collection/5', description: 'Japanese acetate. Titanium hardware. Clarity and protection.' },
+  { id: 6, title: 'Spring Look 06', category: 'Couture', price: 4500, link: '/collection/6', description: 'Pure Tussah silk. Hand-draped. A lesson in fluid architecture.' },
+  { id: 7, title: 'Spring Look 07', category: 'Travel / Tailoring', price: 3200, link: '/collection/7', description: 'Compact efficiency. Fits beneath the seat of any commercial aircraft.' },
+  { id: 8, title: 'Spring Look 08', category: 'Footwear', price: 1850, link: '/collection/8', description: 'Goodyear welted. Hand-painted cognac patina. A foundation for the wardrobe.' },
+  { id: 9, title: 'Spring Look 09', category: 'Outerwear', price: 5200, link: '/collection/9', description: 'Tuscan lambskin. Reversible. The ultimate defense against the cold.' },
+  { id: 10, title: 'Spring Look 10', category: 'Outerwear', price: 4800, link: '/collection/10', description: 'Suri Alpaca blend. Dramatic lapels. A silhouette that commands the room.' },
+  { id: 11, title: 'Spring Look 11', category: 'Tailoring', price: 450, link: '/collection/11', description: 'Wild Amazonian Peccary. Unlined for tactile precision. Hand-sewn in Naples.' },
+  { id: 12, title: 'Spring Look 12', category: 'Business', price: 1850, link: '/collection/12', description: 'Vegetable-tanned bridle leather. Retractable handle. Architecturally rigid.' },
+  { id: 13, title: 'Spring Look 13', category: 'Knitwear', price: 1200, link: '/collection/13', description: '4-ply Scottish cashmere. Chunky rib. The foundation of a winter wardrobe.' },
+  { id: 14, title: 'Bespoke Crocodile Jacket', category: 'Exotics', price: 25000, link: '/bespoke-crocodile-jacket', description: "Crafted from hand-selected Nile or Porosus crocodile, each piece is finished with a hand-developed patina and shaped over 100+ hours of artisanal work. Offered exclusively by commission." },
+];
 
 export default async function handler(req: any, res: any) {
   if (req.method !== 'POST') {
@@ -8,7 +28,7 @@ export default async function handler(req: any, res: any) {
   }
 
   try {
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY;
     if (!apiKey) {
       console.error("No Gemini API key found in server variables.");
       return res.status(500).json({ error: "Server Configuration Error: Missing API Key" });
@@ -18,16 +38,7 @@ export default async function handler(req: any, res: any) {
 
     const genAI = new GoogleGenerativeAI(apiKey);
 
-    const catalogString = JSON.stringify(
-        PRODUCTS.map(p => ({
-            id: p.id,
-            title: p.title,
-            category: p.category,
-            price: p.price,
-            link: `/collection/${p.id}`,
-            description: p.description
-        }))
-    );
+    const catalogString = JSON.stringify(CATALOG);
 
     const contextInstruction = clientContext 
         ? `\n\n**VIP CLIENT CONTEXT:**\n${clientContext}\nAddress this patron with intimate familiarity, acknowledging their identity and status.`
