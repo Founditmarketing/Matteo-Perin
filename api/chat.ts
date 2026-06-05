@@ -69,7 +69,7 @@ When suggesting pieces, add their exact numeric \`id\` into the \`suggestedProdu
 If you are not suggesting a catalog item, leave \`suggestedProducts\` as [].${contextInstruction}`;
 
     const model = genAI.getGenerativeModel({
-        model: "gemini-2.0-flash",
+        model: "gemini-2.5-flash",
         systemInstruction: systemInstruction,
         generationConfig: {
             maxOutputTokens: 800,
