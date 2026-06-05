@@ -10,10 +10,31 @@
 // prerender problem can never break the production deploy (you just fall back to the SPA).
 
 import { preview } from 'vite';
-import puppeteer from 'puppeteer';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import fs from 'fs';
+
+// Launch a headless browser that works both locally and in Vercel's build container.
+// Vercel's image lacks the system libraries (libnspr4, libnss3, ...) that Puppeteer's
+// bundled Chrome needs, so on Vercel we use @sparticuz/chromium (ships those libs);
+// locally we use the full puppeteer package and its managed Chrome.
+async function launchBrowser() {
+  if (process.env.VERCEL) {
+    const chromium = (await import('@sparticuz/chromium')).default;
+    const puppeteerCore = (await import('puppeteer-core')).default;
+    return puppeteerCore.launch({
+      args: [...chromium.args, '--disable-dev-shm-usage'],
+      defaultViewport: chromium.defaultViewport,
+      executablePath: await chromium.executablePath(),
+      headless: chromium.headless,
+    });
+  }
+  const puppeteer = (await import('puppeteer')).default;
+  return puppeteer.launch({
+    headless: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
+  });
+}
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const distDir = path.resolve(__dirname, '..', 'dist');
@@ -45,10 +66,7 @@ async function run() {
   const base = (urls[0] || 'http://localhost:4173').replace(/\/$/, '');
   console.log(`[prerender] preview server at ${base}`);
 
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
-  });
+  const browser = await launchBrowser();
 
   let succeeded = 0;
   for (const route of ROUTES) {
