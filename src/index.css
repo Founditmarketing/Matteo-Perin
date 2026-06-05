@@ -103,6 +103,12 @@ html.dark body {
   transform: translateY(0);
 }
 
+/* Google Places Autocomplete dropdown — keep above the high z-index UI */
+.pac-container {
+  z-index: 100100 !important;
+  font-family: 'Montserrat', sans-serif;
+}
+
 /* Stagger Delays */
 .delay-100 {
   transition-delay: 0.1s;

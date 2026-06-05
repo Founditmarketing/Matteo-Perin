@@ -1,5 +1,6 @@
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { Loader } from '@googlemaps/js-api-loader';
 import { useCart } from '../context/CartContext';
 import { Logo } from './Logo';
 import { Link, useNavigate } from 'react-router-dom';
@@ -19,7 +20,9 @@ const FloatingInput = React.memo(({
     required = false,
     className = "",
     half = false,
-    placeholder = " "
+    placeholder = " ",
+    inputRef,
+    autoComplete
 }: {
     label: string;
     name: string;
@@ -30,14 +33,18 @@ const FloatingInput = React.memo(({
     className?: string;
     half?: boolean;
     placeholder?: string;
+    inputRef?: React.Ref<HTMLInputElement>;
+    autoComplete?: string;
 }) => (
     <div className={`relative pt-5 group ${className} ${half ? 'w-full md:w-[48%]' : 'w-full'}`}>
         <input 
+            ref={inputRef}
             type={type}
             name={name}
             id={name}
             value={value}
             onChange={onChange}
+            autoComplete={autoComplete}
             className="block w-full bg-transparent border-b border-matteo-charcoal/20 dark:border-white/20 py-2 font-serif text-xl text-matteo-charcoal dark:text-white focus:outline-none focus:border-matteo-orange dark:focus:border-matteo-orange transition-colors peer placeholder-transparent"
             placeholder={placeholder}
             required={required}
@@ -187,6 +194,53 @@ export const Checkout: React.FC = () => {
     const [selectedShipping, setSelectedShipping] = useState(shippingMethods[0]);
 
     const finalTotal = cartTotal + selectedShipping.price;
+
+    // Google Places address autocomplete on the shipping address field.
+    const addressInputRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+        if (!apiKey || !addressInputRef.current) return;
+
+        let cancelled = false;
+        const loader = new Loader({ apiKey, version: 'weekly', libraries: ['places'] });
+
+        loader.load().then((google) => {
+            if (cancelled || !addressInputRef.current) return;
+            const autocomplete = new google.maps.places.Autocomplete(addressInputRef.current, {
+                fields: ['address_components'],
+                types: ['address'],
+            });
+
+            autocomplete.addListener('place_changed', () => {
+                const place = autocomplete.getPlace();
+                const components = place.address_components;
+                if (!components) return;
+
+                const get = (type: string, short = false) => {
+                    const c = components.find((comp: any) => comp.types.includes(type));
+                    return c ? (short ? c.short_name : c.long_name) : '';
+                };
+
+                const street = `${get('street_number')} ${get('route')}`.trim();
+                const city = get('locality') || get('postal_town') || get('sublocality_level_1') || get('administrative_area_level_2');
+                const zip = get('postal_code');
+                const country = get('country');
+
+                setFormData(prev => ({
+                    ...prev,
+                    address: street || prev.address,
+                    city: city || prev.city,
+                    zip: zip || prev.zip,
+                    country: country || prev.country,
+                }));
+            });
+        }).catch((err) => {
+            console.error('Google Maps Places failed to load:', err);
+        });
+
+        return () => { cancelled = true; };
+    }, []);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -391,6 +445,8 @@ export const Checkout: React.FC = () => {
                                 value={formData.address} 
                                 onChange={handleInputChange}
                                 required={true}
+                                inputRef={addressInputRef}
+                                autoComplete="off"
                             />
 
                             <div className="flex flex-col md:flex-row gap-8">
