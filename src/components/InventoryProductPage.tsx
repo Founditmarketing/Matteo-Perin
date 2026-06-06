@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { Product } from '../types';
+import { trackViewItem } from '../lib/analytics';
 
 interface GroupedProduct {
     parentName: string;
@@ -128,6 +129,23 @@ export const InventoryProductPage: React.FC = () => {
 
         fetchInventory();
     }, [productName]);
+
+    // Fire GA4 view_item once a product + variation are resolved. This is the
+    // "someone looked at a current-edit product" signal used for the
+    // view -> purchase funnel.
+    useEffect(() => {
+        if (!selectedGroup || !activeVariation) return;
+        const priceStr = String(activeVariation.Price || '0').replace(/[^0-9.]/g, '');
+        trackViewItem({
+            id: selectedGroup.parentName,
+            title: `${selectedGroup.parentName}${activeVariation.Title !== selectedGroup.parentName ? ' — ' + activeVariation.Title : ''}`,
+            category: activeVariation.Category || 'Collection',
+            price: parseFloat(priceStr) || 0,
+            variationTitle: activeVariation.Title,
+            styleName: activeVariation.StyleName || activeVariation.Title,
+            parentName: selectedGroup.parentName,
+        });
+    }, [selectedGroup, activeVariation]);
 
     const getImageUrl = (url: string) => {
         if (!url) return '';

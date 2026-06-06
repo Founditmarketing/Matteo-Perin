@@ -4,6 +4,7 @@ import { Loader } from '@googlemaps/js-api-loader';
 import { useCart } from '../context/CartContext';
 import { Logo } from './Logo';
 import { Link, useNavigate } from 'react-router-dom';
+import { trackBeginCheckout } from '../lib/analytics';
 
 
 
@@ -166,6 +167,14 @@ const CheckoutManifest = React.memo(({ cartItems, cartTotal, selectedShipping, f
     );
 });
 
+// Read the GA4 client id from the `_ga` cookie (format: GA1.1.<id>.<ts>).
+// Returns the "<id>.<ts>" portion GA4 uses as client_id, or '' if absent.
+const getGaClientId = (): string => {
+    if (typeof document === 'undefined') return '';
+    const match = document.cookie.match(/_ga=GA\d\.\d\.(\d+\.\d+)/);
+    return match ? match[1] : '';
+};
+
 export const Checkout: React.FC = () => {
     const { cartItems, cartTotal, updateQuantity, removeFromCart, clearCart } = useCart();
     const navigate = useNavigate();
@@ -269,7 +278,9 @@ export const Checkout: React.FC = () => {
         e.preventDefault();
         setIsProcessing(true);
         setPaymentStatus('Connecting to secure gateway...');
-        
+
+        trackBeginCheckout(cartItems, finalTotal);
+
         try {
             const response = await fetch('/api/create-checkout-session', {
                 method: 'POST',
@@ -279,7 +290,11 @@ export const Checkout: React.FC = () => {
                 body: JSON.stringify({
                     items: cartItems,
                     shippingOptions: selectedShipping,
-                    customerDetails: formData
+                    customerDetails: formData,
+                    // Pass the GA4 client id so the server-side purchase event
+                    // (sent from the Stripe webhook) is attributed to the same
+                    // user's funnel in GA4.
+                    gaClientId: getGaClientId(),
                 }),
             });
             

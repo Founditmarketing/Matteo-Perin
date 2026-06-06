@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { Product, CartItem, CustomizationOptions } from '../types';
+import { trackAddToCart } from '../lib/analytics';
 
 interface CartContextType {
   cartItems: CartItem[];
@@ -31,6 +32,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, [cartItems]);
 
   const addToCart = (product: Product, customizations?: CustomizationOptions) => {
+    trackAddToCart(product, 1);
     setCartItems(prev => {
       // If it has customizations, it's always a new unique line item
       if (customizations) {

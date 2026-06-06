@@ -15,7 +15,7 @@ export default async function handler(req, res) {
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
   try {
-    const { items, shippingOptions } = req.body;
+    const { items, shippingOptions, gaClientId } = req.body;
     
     // Safety check
     if (!items || items.length === 0) {
@@ -51,6 +51,9 @@ export default async function handler(req, res) {
       metadata: {
         item_titles: items.map(i => i.title).join(' | '),
         item_count: String(items.length),
+        // Forwarded to the Stripe webhook so the GA4 purchase event can be
+        // attributed to the same user's view -> cart -> checkout funnel.
+        ga_client_id: gaClientId || '',
       },
     };
 

@@ -29,6 +29,51 @@ function getRawBody(req) {
   });
 }
 
+// Helper: send a GA4 "purchase" event server-side via the Measurement Protocol.
+// This is the authoritative purchase signal — it is not affected by ad blockers
+// or the post-Stripe redirect, and (when ga_client_id is present) it stitches
+// onto the same user's view_item / add_to_cart / begin_checkout funnel.
+// No-ops gracefully if GA4_MEASUREMENT_ID / GA4_API_SECRET aren't configured.
+async function sendGa4Purchase({ clientId, transactionId, value, items }) {
+  const measurementId = process.env.GA4_MEASUREMENT_ID;
+  const apiSecret = process.env.GA4_API_SECRET;
+
+  if (!measurementId || !apiSecret) {
+    console.log('ℹ️ GA4 Measurement Protocol not configured — skipping purchase event');
+    return;
+  }
+
+  // client_id is required by the Measurement Protocol. If the browser didn't
+  // forward one, fall back to a synthetic id so the conversion still records
+  // (it just won't join to the pre-purchase funnel for that user).
+  const client_id = clientId && clientId.trim() !== ''
+    ? clientId
+    : `${Math.floor(Math.random() * 1e10)}.${Math.floor(Date.now() / 1000)}`;
+
+  const payload = {
+    client_id,
+    events: [
+      {
+        name: 'purchase',
+        params: {
+          currency: 'USD',
+          value,
+          transaction_id: transactionId,
+          items,
+        },
+      },
+    ],
+  };
+
+  try {
+    const url = `https://www.google-analytics.com/mp/collect?measurement_id=${measurementId}&api_secret=${apiSecret}`;
+    const resp = await fetch(url, { method: 'POST', body: JSON.stringify(payload) });
+    console.log(`📈 GA4 purchase sent (${transactionId}) — status ${resp.status}`);
+  } catch (err) {
+    console.error('GA4 Measurement Protocol error:', err.message);
+  }
+}
+
 // Helper: authenticate with Google Sheets (read/write)
 function getGoogleSheetsClient() {
   const clientEmail = process.env.GOOGLE_CLIENT_EMAIL;
@@ -213,6 +258,7 @@ export default async function handler(req, res) {
         // Connect to Google Sheets
         const { sheets, sheetId } = getGoogleSheetsClient();
         const results = [];
+        const ga4Items = [];
 
         for (const item of lineItems.data) {
           // Skip shipping line items
@@ -223,11 +269,25 @@ export default async function handler(req, res) {
 
           console.log(`   Processing: "${itemName}" × ${quantity}`);
 
+          ga4Items.push({
+            item_name: itemName,
+            quantity,
+            price: item.amount_total ? item.amount_total / 100 / quantity : undefined,
+          });
+
           const result = await decrementStock(sheets, sheetId, itemName, quantity);
           results.push(result);
         }
 
         console.log(`\n📦 Inventory sync complete:`, JSON.stringify(results, null, 2));
+
+        // Authoritative GA4 purchase (closes the view -> purchase funnel)
+        await sendGa4Purchase({
+          clientId: session.metadata?.ga_client_id,
+          transactionId: session.id,
+          value: session.amount_total ? session.amount_total / 100 : 0,
+          items: ga4Items,
+        });
         break;
       }
 
