@@ -99,27 +99,33 @@ export const CartSidebar: React.FC = () => {
                                     )}
                                 </div>
 
-                                {/* Quantity Controls + Remove */}
+                                {/* Quantity Controls + Remove (no stepper on one-of-one pieces) */}
                                 <div className="flex items-center justify-between mt-3">
-                                    <div className="flex items-center border border-matteo-charcoal/15 dark:border-white/15">
-                                        <button
-                                            onClick={() => updateQuantity(item.cartItemId, item.quantity - 1)}
-                                            className="w-8 h-8 flex items-center justify-center font-sans text-sm text-matteo-charcoal dark:text-white hover:bg-matteo-charcoal/5 dark:hover:bg-white/5 hover:text-matteo-orange transition-colors"
-                                            aria-label="Decrease quantity"
-                                        >
-                                            −
-                                        </button>
-                                        <span className="w-8 h-8 flex items-center justify-center font-sans text-xs text-matteo-charcoal dark:text-white border-x border-matteo-charcoal/15 dark:border-white/15 select-none">
-                                            {item.quantity}
+                                    {item.stock === 1 ? (
+                                        <span className="font-sans text-[9px] uppercase tracking-[0.2em] text-matteo-orange">
+                                            One of One
                                         </span>
-                                        <button
-                                            onClick={() => updateQuantity(item.cartItemId, item.quantity + 1)}
-                                            className="w-8 h-8 flex items-center justify-center font-sans text-sm text-matteo-charcoal dark:text-white hover:bg-matteo-charcoal/5 dark:hover:bg-white/5 hover:text-matteo-orange transition-colors"
-                                            aria-label="Increase quantity"
-                                        >
-                                            +
-                                        </button>
-                                    </div>
+                                    ) : (
+                                        <div className="flex items-center border border-matteo-charcoal/15 dark:border-white/15">
+                                            <button
+                                                onClick={() => updateQuantity(item.cartItemId, item.quantity - 1)}
+                                                className="w-8 h-8 flex items-center justify-center font-sans text-sm text-matteo-charcoal dark:text-white hover:bg-matteo-charcoal/5 dark:hover:bg-white/5 hover:text-matteo-orange transition-colors"
+                                                aria-label="Decrease quantity"
+                                            >
+                                                −
+                                            </button>
+                                            <span className="w-8 h-8 flex items-center justify-center font-sans text-xs text-matteo-charcoal dark:text-white border-x border-matteo-charcoal/15 dark:border-white/15 select-none">
+                                                {item.quantity}
+                                            </span>
+                                            <button
+                                                onClick={() => updateQuantity(item.cartItemId, item.quantity + 1)}
+                                                className="w-8 h-8 flex items-center justify-center font-sans text-sm text-matteo-charcoal dark:text-white hover:bg-matteo-charcoal/5 dark:hover:bg-white/5 hover:text-matteo-orange transition-colors"
+                                                aria-label="Increase quantity"
+                                            >
+                                                +
+                                            </button>
+                                        </div>
+                                    )}
                                     <button 
                                         onClick={() => removeFromCart(item.cartItemId)}
                                         className="font-sans text-[9px] uppercase tracking-widest text-matteo-stone hover:text-matteo-orange transition-colors"

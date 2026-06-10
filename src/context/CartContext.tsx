@@ -48,9 +48,10 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       // Check if non-customized version exists
       const existing = prev.find(item => item.id === product.id && !item.customizations);
       if (existing) {
+        const maxQty = existing.stock ?? Infinity;
         return prev.map(item =>
           item.cartItemId === existing.cartItemId
-            ? { ...item, quantity: item.quantity + 1 }
+            ? { ...item, quantity: Math.min(item.quantity + 1, maxQty) }
             : item
         );
       }
@@ -76,7 +77,9 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
     setCartItems(prev =>
       prev.map(item =>
-        item.cartItemId === cartItemId ? { ...item, quantity } : item
+        item.cartItemId === cartItemId
+          ? { ...item, quantity: Math.min(quantity, item.stock ?? Infinity) }
+          : item
       )
     );
   };

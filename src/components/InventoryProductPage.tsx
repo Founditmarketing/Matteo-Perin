@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import { slugify } from '../lib/slug';
 import { useCart } from '../context/CartContext';
 import { Product } from '../types';
 import { trackViewItem } from '../lib/analytics';
@@ -50,7 +51,7 @@ export const InventoryProductPage: React.FC = () => {
 
                     if (hasTitle && !hasCategory && !hasPrice) {
                         currentParent = {
-                            parentName: row.Title,
+                            parentName: String(row.Title).trim(),
                             parentImage: row['Main Image Link'],
                             parentAdditionalImages: row['Additional Image Links'],
                             description: row.Description,
@@ -107,10 +108,12 @@ export const InventoryProductPage: React.FC = () => {
                     }
                 });
 
-                // Find the specific product that matches the URL parameter
+                // Find the product matching the URL. Compare by slug so both
+                // the new /shop/ostrich-bucket-bag URLs and legacy
+                // /shop/Ostrich%20Bucket%20Bag links resolve to the same page.
                 if (productName) {
-                    const decodedName = decodeURIComponent(productName);
-                    const foundProduct = grouped.find(g => g.parentName === decodedName);
+                    const target = slugify(decodeURIComponent(productName));
+                    const foundProduct = grouped.find(g => slugify(g.parentName) === target);
                     
                     if (foundProduct) {
                         setSelectedGroup(foundProduct);
@@ -218,6 +221,11 @@ export const InventoryProductPage: React.FC = () => {
             image: imgUrl,
             price,
             gender: (selectedGroup.gender?.toLowerCase() || 'unisex') as 'men' | 'women' | 'unisex',
+            // One-of-one pieces carry stock so the cart can cap quantity
+            stock: (() => {
+                const s = parseInt(String(activeVariation.Stock || '').trim(), 10);
+                return isNaN(s) ? undefined : s;
+            })(),
             // Pass extra info for the webhook to match
             variationTitle: activeVariation.Title,
             styleName: activeVariation.StyleName || activeVariation.Title,
@@ -285,7 +293,9 @@ export const InventoryProductPage: React.FC = () => {
     const currentSoldOut = isVariationSoldOut(activeVariation);
 
     const activePrice = parseFloat(String(activeVariation?.Price || '').replace(/[^0-9.]/g, '')) || null;
-    const canonicalUrl = `https://www.matteoperin.com/shop/${encodeURIComponent(selectedGroup.parentName)}`;
+    const activeStock = parseInt(String(activeVariation?.Stock || '').trim(), 10);
+    const isOneOfOne = activeStock === 1;
+    const canonicalUrl = `https://www.matteoperin.com/shop/${slugify(selectedGroup.parentName)}`;
     const metaDescription = selectedGroup.description
         ? String(selectedGroup.description).slice(0, 155)
         : `${selectedGroup.parentName} — a one-of-one piece handcrafted in Italy, in stock and ready to ship worldwide from the Matteo Perin atelier in Jackson Hole.`;
@@ -586,6 +596,11 @@ export const InventoryProductPage: React.FC = () => {
 
                         {/* ── ADD TO BAG / CHECKOUT ── */}
                         <div className="mt-4 space-y-4">
+                            {!currentSoldOut && isOneOfOne && (
+                                <p className="font-serif italic text-lg text-matteo-charcoal/80 dark:text-white/70 pb-2">
+                                    One of one. When it's acquired, it's gone.
+                                </p>
+                            )}
                             {currentSoldOut ? (
                                 <button
                                     disabled

@@ -15,6 +15,7 @@ export interface Product {
   description?: string;
   link?: string;
   gallery?: string[]; // Multiple images for detail page
+  stock?: number; // Available units (1 = one-of-one piece)
 }
 
 export interface Article {

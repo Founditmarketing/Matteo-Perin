@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import { slugify } from '../lib/slug';
 
 interface StyleGroup {
     styleName: string;
@@ -65,9 +66,10 @@ export const HiddenInventoryTest: React.FC = () => {
                     const hasPrice = row.Price && String(row.Price).trim() !== '';
 
                     if (hasTitle && !hasCategory && !hasPrice) {
-                        // It's a parent product
+                        // It's a parent product. Trim: sheet titles sometimes
+                        // carry trailing spaces, which leak into URLs.
                         currentParent = {
-                            parentName: row.Title,
+                            parentName: String(row.Title).trim(),
                             parentImage: row['Main Image Link'],
                             parentAdditionalImages: row['Additional Image Links'],
                             description: row.Description,
@@ -231,7 +233,7 @@ export const HiddenInventoryTest: React.FC = () => {
                     ...(firstImage ? { image: toAbsoluteUrl(firstImage) } : {}),
                     ...(group.description ? { description: group.description } : {}),
                     brand: { '@type': 'Brand', name: 'Matteo Perin' },
-                    url: `https://www.matteoperin.com/shop/${encodeURIComponent(group.parentName)}`,
+                    url: `https://www.matteoperin.com/shop/${slugify(group.parentName)}`,
                     ...(minPrice ? {
                         offers: {
                             '@type': 'Offer',
@@ -240,7 +242,7 @@ export const HiddenInventoryTest: React.FC = () => {
                             availability: isAllSoldOut(group)
                                 ? 'https://schema.org/OutOfStock'
                                 : 'https://schema.org/InStock',
-                            url: `https://www.matteoperin.com/shop/${encodeURIComponent(group.parentName)}`,
+                            url: `https://www.matteoperin.com/shop/${slugify(group.parentName)}`,
                         },
                     } : {}),
                 },
@@ -322,7 +324,7 @@ export const HiddenInventoryTest: React.FC = () => {
                                         {/* Image Area with Arrow Navigation */}
                                         <div 
                                             className="w-full aspect-[3/4] bg-[#f0f0f0] dark:bg-[#111] overflow-hidden relative cursor-pointer group/card"
-                                            onClick={() => !soldOut && navigate(`${basePath}/${encodeURIComponent(group.parentName)}`)}
+                                            onClick={() => !soldOut && navigate(`${basePath}/${slugify(group.parentName)}`)}
                                         >
                                             {previewImages.length > 0 ? (
                                                 <>
@@ -387,13 +389,8 @@ export const HiddenInventoryTest: React.FC = () => {
                                             )}
                                         </div>
                                         
-                                        {/* Card Info Area */}
-                                        <div 
-                                            className="pt-6 flex flex-col flex-grow cursor-pointer"
-                                            onClick={() => {
-                                                if (!soldOut) navigate(`${basePath}/${encodeURIComponent(group.parentName)}`);
-                                            }}
-                                        >
+                                        {/* Card Info Area — real anchors so crawlers can reach product pages */}
+                                        <div className="pt-6 flex flex-col flex-grow">
                                             <span className="font-sans text-[10px] uppercase tracking-[0.25em] text-matteo-orange mb-3">
                                                 {soldOut
                                                     ? 'Sold'
@@ -402,7 +399,9 @@ export const HiddenInventoryTest: React.FC = () => {
                                                         : 'In Stock · Ships Now'}
                                             </span>
                                             <div className="flex justify-between items-baseline gap-4 mb-1">
-                                                <h3 className="font-serif text-2xl md:text-3xl text-matteo-charcoal dark:text-white leading-tight group-hover:text-matteo-orange transition-colors">{group.parentName}</h3>
+                                                <h3 className="font-serif text-2xl md:text-3xl text-matteo-charcoal dark:text-white leading-tight group-hover:text-matteo-orange transition-colors">
+                                                    <Link to={`${basePath}/${slugify(group.parentName)}`}>{group.parentName}</Link>
+                                                </h3>
                                                 <span className="font-serif text-xl text-matteo-charcoal dark:text-white shrink-0">
                                                     {getPriceRange(group.variations)}
                                                 </span>
@@ -411,11 +410,18 @@ export const HiddenInventoryTest: React.FC = () => {
                                                 {colorCount} {colorCount === 1 ? 'Color' : 'Colors'}
                                             </span>
 
-                                            <button className={`mt-auto self-start font-sans text-[10px] uppercase tracking-[0.2em] px-8 py-3.5 transition-colors duration-500 ${soldOut
-                                                ? 'border border-matteo-charcoal/20 dark:border-white/20 text-matteo-stone'
-                                                : 'bg-matteo-charcoal dark:bg-white text-white dark:text-matteo-black group-hover:bg-matteo-orange dark:group-hover:bg-matteo-orange group-hover:text-white dark:group-hover:text-white'}`}>
-                                                {soldOut ? 'Sold Out' : 'Shop This Piece'}
-                                            </button>
+                                            {soldOut ? (
+                                                <span className="mt-auto self-start font-sans text-[10px] uppercase tracking-[0.2em] px-8 py-3.5 border border-matteo-charcoal/20 dark:border-white/20 text-matteo-stone">
+                                                    Sold Out
+                                                </span>
+                                            ) : (
+                                                <Link
+                                                    to={`${basePath}/${slugify(group.parentName)}`}
+                                                    className="mt-auto self-start font-sans text-[10px] uppercase tracking-[0.2em] px-8 py-3.5 bg-matteo-charcoal dark:bg-white text-white dark:text-matteo-black group-hover:bg-matteo-orange dark:group-hover:bg-matteo-orange group-hover:text-white dark:group-hover:text-white transition-colors duration-500"
+                                                >
+                                                    Shop This Piece
+                                                </Link>
+                                            )}
                                         </div>
                                     </div>
                                 );

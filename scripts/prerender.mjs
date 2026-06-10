@@ -67,31 +67,49 @@ const ROUTES = [
 // into the prerendered /shop and /shop/<product> HTML.
 const PRODUCTION_API = 'https://www.matteoperin.com';
 
-// Discover product routes from the live inventory so each product page gets
-// its own static HTML with canonical + Product schema. Fault-tolerant: if the
-// API is unreachable at build time we just skip product pages.
-async function getProductRoutes() {
-  try {
-    const res = await fetch(`${PRODUCTION_API}/api/inventory`);
-    if (!res.ok) throw new Error(`inventory API returned ${res.status}`);
-    const result = await res.json();
-
-    // Parent products are rows with a Title but no Category/Price
-    // (mirrors the grouping logic in HiddenInventoryTest.tsx).
-    const names = [];
-    for (const row of result.data || []) {
-      const hasTitle = row.Title && String(row.Title).trim() !== '';
-      const hasCategory = row.Category && String(row.Category).trim() !== '';
-      const hasPrice = row.Price && String(row.Price).trim() !== '';
-      if (hasTitle && !hasCategory && !hasPrice) {
-        names.push(String(row.Title).trim());
-      }
+// Fetch the live inventory ONCE (with retries) at build time. The snapshot is
+// used both to discover product routes and to answer every page's
+// /api/inventory request during prerender — so a flaky Sheets-backed API
+// can't poison individual page renders.
+async function fetchInventorySnapshot() {
+  for (let attempt = 1; attempt <= 4; attempt++) {
+    try {
+      const res = await fetch(`${PRODUCTION_API}/api/inventory`);
+      if (!res.ok) throw new Error(`inventory API returned ${res.status}`);
+      const payload = await res.json();
+      if (!Array.isArray(payload.data)) throw new Error('unexpected payload shape');
+      return payload;
+    } catch (err) {
+      console.warn(`[prerender] inventory fetch attempt ${attempt}/4 failed: ${err?.message || err}`);
+      if (attempt < 4) await new Promise((r) => setTimeout(r, 3000));
     }
-    return names.map((n) => `/shop/${encodeURIComponent(n)}`);
-  } catch (err) {
-    console.warn(`[prerender] could not load inventory for product routes: ${err?.message || err}`);
-    return [];
   }
+  return null;
+}
+
+// Parent products are rows with a Title but no Category/Price
+// (mirrors the grouping logic in HiddenInventoryTest.tsx).
+// Routes use slugs ("/shop/ostrich-bucket-bag") — keep in sync with src/lib/slug.ts.
+function slugify(name) {
+  return String(name || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function getProductRoutes(inventoryPayload) {
+  if (!inventoryPayload) return [];
+  const names = [];
+  for (const row of inventoryPayload.data || []) {
+    const hasTitle = row.Title && String(row.Title).trim() !== '';
+    const hasCategory = row.Category && String(row.Category).trim() !== '';
+    const hasPrice = row.Price && String(row.Price).trim() !== '';
+    if (hasTitle && !hasCategory && !hasPrice) {
+      names.push(String(row.Title).trim());
+    }
+  }
+  return names.map((n) => `/shop/${slugify(n)}`);
 }
 
 function outPathForRoute(route) {
@@ -126,7 +144,8 @@ async function run() {
 
   const browser = await launchBrowser();
 
-  const productRoutes = await getProductRoutes();
+  const inventorySnapshot = await fetchInventorySnapshot();
+  const productRoutes = getProductRoutes(inventorySnapshot);
   if (productRoutes.length > 0) {
     console.log(`[prerender] discovered ${productRoutes.length} product route(s) from live inventory`);
   }
@@ -135,6 +154,23 @@ async function run() {
   async function renderRoute(route) {
     const page = await browser.newPage();
     try {
+      // Serve the build-time inventory snapshot for every /api/inventory call
+      // so page renders never depend on the upstream API being responsive.
+      if (inventorySnapshot) {
+        await page.setRequestInterception(true);
+        page.on('request', (req) => {
+          if (req.url().includes('/api/inventory')) {
+            req.respond({
+              status: 200,
+              contentType: 'application/json',
+              body: JSON.stringify(inventorySnapshot),
+            });
+          } else {
+            req.continue();
+          }
+        });
+      }
+
       await page.goto(`${base}${route}`, { waitUntil: 'networkidle2', timeout: 45000 });
 
       // Wait until React has actually rendered something into #root.

@@ -42,6 +42,9 @@ export default async function handler(req: any, res: any) {
       return item;
     });
 
+    // Cache at the CDN edge: Google Sheets is slow and rate-limited, and
+    // inventory changes infrequently. 5 min fresh + 10 min stale-while-revalidate.
+    res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=600');
     return res.status(200).json({ data });
   } catch (error: any) {
     console.error('Error fetching Google Sheets data:', error);
