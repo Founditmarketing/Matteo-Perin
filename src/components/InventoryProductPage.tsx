@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { Product } from '../types';
 import { trackViewItem } from '../lib/analytics';
@@ -157,8 +157,11 @@ export const InventoryProductPage: React.FC = () => {
             match = trimmed.match(/id=([a-zA-Z0-9_-]+)/);
         }
         if (match && match[1]) {
-            // lh3.googleusercontent.com is the most reliable for publicly shared Drive files
-            return `https://lh3.googleusercontent.com/d/${match[1]}=w1200`;
+            // Serve through our CDN-cached proxy in production; direct Drive
+            // link in local dev where /api isn't running.
+            return (import.meta as any).env.DEV
+                ? `https://lh3.googleusercontent.com/d/${match[1]}=w1200`
+                : `/api/image?id=${match[1]}&w=1600`;
         }
         return trimmed;
     };
@@ -568,9 +571,17 @@ export const InventoryProductPage: React.FC = () => {
                                     </button>
                                 </>
                             )}
-                            <p className="font-sans text-[9px] uppercase tracking-widest text-matteo-charcoal/40 dark:text-white/30 text-center">
-                                Secure checkout via Stripe · Free shipping on orders over $500
-                            </p>
+                            <div className="pt-4 space-y-2 text-center">
+                                <p className="font-sans text-[10px] uppercase tracking-widest text-matteo-charcoal/50 dark:text-white/40">
+                                    Complimentary insured delivery, worldwide · 14-day returns
+                                </p>
+                                <p className="font-sans text-[10px] uppercase tracking-widest text-matteo-charcoal/50 dark:text-white/40">
+                                    Authenticity guaranteed · Secure checkout · Apple Pay &amp; Google Pay
+                                </p>
+                                <Link to="/shipping-returns" className="inline-block font-sans text-[10px] uppercase tracking-widest text-matteo-orange border-b border-matteo-orange/40 pb-0.5 hover:opacity-70 transition-opacity">
+                                    Shipping, Returns &amp; Authenticity
+                                </Link>
+                            </div>
                         </div>
                     </div>
                 </div>

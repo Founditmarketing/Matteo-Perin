@@ -52,6 +52,7 @@ const ROUTES = [
   '/lifestyle',
   '/furniture',
   '/collection',
+  '/shipping-returns',
   // Journal articles (keep in sync with ARTICLES slugs in src/constants.ts)
   '/journal/art-of-patina',
   '/journal/dolomites-notes',

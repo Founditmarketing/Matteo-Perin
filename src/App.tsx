@@ -35,6 +35,7 @@ const DossierDashboard = React.lazy(() => import('./components/DossierDashboard'
 const NotFound = React.lazy(() => import('./components/NotFound').then(m => ({ default: m.NotFound })));
 const PrivateClientForm = React.lazy(() => import('./components/PrivateClientForm').then(m => ({ default: m.PrivateClientForm })));
 const HiddenInventoryTest = React.lazy(() => import('./components/HiddenInventoryTest').then(m => ({ default: m.HiddenInventoryTest })));
+const ClientServices = React.lazy(() => import('./components/ClientServices').then(m => ({ default: m.ClientServices })));
 const InventoryProductPage = React.lazy(() => import('./components/InventoryProductPage').then(m => ({ default: m.InventoryProductPage })));
 const Checkout = React.lazy(() => import('./components/Checkout').then(m => ({ default: m.Checkout })));
 
@@ -240,6 +241,7 @@ const AnimatedRoutes = () => {
                 <Route path="/inventory-test-hidden/:productName" element={<PageTransition><InventoryProductPage /></PageTransition>} />
                 <Route path="/shop" element={<PageTransition><HiddenInventoryTest /></PageTransition>} />
                 <Route path="/shop/:productName" element={<PageTransition><InventoryProductPage /></PageTransition>} />
+                <Route path="/shipping-returns" element={<PageTransition><ClientServices /></PageTransition>} />
                 <Route path="/checkout" element={<PageTransition><Checkout /></PageTransition>} />
                 <Route path="/thank-you" element={<PageTransition><ThankYouPage /></PageTransition>} />
                 <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />

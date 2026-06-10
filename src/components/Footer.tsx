@@ -98,6 +98,7 @@ export const Footer: React.FC = () => {
                             <li><Link to="/journal" onClick={() => window.scrollTo(0, 0)} className="hover:text-white transition-colors block py-1">Journal</Link></li>
                             <li><Link to="/bespoke-crocodile-jacket" onClick={() => window.scrollTo(0, 0)} className="hover:text-white transition-colors block py-1">Bespoke Crocodile Jacket</Link></li>
                             <li><a href="/#contact" onClick={(e) => handleNav(e, '/#contact')} className="hover:text-white transition-colors block py-1">Enquire</a></li>
+                            <li><Link to="/shipping-returns" onClick={() => window.scrollTo(0, 0)} className="hover:text-white transition-colors block py-1">Shipping &amp; Returns</Link></li>
                             <li><Link to="/private-client" onClick={() => window.scrollTo(0, 0)} className="hover:text-white transition-colors block py-1">Private Client</Link></li>
                         </ul>
                     </div>
