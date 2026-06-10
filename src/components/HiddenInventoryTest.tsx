@@ -194,8 +194,21 @@ export const HiddenInventoryTest: React.FC = () => {
         <div className="min-h-screen bg-matteo-cream dark:bg-matteo-black py-32 px-6 md:px-16 flex flex-col items-center relative">
             <div className="w-full">
                 <div className="mb-16 text-center">
-                    <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-matteo-orange mb-4 block">Live Availability</span>
-                    <h1 className="font-serif text-4xl md:text-5xl text-matteo-charcoal dark:text-white mb-4">The Current Edit</h1>
+                    <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-matteo-orange mb-4 block">Available Now · In Stock</span>
+                    {isEmbedded ? (
+                        <h2 className="font-serif text-4xl md:text-5xl text-matteo-charcoal dark:text-white mb-4">The Current Edit</h2>
+                    ) : (
+                        <h1 className="font-serif text-4xl md:text-5xl text-matteo-charcoal dark:text-white mb-4">The Current Edit</h1>
+                    )}
+                    <p className="font-serif text-lg text-matteo-charcoal/60 dark:text-white/60 italic max-w-xl mx-auto mb-6">
+                        One-of-a-kind pieces, ready for immediate acquisition — purchase online with worldwide delivery.
+                    </p>
+                    <button
+                        onClick={() => navigate('/shop')}
+                        className="font-sans text-[10px] uppercase tracking-[0.25em] border border-matteo-charcoal/30 dark:border-white/30 px-8 py-3 text-matteo-charcoal dark:text-white hover:bg-matteo-charcoal hover:text-white dark:hover:bg-white dark:hover:text-black hover:border-transparent transition-colors duration-500"
+                    >
+                        Shop the Edit
+                    </button>
                 </div>
 
                 {loading ? (
@@ -325,8 +338,8 @@ export const HiddenInventoryTest: React.FC = () => {
                                             </div>
                                             <h3 className="font-serif text-xl text-matteo-charcoal dark:text-white leading-tight mb-4 group-hover:text-matteo-orange transition-colors">{group.parentName}</h3>
                                             
-                                            <button className="mt-auto self-start font-sans text-[9px] uppercase tracking-[0.2em] border-b border-matteo-charcoal/30 dark:border-white/30 pb-1 group-hover:border-matteo-orange transition-colors">
-                                                {soldOut ? 'Unavailable' : 'View Colors'}
+                                            <button className="mt-auto self-start font-sans text-[9px] uppercase tracking-[0.2em] border-b border-matteo-charcoal/30 dark:border-white/30 pb-1 group-hover:border-matteo-orange group-hover:text-matteo-orange transition-colors">
+                                                {soldOut ? 'Sold Out' : 'Shop Now'}
                                             </button>
                                         </div>
                                     </div>

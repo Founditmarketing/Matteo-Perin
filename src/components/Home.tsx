@@ -33,9 +33,9 @@ export const Home: React.FC<HomeProps> = ({ startAnimation = true }) => {
       {/* <NarrativeStream /> */}
       {/* <Hero startAnimation={startAnimation} /> */}
       <DualHero />
+      <HiddenInventoryTest />
       <Collection />
       <CrocJacketHero />
-      <HiddenInventoryTest />
       <Interlude />
       <Contact />
     </>
