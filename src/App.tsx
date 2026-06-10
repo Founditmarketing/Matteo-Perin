@@ -1,5 +1,6 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation, Link } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import { Navigation } from './components/Navigation';
 import { Footer } from './components/Footer';
 import { InquiryProvider } from './context/InquiryContext';
@@ -225,6 +226,7 @@ function App() {
 
                         <Footer />
                     </div>
+                    <Analytics />
                 </Router>
             </InquiryProvider>
             </CartProvider>
