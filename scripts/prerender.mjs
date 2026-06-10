@@ -42,6 +42,7 @@ const distDir = path.resolve(__dirname, '..', 'dist');
 // Routes to prerender. Keep these to high-value pages with their own SEO (Helmet).
 const ROUTES = [
   '/',
+  '/shop',
   '/bespoke-crocodile-jacket',
   '/lookbook/men',
   '/lookbook/women',
@@ -62,9 +63,43 @@ const ROUTES = [
   '/journal/urban-armor',
 ];
 
+// Live inventory API used to render real products (names, prices, schema)
+// into the prerendered /shop and /shop/<product> HTML.
+const PRODUCTION_API = 'https://www.matteoperin.com';
+
+// Discover product routes from the live inventory so each product page gets
+// its own static HTML with canonical + Product schema. Fault-tolerant: if the
+// API is unreachable at build time we just skip product pages.
+async function getProductRoutes() {
+  try {
+    const res = await fetch(`${PRODUCTION_API}/api/inventory`);
+    if (!res.ok) throw new Error(`inventory API returned ${res.status}`);
+    const result = await res.json();
+
+    // Parent products are rows with a Title but no Category/Price
+    // (mirrors the grouping logic in HiddenInventoryTest.tsx).
+    const names = [];
+    for (const row of result.data || []) {
+      const hasTitle = row.Title && String(row.Title).trim() !== '';
+      const hasCategory = row.Category && String(row.Category).trim() !== '';
+      const hasPrice = row.Price && String(row.Price).trim() !== '';
+      if (hasTitle && !hasCategory && !hasPrice) {
+        names.push(String(row.Title).trim());
+      }
+    }
+    return names.map((n) => `/shop/${encodeURIComponent(n)}`);
+  } catch (err) {
+    console.warn(`[prerender] could not load inventory for product routes: ${err?.message || err}`);
+    return [];
+  }
+}
+
 function outPathForRoute(route) {
   if (route === '/') return path.join(distDir, 'index.html');
-  return path.join(distDir, route.replace(/^\//, ''), 'index.html');
+  // Decode so /shop/Encoded%20Name writes to dist/shop/Encoded Name/index.html
+  // (Vercel decodes the URL before filesystem lookup).
+  const decoded = decodeURIComponent(route.replace(/^\//, ''));
+  return path.join(distDir, decoded, 'index.html');
 }
 
 async function run() {
@@ -74,7 +109,15 @@ async function run() {
   }
 
   const server = await preview({
-    preview: { port: 4173, strictPort: false },
+    preview: {
+      port: 4173,
+      strictPort: false,
+      // Proxy API calls to production during prerender so the shop and
+      // product pages render with real, live inventory.
+      proxy: {
+        '/api': { target: PRODUCTION_API, changeOrigin: true, secure: true },
+      },
+    },
   });
 
   const urls = server.resolvedUrls?.local || [];
@@ -83,8 +126,13 @@ async function run() {
 
   const browser = await launchBrowser();
 
-  let succeeded = 0;
-  for (const route of ROUTES) {
+  const productRoutes = await getProductRoutes();
+  if (productRoutes.length > 0) {
+    console.log(`[prerender] discovered ${productRoutes.length} product route(s) from live inventory`);
+  }
+  const allRoutes = [...ROUTES, ...productRoutes];
+
+  async function renderRoute(route) {
     const page = await browser.newPage();
     try {
       await page.goto(`${base}${route}`, { waitUntil: 'networkidle2', timeout: 45000 });
@@ -98,6 +146,18 @@ async function run() {
         { timeout: 20000 }
       );
 
+      // Shop routes: wait for the live inventory to actually render so
+      // product names and prices end up in the static HTML.
+      if (route === '/' || route.startsWith('/shop')) {
+        await page
+          .waitForFunction(
+            // innerText reflects CSS text-transform, so match case-insensitively
+            () => /shop this piece|add to bag|sold out|no inventory available|being updated|product not found/i.test(document.body.innerText),
+            { timeout: 20000 }
+          )
+          .catch(() => console.warn(`[prerender] ${route}: inventory didn't render in time.`));
+      }
+
       // Give Helmet + above-the-fold animations a moment to settle.
       await new Promise((r) => setTimeout(r, 2500));
 
@@ -106,10 +166,16 @@ async function run() {
         document.body.innerText.includes('CRITICAL STARTUP ERROR') ||
         document.body.innerText.includes('App Crashed')
       );
-      if (hasError) {
-        console.warn(`[prerender] ${route} rendered an error overlay — skipping.`);
-        await page.close();
-        continue;
+      if (hasError) throw new Error('rendered an error overlay');
+
+      // Product pages: a flaky inventory response renders the not-found state
+      // with the homepage's default meta. Throw so the attempt loop retries —
+      // never write that shell to disk for a product URL.
+      if (route.startsWith('/shop/')) {
+        const isNotFound = await page.evaluate(() =>
+          /product not found|being updated/i.test(document.body.innerText)
+        );
+        if (isNotFound) throw new Error('product page rendered not-found state');
       }
 
       // De-duplicate the description meta: keep the route-specific one Helmet injected
@@ -123,23 +189,36 @@ async function run() {
         }
       });
 
-      const html = '<!DOCTYPE html>\n' + (await page.content()).replace(/^<!DOCTYPE html>/i, '');
-
-      const outPath = outPathForRoute(route);
-      fs.mkdirSync(path.dirname(outPath), { recursive: true });
-      fs.writeFileSync(outPath, html, 'utf8');
-      console.log(`[prerender] wrote ${path.relative(distDir, outPath)} (${html.length} bytes)`);
-      succeeded += 1;
-    } catch (err) {
-      console.warn(`[prerender] failed for ${route}: ${err?.message || err}`);
+      return '<!DOCTYPE html>\n' + (await page.content()).replace(/^<!DOCTYPE html>/i, '');
     } finally {
       await page.close();
     }
   }
 
+  const MAX_ATTEMPTS = 3;
+  let succeeded = 0;
+  for (const route of allRoutes) {
+    let html = null;
+    for (let attempt = 1; attempt <= MAX_ATTEMPTS && !html; attempt++) {
+      try {
+        html = await renderRoute(route);
+      } catch (err) {
+        console.warn(`[prerender] ${route} attempt ${attempt}/${MAX_ATTEMPTS} failed: ${err?.message || err}`);
+        if (attempt < MAX_ATTEMPTS) await new Promise((r) => setTimeout(r, 3000));
+      }
+    }
+    if (!html) continue;
+
+    const outPath = outPathForRoute(route);
+    fs.mkdirSync(path.dirname(outPath), { recursive: true });
+    fs.writeFileSync(outPath, html, 'utf8');
+    console.log(`[prerender] wrote ${path.relative(distDir, outPath)} (${html.length} bytes)`);
+    succeeded += 1;
+  }
+
   await browser.close();
   await server.close();
-  console.log(`[prerender] done — ${succeeded}/${ROUTES.length} routes prerendered.`);
+  console.log(`[prerender] done — ${succeeded}/${allRoutes.length} routes prerendered.`);
 }
 
 run().catch((err) => {

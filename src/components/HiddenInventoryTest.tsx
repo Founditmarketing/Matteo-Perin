@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 
 interface StyleGroup {
     styleName: string;
@@ -202,8 +203,68 @@ export const HiddenInventoryTest: React.FC = () => {
         return nums.reduce((a, b) => a + b, 0);
     };
 
+    // Lowest numeric price across variations, for schema markup
+    const getMinPrice = (variations: any[]) => {
+        const prices = variations
+            .map(v => parseFloat(String(v.Price || '').replace(/[^0-9.]/g, '')))
+            .filter(n => !isNaN(n) && n > 0);
+        return prices.length > 0 ? Math.min(...prices) : null;
+    };
+
+    const toAbsoluteUrl = (url: string) =>
+        url.startsWith('/') ? `https://www.matteoperin.com${url}` : url;
+
+    // Product schema so Google Search / Shopping sees real products with
+    // prices and availability in the (prerendered) HTML source.
+    const productSchema = groupedInventory.length > 0 ? {
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        itemListElement: groupedInventory.map((group, i) => {
+            const minPrice = getMinPrice(group.variations);
+            const firstImage = getColorPreviewImages(group)[0];
+            return {
+                '@type': 'ListItem',
+                position: i + 1,
+                item: {
+                    '@type': 'Product',
+                    name: group.parentName,
+                    ...(firstImage ? { image: toAbsoluteUrl(firstImage) } : {}),
+                    ...(group.description ? { description: group.description } : {}),
+                    brand: { '@type': 'Brand', name: 'Matteo Perin' },
+                    url: `https://www.matteoperin.com/shop/${encodeURIComponent(group.parentName)}`,
+                    ...(minPrice ? {
+                        offers: {
+                            '@type': 'Offer',
+                            priceCurrency: 'USD',
+                            price: minPrice,
+                            availability: isAllSoldOut(group)
+                                ? 'https://schema.org/OutOfStock'
+                                : 'https://schema.org/InStock',
+                            url: `https://www.matteoperin.com/shop/${encodeURIComponent(group.parentName)}`,
+                        },
+                    } : {}),
+                },
+            };
+        }),
+    } : null;
+
     return (
         <div className="min-h-screen bg-matteo-cream dark:bg-matteo-black py-32 px-6 md:px-16 flex flex-col items-center relative">
+            {!isEmbedded && (
+                <Helmet>
+                    <title>Shop One-of-One Italian Leather Goods & Luxury Pieces | Matteo Perin</title>
+                    <meta name="description" content="Shop the Current Edit — one-of-one Italian leather bags, exotic leather goods, and luxury outerwear, in stock and ready to ship worldwide from our Jackson Hole atelier. Handcrafted in Italy." />
+                    <meta name="keywords" content="luxury leather bags, italian leather goods, exotic leather bags, one of one luxury pieces, luxury leather goods jackson hole, designer leather bags jackson wy, Matteo Perin shop" />
+                    <link rel="canonical" href="https://www.matteoperin.com/shop" />
+                    <meta property="og:title" content="Shop One-of-One Italian Leather Goods | Matteo Perin" />
+                    <meta property="og:description" content="One-of-one Italian leather bags, exotic leather goods, and luxury outerwear — in stock, ready to ship worldwide." />
+                    <meta property="og:type" content="website" />
+                    <meta property="og:url" content="https://www.matteoperin.com/shop" />
+                    {productSchema && (
+                        <script type="application/ld+json">{JSON.stringify(productSchema)}</script>
+                    )}
+                </Helmet>
+            )}
             <div className="w-full">
                 <div className="mb-16 text-center">
                     <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-matteo-orange mb-4 block">Available Now · In Stock</span>
@@ -234,9 +295,13 @@ export const HiddenInventoryTest: React.FC = () => {
                     ) : null
                 ) : error ? (
                     !isEmbedded ? (
-                    <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 p-6 text-center">
-                        <p className="font-sans text-sm uppercase tracking-wider mb-2">Connection Error</p>
-                        <p className="font-serif">{error}</p>
+                    <div className="py-20 text-center">
+                        <p className="font-serif text-xl text-matteo-charcoal/70 dark:text-white/60 mb-4">
+                            The Current Edit is being updated.
+                        </p>
+                        <p className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone">
+                            Please refresh in a moment, or write to <a href="mailto:concierge@matteoperin.com" className="text-matteo-orange">concierge@matteoperin.com</a>
+                        </p>
                     </div>
                     ) : null
                 ) : (

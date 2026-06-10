@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { useCart } from '../context/CartContext';
 import { Product } from '../types';
 import { trackViewItem } from '../lib/analytics';
@@ -283,8 +284,45 @@ export const InventoryProductPage: React.FC = () => {
     const currentImages = getCurrentImages();
     const currentSoldOut = isVariationSoldOut(activeVariation);
 
+    const activePrice = parseFloat(String(activeVariation?.Price || '').replace(/[^0-9.]/g, '')) || null;
+    const canonicalUrl = `https://www.matteoperin.com/shop/${encodeURIComponent(selectedGroup.parentName)}`;
+    const metaDescription = selectedGroup.description
+        ? String(selectedGroup.description).slice(0, 155)
+        : `${selectedGroup.parentName} — a one-of-one piece handcrafted in Italy, in stock and ready to ship worldwide from the Matteo Perin atelier in Jackson Hole.`;
+    const productJsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'Product',
+        name: selectedGroup.parentName,
+        ...(currentImages.length > 0 ? {
+            image: currentImages.map((img: any) => img.url.startsWith('/') ? `https://www.matteoperin.com${img.url}` : img.url),
+        } : {}),
+        ...(selectedGroup.description ? { description: selectedGroup.description } : {}),
+        brand: { '@type': 'Brand', name: 'Matteo Perin' },
+        url: canonicalUrl,
+        ...(activePrice ? {
+            offers: {
+                '@type': 'Offer',
+                priceCurrency: 'USD',
+                price: activePrice,
+                availability: currentSoldOut ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
+                url: canonicalUrl,
+            },
+        } : {}),
+    };
+
     return (
         <div className="min-h-screen bg-matteo-cream dark:bg-matteo-black py-24 md:py-32 px-6 md:px-12 lg:px-24 flex flex-col items-center">
+            <Helmet>
+                <title>{`${selectedGroup.parentName} — One of One, In Stock | Matteo Perin`}</title>
+                <meta name="description" content={metaDescription} />
+                <link rel="canonical" href={canonicalUrl} />
+                <meta property="og:title" content={`${selectedGroup.parentName} | Matteo Perin`} />
+                <meta property="og:description" content={metaDescription} />
+                <meta property="og:type" content="product" />
+                <meta property="og:url" content={canonicalUrl} />
+                {currentImages[0] && <meta property="og:image" content={currentImages[0].url.startsWith('/') ? `https://www.matteoperin.com${currentImages[0].url}` : currentImages[0].url} />}
+                <script type="application/ld+json">{JSON.stringify(productJsonLd)}</script>
+            </Helmet>
             
             {/* Lightbox Overlay (Must be outside overflow-hidden containers) */}
             {isLightboxOpen && (

@@ -140,8 +140,8 @@ export const DualHero: React.FC = () => {
                                 <span className="block italic font-light text-white/90">The</span>
                                 <span className="block">Provenance</span>
                             </h1>
-                            <div className="flex gap-16 pointer-events-none opacity-0">
-                                <button className="py-2">placeholder</button>
+                            <div className="flex gap-16 pointer-events-none opacity-0" aria-hidden="true">
+                                <span className="py-2 block">&nbsp;</span>
                             </div>
                         </motion.div>
 
