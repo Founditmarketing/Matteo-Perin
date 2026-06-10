@@ -4,6 +4,7 @@ import { SpinningLogo } from './SpinningLogo';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 
 import { useTheme } from '../context/ThemeContext';
+import { useCart } from '../context/CartContext';
 import { NAV_ITEMS } from '../constants';
 
 export const Navigation: React.FC = () => {
@@ -12,6 +13,7 @@ export const Navigation: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const { theme, toggleTheme } = useTheme();
+  const { cartCount, setIsCartOpen } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -149,6 +151,21 @@ export const Navigation: React.FC = () => {
           {/* Actions: Absolute Right */}
           <div className="absolute right-8 md:right-16 top-1/2 -translate-y-1/2 flex items-center gap-6">
 
+            {/* Bag — persistent cart trigger */}
+            <button
+              onClick={() => setIsCartOpen(true)}
+              className="relative p-2 hover:text-matteo-orange transition-colors"
+              aria-label={`Open bag${cartCount > 0 ? `, ${cartCount} item${cartCount === 1 ? '' : 's'}` : ''}`}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007Z" />
+              </svg>
+              {cartCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-matteo-orange text-white font-sans text-[9px] leading-4 text-center">
+                  {cartCount}
+                </span>
+              )}
+            </button>
 
             <button
               onClick={() => setMobileMenuOpen(true)}

@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation, Link } from 'react
 import { Navigation } from './components/Navigation';
 import { Footer } from './components/Footer';
 import { InquiryProvider } from './context/InquiryContext';
-import { CartProvider } from './context/CartContext';
+import { CartProvider, useCart } from './context/CartContext';
 import { CartSidebar } from './components/CartSidebar';
 
 import { ThemeProvider } from './context/ThemeContext';
@@ -39,53 +39,100 @@ const InventoryProductPage = React.lazy(() => import('./components/InventoryProd
 const Checkout = React.lazy(() => import('./components/Checkout').then(m => ({ default: m.Checkout })));
 
 // Inline Thank You Page — no separate file needed
+interface OrderSummary {
+    paymentStatus: string;
+    amountTotal: number;
+    currency: string;
+    email: string;
+    name: string;
+    city: string;
+    items: { description: string; quantity: number; amountTotal: number }[];
+}
+
 const ThankYouPage: React.FC = () => {
-    const isDeposit = new URLSearchParams(window.location.search).get('deposit') === 'true';
+    const params = new URLSearchParams(window.location.search);
+    const isDeposit = params.get('deposit') === 'true';
+    const sessionId = params.get('session_id');
+    const isOrder = Boolean(sessionId) || isDeposit;
+    const [order, setOrder] = useState<OrderSummary | null>(null);
+    const { clearCart } = useCart();
+
+    // The purchase is complete — empty the bag.
+    useEffect(() => {
+        if (sessionId) clearCart();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [sessionId]);
+
+    // Pull the real order from Stripe so the confirmation shows what was
+    // actually purchased. Fails quietly to a generic confirmation.
+    useEffect(() => {
+        if (!sessionId) return;
+        fetch(`/api/checkout-session?session_id=${encodeURIComponent(sessionId)}`)
+            .then(r => (r.ok ? r.json() : null))
+            .then(data => { if (data && data.paymentStatus === 'paid') setOrder(data); })
+            .catch(() => { /* generic confirmation is fine */ });
+    }, [sessionId]);
 
     useEffect(() => {
         if (typeof (window as any).gtag !== 'function') return;
 
-        // Always fire the Ads conversion tag
+        // Google Ads conversion tag. The authoritative GA4 purchase event is
+        // sent server-side from the Stripe webhook — do not duplicate it here.
         (window as any).gtag('event', 'conversion', { send_to: 'AW-17701157571/7bczCMWv35kcEMP1yPhB' });
 
         if (isDeposit) {
-            // Stripe deposit completed — fire as purchase with value
             (window as any).gtag('event', 'deposit_completed', {
                 currency: 'USD',
                 value: 25000,
-                transaction_id: `dep_${Date.now()}`,
                 item_name: 'Bespoke Crocodile Jacket Deposit',
             });
-            (window as any).gtag('event', 'purchase', {
-                currency: 'USD',
-                value: 25000,
-                transaction_id: `dep_${Date.now()}`,
-                items: [{ item_name: 'Bespoke Crocodile Jacket Commission Deposit', price: 25000, quantity: 1 }],
-            });
-        } else {
-            // Form inquiry landing
+        } else if (!isOrder) {
+            // Inquiry-form landing (no purchase involved)
             (window as any).gtag('event', 'generate_lead', { lead_type: 'croc_jacket_inquiry' });
         }
     }, []);
 
+    const heading = isDeposit ? 'Commission Reserved' : isOrder ? 'Order Confirmed' : 'Inquiry Received';
+    const message = isDeposit
+        ? 'Your deposit has been received and your commission slot is reserved. A senior Matteo Perin advisor will contact you within 24 hours to begin the consultation process.'
+        : isOrder
+            ? `Your order has been received${order?.city ? ` and will be prepared for delivery to ${order.city}` : ''}. ${order?.email ? `A confirmation has been sent to ${order.email}.` : 'A confirmation email is on its way.'}`
+            : 'A senior Matteo Perin advisor will contact you within 24 hours to arrange your private consultation.';
+
     return (
-        <div className="min-h-screen bg-matteo-cream dark:bg-matteo-black flex items-center justify-center text-center px-6">
-            <div className="max-w-lg">
+        <div className="min-h-screen bg-matteo-cream dark:bg-matteo-black flex items-center justify-center text-center px-6 py-32">
+            <div className="max-w-lg w-full">
                 <div className="w-16 h-16 rounded-full border border-matteo-orange flex items-center justify-center mx-auto mb-8">
                     <svg className="w-6 h-6 text-matteo-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M5 13l4 4L19 7" /></svg>
                 </div>
-                <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-matteo-orange mb-4 block">
-                    {isDeposit ? 'Commission Reserved' : 'Inquiry Received'}
-                </span>
-                <h1 className="font-serif text-4xl md:text-5xl text-matteo-charcoal dark:text-white mb-6">Thank You</h1>
-                <p className="font-serif text-matteo-charcoal/60 dark:text-white/50 text-lg leading-relaxed mb-10">
-                    {isDeposit
-                        ? 'Your $25,000 deposit has been received. Your commission slot is now reserved. A senior Matteo Perin advisor will contact you within 24 hours to begin the consultation process.'
-                        : 'A senior Matteo Perin advisor will contact you within 24 hours to arrange your private consultation.'
-                    }
-                </p>
-                <Link to="/bespoke-crocodile-jacket" className="font-sans text-[10px] uppercase tracking-widest border-b border-matteo-orange text-matteo-orange pb-1 hover:opacity-70 transition-opacity">
-                    Return to Bespoke Crocodile Jacket
+                <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-matteo-orange mb-4 block">{heading}</span>
+                <h1 className="font-serif text-4xl md:text-5xl text-matteo-charcoal dark:text-white mb-6">Thank You{order?.name ? `, ${order.name.split(' ')[0]}` : ''}</h1>
+                <p className="font-serif text-matteo-charcoal/60 dark:text-white/50 text-lg leading-relaxed mb-10">{message}</p>
+
+                {order && order.items.length > 0 && (
+                    <div className="text-left border-t border-b border-matteo-charcoal/10 dark:border-white/10 divide-y divide-matteo-charcoal/5 dark:divide-white/5 mb-10">
+                        {order.items.map((item, i) => (
+                            <div key={i} className="flex justify-between items-baseline gap-4 py-4">
+                                <span className="font-serif text-matteo-charcoal dark:text-white">
+                                    {item.description}{item.quantity > 1 ? ` × ${item.quantity}` : ''}
+                                </span>
+                                <span className="font-sans text-xs text-matteo-charcoal/70 dark:text-white/60 shrink-0">
+                                    ${(item.amountTotal / 100).toLocaleString()}
+                                </span>
+                            </div>
+                        ))}
+                        <div className="flex justify-between items-baseline gap-4 py-4">
+                            <span className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone">Total</span>
+                            <span className="font-serif text-xl text-matteo-charcoal dark:text-white">${(order.amountTotal / 100).toLocaleString()}</span>
+                        </div>
+                    </div>
+                )}
+
+                <Link
+                    to={isDeposit ? '/bespoke-crocodile-jacket' : isOrder ? '/shop' : '/bespoke-crocodile-jacket'}
+                    className="font-sans text-[10px] uppercase tracking-widest border-b border-matteo-orange text-matteo-orange pb-1 hover:opacity-70 transition-opacity"
+                >
+                    {isOrder && !isDeposit ? 'Continue Shopping' : 'Return to Bespoke Crocodile Jacket'}
                 </Link>
             </div>
         </div>

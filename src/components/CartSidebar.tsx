@@ -39,18 +39,18 @@ export const CartSidebar: React.FC = () => {
         <div className="flex-1 overflow-y-auto p-8">
             {cartItems.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-center">
-                    <p className="font-serif italic text-gray-400 mb-4 text-lg">Your commission list is empty.</p>
+                    <p className="font-serif italic text-gray-400 mb-4 text-lg">Your bag is empty.</p>
                     <p className="font-sans text-[10px] text-matteo-stone max-w-[200px] mb-8 leading-relaxed">
-                        Add items from the archive to begin your acquisition.
+                        One-of-a-kind pieces, in stock and ready to ship.
                     </p>
                     <button 
                         onClick={() => {
                             setIsCartOpen(false);
-                            navigate('/collection');
+                            navigate('/shop');
                         }}
                         className="font-sans text-xs uppercase tracking-widest border-b border-matteo-charcoal dark:border-white pb-1 text-matteo-charcoal dark:text-white hover:text-matteo-orange dark:hover:text-matteo-orange hover:border-matteo-orange dark:hover:border-matteo-orange transition-colors"
                     >
-                        Explore Archive
+                        Shop Available Pieces
                     </button>
                 </div>
             ) : (
@@ -89,7 +89,7 @@ export const CartSidebar: React.FC = () => {
                                     )}
 
                                     <span className="font-sans text-xs text-matteo-charcoal/60 dark:text-gray-400 font-medium">
-                                        Est. ${item.price.toLocaleString()}
+                                        ${item.price.toLocaleString()}
                                         {item.id === 14 && <span className="text-matteo-orange ml-1">(Deposit)</span>}
                                     </span>
                                     {item.id === 14 && (
