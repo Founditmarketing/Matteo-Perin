@@ -212,6 +212,29 @@ export const CrocJacketLanding: React.FC = () => {
                 <meta property="product:brand" content="Matteo Perin" />
                 <meta property="product:category" content="Clothing > Outerwear > Leather Jackets" />
 
+                {/* Product structured data — limited-availability commission */}
+                <script type="application/ld+json">{JSON.stringify({
+                    '@context': 'https://schema.org',
+                    '@type': 'Product',
+                    name: 'Bespoke Crocodile Jacket',
+                    image: [
+                        'https://www.matteoperin.com/assets/croc-jacket/matteo_croc_new_1.jpg',
+                        'https://www.matteoperin.com/assets/croc-jacket/matteo_croc_new_2.jpg',
+                        'https://www.matteoperin.com/assets/croc-jacket/matteo_croc.jpg',
+                    ],
+                    description: 'One-of-one bespoke crocodile jacket. Hand-selected Nile or Porosus crocodile, hand-painted patina, over 100 hours of artisanal labor in Verona, Italy. CITES-certified hides. Limited to 3 commissions per year.',
+                    brand: { '@type': 'Brand', name: 'Matteo Perin' },
+                    url: 'https://www.matteoperin.com/bespoke-crocodile-jacket',
+                    offers: {
+                        '@type': 'Offer',
+                        priceCurrency: 'USD',
+                        price: 185000,
+                        availability: 'https://schema.org/LimitedAvailability',
+                        url: 'https://www.matteoperin.com/bespoke-crocodile-jacket',
+                        itemCondition: 'https://schema.org/NewCondition',
+                    },
+                })}</script>
+
                 {/* Twitter Card */}
                 <meta name="twitter:card" content="summary_large_image" />
                 <meta name="twitter:title" content="Bespoke Crocodile Jacket — $25,000 Deposit | Matteo Perin" />
