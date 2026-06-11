@@ -214,15 +214,19 @@ async function run() {
         if (isNotFound) throw new Error('product page rendered not-found state');
       }
 
-      // De-duplicate the description meta: keep the route-specific one Helmet injected
-      // (marked data-rh) and drop the static homepage fallback from index.html.
+      // De-duplicate metas that exist both as static index.html defaults and
+      // as route-specific Helmet tags (marked data-rh): keep the Helmet one.
       await page.evaluate(() => {
-        const helmetDesc = document.querySelector('meta[name="description"][data-rh="true"]');
-        if (helmetDesc) {
-          document
-            .querySelectorAll('meta[name="description"]:not([data-rh="true"])')
-            .forEach((el) => el.remove());
-        }
+        const dedupe = (selector) => {
+          if (document.querySelector(`${selector}[data-rh="true"]`)) {
+            document
+              .querySelectorAll(`${selector}:not([data-rh="true"])`)
+              .forEach((el) => el.remove());
+          }
+        };
+        dedupe('meta[name="description"]');
+        dedupe('meta[property="og:image"]');
+        dedupe('meta[name="twitter:image"]');
       });
 
       return '<!DOCTYPE html>\n' + (await page.content()).replace(/^<!DOCTYPE html>/i, '');

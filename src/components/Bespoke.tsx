@@ -135,7 +135,6 @@ export const Bespoke: React.FC = () => {
             <Helmet>
                 <title>The Bespoke Commission Process | Made-to-Measure Luxury | Matteo Perin</title>
                 <meta name="description" content="Commission a bespoke garment with Matteo Perin. From private consultation and material selection to hand-finishing in Italy, discover the made-to-measure process behind our one-of-a-kind luxury pieces." />
-                <meta name="keywords" content="bespoke commission, made to measure luxury, custom tailoring Jackson Wyoming, bespoke menswear, bespoke womenswear, Matteo Perin bespoke" />
                 <link rel="canonical" href="https://www.matteoperin.com/bespoke" />
                 <meta property="og:title" content="The Bespoke Commission Process | Matteo Perin" />
                 <meta property="og:description" content="From private consultation to hand-finishing in Italy — the made-to-measure process behind Matteo Perin's one-of-a-kind pieces." />

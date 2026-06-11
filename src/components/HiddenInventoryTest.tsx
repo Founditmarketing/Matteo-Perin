@@ -256,7 +256,6 @@ export const HiddenInventoryTest: React.FC = () => {
                 <Helmet>
                     <title>Shop One-of-One Italian Leather Goods & Luxury Pieces | Matteo Perin</title>
                     <meta name="description" content="Shop the Current Edit — one-of-one Italian leather bags, exotic leather goods, and luxury outerwear, in stock and ready to ship worldwide from our Jackson Hole atelier. Handcrafted in Italy." />
-                    <meta name="keywords" content="luxury leather bags, italian leather goods, exotic leather bags, one of one luxury pieces, luxury leather goods jackson hole, designer leather bags jackson wy, Matteo Perin shop" />
                     <link rel="canonical" href="https://www.matteoperin.com/shop" />
                     <meta property="og:title" content="Shop One-of-One Italian Leather Goods | Matteo Perin" />
                     <meta property="og:description" content="One-of-one Italian leather bags, exotic leather goods, and luxury outerwear — in stock, ready to ship worldwide." />

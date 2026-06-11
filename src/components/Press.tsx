@@ -9,7 +9,6 @@ export const Press: React.FC = () => {
             <Helmet>
                 <title>Press & Media Coverage | Matteo Perin</title>
                 <meta name="description" content="Matteo Perin in the press — featured in Robb Report, Private Air Magazine, JH Style, and more. Coverage of the Italian bespoke luxury designer based in Jackson Hole, Wyoming." />
-                <meta name="keywords" content="Matteo Perin press, Matteo Perin media, luxury designer Jackson Hole press, bespoke designer features" />
                 <link rel="canonical" href="https://www.matteoperin.com/press" />
                 <meta property="og:title" content="Press & Media Coverage | Matteo Perin" />
                 <meta property="og:description" content="Featured coverage of Matteo Perin, the Italian bespoke luxury designer based in Jackson Hole, Wyoming." />

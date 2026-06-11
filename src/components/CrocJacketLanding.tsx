@@ -193,7 +193,6 @@ export const CrocJacketLanding: React.FC = () => {
             <Helmet>
                 <title>Bespoke Crocodile Jacket | Handcrafted in Italy | Matteo Perin</title>
                 <meta name="description" content="Commission a 1-of-1 bespoke Porosus crocodile jacket by Matteo Perin — a hand-painted Nile crocodile coat finished with a hand-developed patina over 100+ hours of artisanal hand-stitching in Verona, Italy, using certified CITES-regulated hides. Full commission $185,000; secure your slot with a $25,000 deposit." />
-                <meta name="keywords" content="bespoke porosus crocodile jacket, hand-painted nile crocodile coat, 1-of-1 custom exotic outerwear, bespoke crocodile jacket, luxury custom alligator coat, CITES certified crocodile jacket, hand-stitched exotic leather jacket Italy, Niloticus crocodile jacket, Porosus crocodile jacket, Matteo Perin, custom crocodile coat, made to order crocodile outerwear, luxury commission jacket, high end exotic jacket" />
                 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
                 <link rel="canonical" href="https://www.matteoperin.com/bespoke-crocodile-jacket" />
 

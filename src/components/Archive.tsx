@@ -154,7 +154,6 @@ export const Archive: React.FC<ArchiveProps> = ({ initialGender }) => {
             <Helmet>
                 <title>The Collection — Luxury Clothing &amp; Exotic Leather in Jackson, WY | Matteo Perin</title>
                 <meta name="description" content="Browse the Matteo Perin collection — bespoke jackets, exotic leather goods, and one-of-a-kind luxury pieces for men and women, handcrafted in Italy and shown at our Jackson Hole atelier on 164 E Deloney Ave." />
-                <meta name="keywords" content="luxury clothing collection jackson wy, designer clothing jackson hole, exotic leather jackson wyoming, luxury outerwear jackson hole, Matteo Perin collection" />
                 <link rel="canonical" href="https://www.matteoperin.com/collection" />
                 <meta property="og:title" content="The Collection — Luxury Clothing in Jackson, WY | Matteo Perin" />
                 <meta property="og:description" content="Bespoke jackets, exotic leather, and one-of-a-kind luxury pieces, handcrafted in Italy. Shown at the Matteo Perin atelier in Jackson Hole." />

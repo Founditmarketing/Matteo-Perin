@@ -176,7 +176,6 @@ export const WomensLookbook: React.FC = () => {
             <Helmet>
                 <title>Luxury Women's Clothing in Jackson, WY | Matteo Perin</title>
                 <meta name="description" content="Discover luxury women's clothing in Jackson, Wyoming. Matteo Perin's women's lookbook features bespoke outerwear, exotic leather, and one-of-a-kind pieces, handcrafted in Italy and available at our Jackson Hole showroom on 164 E Deloney Ave." />
-                <meta name="keywords" content="luxury womens clothing jackson wy, womens designer clothing jackson hole, bespoke womenswear jackson wyoming, luxury womens jackets jackson hole, Matteo Perin womens" />
                 <link rel="canonical" href="https://www.matteoperin.com/lookbook/women" />
                 <meta property="og:title" content="Luxury Women's Clothing in Jackson, WY | Matteo Perin" />
                 <meta property="og:description" content="Bespoke women's outerwear, exotic leather, and one-of-a-kind pieces, handcrafted in Italy. Luxury womenswear in Jackson Hole, Wyoming." />

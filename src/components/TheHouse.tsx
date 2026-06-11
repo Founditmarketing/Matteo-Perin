@@ -63,7 +63,6 @@ export const TheHouse: React.FC = () => {
             <Helmet>
                 <title>The House — The Matteo Perin Story | Luxury Atelier in Jackson, WY</title>
                 <meta name="description" content="The story of Matteo Perin — an Italian bespoke luxury house rooted in Verona craftsmanship and based in Jackson, Wyoming. Discover the philosophy, the atelier, and the design code behind the brand." />
-                <meta name="keywords" content="Matteo Perin, about Matteo Perin, Italian luxury designer, bespoke atelier Jackson Wyoming, luxury fashion house Jackson Hole" />
                 <link rel="canonical" href="https://www.matteoperin.com/the-house" />
                 <meta property="og:title" content="The House — The Matteo Perin Story" />
                 <meta property="og:description" content="An Italian bespoke luxury house rooted in Verona craftsmanship, based in Jackson, Wyoming." />
