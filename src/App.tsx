@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation, Link } from 'react-router-dom';
 import { Navigation } from './components/Navigation';
 import { Footer } from './components/Footer';
@@ -10,6 +10,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import { InquiryModal } from './components/InquiryModal';
 import { Cursor } from './components/Cursor';
 import { DigitalConcierge } from './components/DigitalConcierge';
+import { StitchTransition, STITCH_COVER_MS } from './components/StitchTransition';
 
 // Code-split all page-level routes for smaller initial bundle
 const Home = React.lazy(() => import('./components/Home').then(m => ({ default: m.Home })));
@@ -56,6 +57,10 @@ const ThankYouPage: React.FC = () => {
     const sessionId = params.get('session_id');
     const isOrder = Boolean(sessionId) || isDeposit;
     const [order, setOrder] = useState<OrderSummary | null>(null);
+    // For purchases, hold the Ads conversion until the Stripe order lookup
+    // settles so the event can carry real value + transaction_id.
+    const [orderFetchDone, setOrderFetchDone] = useState(!sessionId);
+    const adsFired = useRef(false);
     const { clearCart } = useCart();
 
     // The purchase is complete — empty the bag.
@@ -71,27 +76,35 @@ const ThankYouPage: React.FC = () => {
         fetch(`/api/checkout-session?session_id=${encodeURIComponent(sessionId)}`)
             .then(r => (r.ok ? r.json() : null))
             .then(data => { if (data && data.paymentStatus === 'paid') setOrder(data); })
-            .catch(() => { /* generic confirmation is fine */ });
+            .catch(() => { /* generic confirmation is fine */ })
+            .finally(() => setOrderFetchDone(true));
     }, [sessionId]);
 
     useEffect(() => {
+        if (adsFired.current || !orderFetchDone) return;
         if (typeof (window as any).gtag !== 'function') return;
+        adsFired.current = true;
 
-        // Google Ads conversion tag. The authoritative GA4 purchase event is
-        // sent server-side from the Stripe webhook — do not duplicate it here.
-        (window as any).gtag('event', 'conversion', { send_to: 'AW-17701157571/7bczCMWv35kcEMP1yPhB' });
+        // Google Ads conversion. Purchases carry value + transaction_id so
+        // Ads can dedupe refreshes and bid on value. The authoritative GA4
+        // purchase event is sent server-side from the Stripe webhook — do
+        // not duplicate it here.
+        (window as any).gtag('event', 'conversion', {
+            send_to: 'AW-17701157571/7bczCMWv35kcEMP1yPhB',
+            ...(sessionId ? { transaction_id: sessionId } : {}),
+            ...(order ? { value: order.amountTotal / 100, currency: 'USD' } : {}),
+        });
 
         if (isDeposit) {
             (window as any).gtag('event', 'deposit_completed', {
                 currency: 'USD',
-                value: 25000,
+                value: order ? order.amountTotal / 100 : 25000,
                 item_name: 'Bespoke Crocodile Jacket Deposit',
             });
-        } else if (!isOrder) {
-            // Inquiry-form landing (no purchase involved)
-            (window as any).gtag('event', 'generate_lead', { lead_type: 'croc_jacket_inquiry' });
         }
-    }, []);
+        // Note: no generate_lead here — inquiry forms fire it at submit time
+        // (reportInquiryConversion), so firing again on landing double-counts.
+    }, [orderFetchDone, order]);
 
     const heading = isDeposit ? 'Commission Reserved' : isOrder ? 'Order Confirmed' : 'Inquiry Received';
     const message = isDeposit
@@ -160,12 +173,23 @@ const ScrollToTop = () => {
         }
     }, []);
 
+    const isFirstNav = useRef(true);
+
     useEffect(() => {
-        // If no hash, just go to top
+        const isFirst = isFirstNav.current;
+        isFirstNav.current = false;
+
         if (!hash) {
-            window.scrollTo(0, 0);
+            if (isFirst) {
+                window.scrollTo(0, 0);
+                return;
+            }
+            // The Stitch panels cover the viewport at STITCH_COVER_MS — reset
+            // scroll while hidden so neither page visibly jumps.
+            const t = setTimeout(() => window.scrollTo(0, 0), STITCH_COVER_MS + 30);
+            return () => clearTimeout(t);
         } else {
-            // If there is a hash, wait for page transition/render then scroll
+            // If there is a hash, wait for the stitch reveal + render, then scroll
             const id = hash.replace('#', '');
             setTimeout(() => {
                 const element = document.getElementById(id);
@@ -176,25 +200,42 @@ const ScrollToTop = () => {
                         element.scrollIntoView({ behavior: 'smooth' });
                     }
                 }
-            }, 1200); // Delay matches the cinematic page transition duration slightly
+            }, 1200); // After the stitch transition completes
         }
     }, [pathname, hash]);
 
     return null;
 };
 
-import { AnimatePresence, motion } from 'framer-motion'; // Add AnimatePresence
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'; // Add AnimatePresence
 
 // ... existing ScrollToTop ...
 
-// Cinematic Fluid Transition
+// The Stitch — the route swap hides behind the StitchTransition overlay
+// (panels close over the old page, thread draws, panels part on the new one).
+// The exiting page simply holds fully visible until the panels have covered
+// it; reduced-motion users get a quick crossfade instead.
 const PageTransition: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const reduced = useReducedMotion();
+
+    if (reduced) {
+        return (
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            >
+                {children}
+            </motion.div>
+        );
+    }
+
     return (
         <motion.div
-            initial={{ opacity: 0 }}
+            initial={{ opacity: 1 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            exit={{ opacity: 0.999, transition: { duration: STITCH_COVER_MS / 1000 } }}
         >
             {children}
         </motion.div>
@@ -257,6 +298,7 @@ function App() {
             <InquiryProvider>
                 <Router>
                     <ScrollToTop />
+                    <StitchTransition />
                     <div className="relative w-full min-h-screen flex flex-col justify-between transition-colors duration-700 bg-matteo-cream dark:bg-matteo-black text-matteo-charcoal dark:text-matteo-cream">
                         {/* Global Cursor Override Options */}
                         <Cursor />
