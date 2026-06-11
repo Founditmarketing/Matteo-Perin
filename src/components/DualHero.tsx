@@ -74,7 +74,7 @@ export const DualHero: React.FC = () => {
     return (
         <section
             ref={containerRef}
-            className="relative h-[300vh] w-full bg-matteo-charcoal"
+            className="relative h-[200vh] w-full bg-matteo-charcoal"
         >
             <div className="sticky top-0 h-screen w-full overflow-hidden text-white" onMouseMove={handleMouseMove}>
 

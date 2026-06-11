@@ -592,20 +592,19 @@ export const CrocJacketLanding: React.FC = () => {
                             </button>
                         </motion.div>
 
-                        {/* Trust Signals */}
-                        <motion.div variants={fadeUpVariant} className="grid grid-cols-3 gap-4 py-6 border-t border-b border-matteo-charcoal/10 dark:border-white/10 mb-8">
-                            <div className="text-center">
-                                <div className="font-serif text-lg text-matteo-charcoal dark:text-white mb-1">100+</div>
-                                <div className="font-sans text-[10px] uppercase tracking-[0.15em] text-matteo-stone">Hours Crafted</div>
-                            </div>
-                            <div className="text-center border-x border-matteo-charcoal/10 dark:border-white/10">
-                                <div className="font-serif text-lg text-matteo-charcoal dark:text-white mb-1">1 of 1</div>
-                                <div className="font-sans text-[10px] uppercase tracking-[0.15em] text-matteo-stone">Unique Piece</div>
-                            </div>
-                            <div className="text-center">
-                                <div className="font-serif text-lg text-matteo-charcoal dark:text-white mb-1">Italy</div>
-                                <div className="font-sans text-[10px] uppercase tracking-[0.15em] text-matteo-stone">Handcrafted</div>
-                            </div>
+                        {/* The Ledger — provenance, not statistics */}
+                        <motion.div variants={fadeUpVariant} className="divide-y divide-matteo-charcoal/10 dark:divide-white/10 border-t border-b border-matteo-charcoal/10 dark:border-white/10 mb-8">
+                            {[
+                                ["Hide", "Nile or Porosus, hand-selected"],
+                                ["Patina", "Hand-painted by one artisan"],
+                                ["Bench", "One hundred hours, Verona"],
+                                ["Edition", "One of one"],
+                            ].map(([label, value]) => (
+                                <div key={label} className="flex items-baseline justify-between gap-6 py-3">
+                                    <span className="font-sans text-[10px] uppercase tracking-[0.15em] text-matteo-stone shrink-0">{label}</span>
+                                    <span className="font-serif text-base text-matteo-charcoal dark:text-white text-right">{value}</span>
+                                </div>
+                            ))}
                         </motion.div>
 
                         {/* Accordions: Details, Materials, Shipping */}

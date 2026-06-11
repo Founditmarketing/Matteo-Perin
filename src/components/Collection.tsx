@@ -175,7 +175,9 @@ export const Collection: React.FC = () => {
                 const maxTrans = Math.max(0, trackWidth - viewportWidth + 50);
                 setMaxTranslate(maxTrans);
 
-                const calculatedHeight = maxTrans + viewportHeight;
+                // 0.55 scroll-to-track ratio: the gallery still travels its full
+                // width, but the vertical scroll it taxes is roughly halved.
+                const calculatedHeight = Math.round(maxTrans * 0.55) + viewportHeight;
                 setDynamicHeight(`${calculatedHeight}px`);
             } else {
                 setDynamicHeight('auto');

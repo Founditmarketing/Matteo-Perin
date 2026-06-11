@@ -92,16 +92,17 @@ export const CrocJacketHero: React.FC = () => {
                         Over 100 hours of artisanal labor. Limited to 3 commissions per year.
                     </p>
 
-                    {/* Stats */}
-                    <div className="grid grid-cols-3 gap-4 py-5 border-t border-b border-matteo-charcoal/10 dark:border-white/10 mb-8">
+                    {/* The Ledger — provenance, not statistics */}
+                    <div className="divide-y divide-matteo-charcoal/10 dark:divide-white/10 border-t border-b border-matteo-charcoal/10 dark:border-white/10 mb-8">
                         {[
-                            { value: "100+", label: "Hours" },
-                            { value: "1 of 1", label: "Edition" },
-                            { value: "Italy", label: "Origin" },
-                        ].map((stat) => (
-                            <div key={stat.label} className="text-center">
-                                <span className="font-serif text-lg text-matteo-charcoal dark:text-white block mb-0.5">{stat.value}</span>
-                                <span className="font-sans text-[10px] uppercase tracking-[0.15em] text-matteo-stone">{stat.label}</span>
+                            ["Hide", "Nile or Porosus, hand-selected"],
+                            ["Patina", "Hand-painted by one artisan"],
+                            ["Bench", "One hundred hours, Verona"],
+                            ["Edition", "One of one"],
+                        ].map(([label, value]) => (
+                            <div key={label} className="flex items-baseline justify-between gap-6 py-2.5">
+                                <span className="font-sans text-[10px] uppercase tracking-[0.15em] text-matteo-stone shrink-0">{label}</span>
+                                <span className="font-serif text-base text-matteo-charcoal dark:text-white text-right">{value}</span>
                             </div>
                         ))}
                     </div>
@@ -194,16 +195,17 @@ export const CrocJacketHero: React.FC = () => {
                                     Over 100 hours of artisanal labor. Limited to 3 commissions per year.
                                 </p>
 
-                                {/* Stats */}
-                                <div className="grid grid-cols-3 gap-6 py-6 border-t border-b border-matteo-charcoal/10 dark:border-white/10 mb-10">
+                                {/* The Ledger — provenance, not statistics */}
+                                <div className="divide-y divide-matteo-charcoal/10 dark:divide-white/10 border-t border-b border-matteo-charcoal/10 dark:border-white/10 mb-10">
                                     {[
-                                        { value: "100+", label: "Hours Crafted" },
-                                        { value: "1 of 1", label: "Unique Piece" },
-                                        { value: "Italy", label: "Handcrafted" },
-                                    ].map((stat) => (
-                                        <div key={stat.label} className="text-center">
-                                            <span className="font-serif text-lg text-matteo-charcoal dark:text-white block mb-1">{stat.value}</span>
-                                            <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-matteo-stone">{stat.label}</span>
+                                        ["Hide", "Nile or Porosus, hand-selected"],
+                                        ["Patina", "Hand-painted by one artisan"],
+                                        ["Bench", "One hundred hours, Verona"],
+                                        ["Edition", "One of one"],
+                                    ].map(([label, value]) => (
+                                        <div key={label} className="flex items-baseline justify-between gap-6 py-3">
+                                            <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-matteo-stone shrink-0">{label}</span>
+                                            <span className="font-serif text-lg text-matteo-charcoal dark:text-white text-right">{value}</span>
                                         </div>
                                     ))}
                                 </div>
