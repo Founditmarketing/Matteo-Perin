@@ -25,18 +25,18 @@ const staggerContainer = {
 
 // --- All gallery images ---
 const GALLERY_IMAGES = [
-    "/assets/croc jacket/matteo_croc_new_1.jpg",
-    "/assets/croc jacket/matteo_croc_new_2.jpg",
-    "/assets/croc jacket/matteo_croc.jpg",
-    "/assets/croc jacket/hero_jacket_1.jpg",
-    "/assets/croc jacket/detail_jacket_2.jpg",
-    "/assets/croc jacket/detail_jacket_3.jpg",
-    "/assets/croc jacket/detail_jacket_4.jpg",
-    "/assets/croc jacket/detail_jacket_5.jpg",
-    "/assets/croc jacket/detail_jacket_6.jpg",
-    "/assets/croc jacket/detail_jacket_7.jpg",
-    "/assets/croc jacket/detail_jacket_8.jpg",
-    "/assets/croc jacket/detail_jacket_9.jpg",
+    "/assets/croc-jacket/matteo_croc_new_1.jpg",
+    "/assets/croc-jacket/matteo_croc_new_2.jpg",
+    "/assets/croc-jacket/matteo_croc.jpg",
+    "/assets/croc-jacket/hero_jacket_1.jpg",
+    "/assets/croc-jacket/detail_jacket_2.jpg",
+    "/assets/croc-jacket/detail_jacket_3.jpg",
+    "/assets/croc-jacket/detail_jacket_4.jpg",
+    "/assets/croc-jacket/detail_jacket_5.jpg",
+    "/assets/croc-jacket/detail_jacket_6.jpg",
+    "/assets/croc-jacket/detail_jacket_7.jpg",
+    "/assets/croc-jacket/detail_jacket_8.jpg",
+    "/assets/croc-jacket/detail_jacket_9.jpg",
 ];
 
 // --- Specification Accordion Item ---
@@ -199,7 +199,7 @@ export const CrocJacketLanding: React.FC = () => {
                 {/* OpenGraph — Optimized for social sharing + AdWords */}
                 <meta property="og:title" content="Bespoke Crocodile Jacket — Commission Yours | Matteo Perin" />
                 <meta property="og:description" content="One-of-one bespoke crocodile jacket. Hand-selected Nile or Porosus crocodile, hand-developed patina, 100+ hours of Italian craftsmanship. Secure with $25,000 deposit." />
-                <meta property="og:image" content="https://www.matteoperin.com/assets/croc%20jacket/matteo_croc_new_1.jpg" />
+                <meta property="og:image" content="https://www.matteoperin.com/assets/croc-jacket/matteo_croc_new_1.jpg" />
                 <meta property="og:image:width" content="1200" />
                 <meta property="og:image:height" content="630" />
                 <meta property="og:url" content="https://www.matteoperin.com/bespoke-crocodile-jacket" />
@@ -239,7 +239,7 @@ export const CrocJacketLanding: React.FC = () => {
                 <meta name="twitter:card" content="summary_large_image" />
                 <meta name="twitter:title" content="Bespoke Crocodile Jacket — $25,000 Deposit | Matteo Perin" />
                 <meta name="twitter:description" content="One-of-one hand-selected crocodile. Handcrafted in Verona, Italy. 100+ hours of artisanal work." />
-                <meta name="twitter:image" content="https://www.matteoperin.com/assets/croc%20jacket/matteo_croc_new_1.jpg" />
+                <meta name="twitter:image" content="https://www.matteoperin.com/assets/croc-jacket/matteo_croc_new_1.jpg" />
 
                 {/* Product Structured Data — Google Shopping + AdWords */}
                 <script type="application/ld+json">
@@ -829,7 +829,7 @@ export const CrocJacketLanding: React.FC = () => {
                         <div className="bg-white dark:bg-[#111] w-full max-w-5xl relative overflow-hidden shadow-2xl flex flex-col md:flex-row max-h-[90vh] md:max-h-[80vh]">
                             {/* Left: Image */}
                             <div className="hidden md:block md:w-1/2 relative h-full">
-                                <img src="/assets/croc jacket/matteo_croc.jpg" className="absolute inset-0 w-full h-full object-cover object-top" alt="Matteo Perin in Bespoke Crocodile Jacket" />
+                                <img src="/assets/croc-jacket/matteo_croc.jpg" className="absolute inset-0 w-full h-full object-cover object-top" alt="Matteo Perin in Bespoke Crocodile Jacket" />
                             </div>
                             {/* Right: Form */}
                             <div className="w-full md:w-1/2 p-8 md:p-16 lg:p-24 flex flex-col justify-center relative overflow-y-auto">

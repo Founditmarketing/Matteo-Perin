@@ -6,7 +6,7 @@ import { reportInquiryConversion } from '@/lib/gtagConversion';
 // Visual ambiance images for the left side
 const AMBIANCE_IMAGE = {
     id: 1,
-    image: "/assets/hero_nature.png.jpg",
+    image: "/assets/hero_nature.jpg",
     label: "The Retreat",
     location: "Jackson Hole, USA"
 };

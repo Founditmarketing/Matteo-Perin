@@ -41,7 +41,7 @@ export const CrocJacketHero: React.FC = () => {
                 {/* Full-width image — NO parallax, just a clean static image */}
                 <div className="relative w-full overflow-hidden">
                     <img
-                        src="/assets/croc jacket/matteo_croc_new_1.jpg"
+                        src="/assets/croc-jacket/matteo_croc_new_1.jpg"
                         alt="Bespoke Crocodile Jacket by Matteo Perin"
                         className="w-full aspect-[3/4] object-cover object-center"
                     />
@@ -145,7 +145,7 @@ export const CrocJacketHero: React.FC = () => {
                                     className="relative aspect-[3/4] overflow-hidden bg-[#EBEBEB] dark:bg-[#1a1a1a] group"
                                 >
                                     <motion.img
-                                        src="/assets/croc jacket/matteo_croc_new_1.jpg"
+                                        src="/assets/croc-jacket/matteo_croc_new_1.jpg"
                                         alt="Bespoke Crocodile Jacket by Matteo Perin"
                                         className="w-full h-full object-cover object-[center_30%] transition-transform duration-[2s] ease-out group-hover:scale-[1.03] dark:brightness-90"
                                         style={{ y: imageSpring, scale: scaleSpring }}

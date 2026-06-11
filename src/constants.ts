@@ -304,16 +304,16 @@ export const PRODUCTS: Product[] = [
     id: 14,
     title: 'Bespoke Crocodile Jacket',
     category: 'Exotics',
-    image: "/assets/croc jacket/matteo_croc_new_1.jpg",
+    image: "/assets/croc-jacket/matteo_croc_new_1.jpg",
     price: 25000,
     gender: 'men',
     wide: true,
     description: "Crafted from hand-selected Nile or Porosus crocodile, each piece is finished with a hand-developed patina and shaped over 100+ hours of artisanal work. Offered exclusively by commission, reserved for the atelier's most considered works.",
     link: "/bespoke-crocodile-jacket",
     gallery: [
-      "/assets/croc jacket/matteo_croc_new_1.jpg",
-      "/assets/croc jacket/matteo_croc_new_2.jpg",
-      "/assets/croc jacket/matteo_croc.jpg"
+      "/assets/croc-jacket/matteo_croc_new_1.jpg",
+      "/assets/croc-jacket/matteo_croc_new_2.jpg",
+      "/assets/croc-jacket/matteo_croc.jpg"
     ]
   },
 ];
