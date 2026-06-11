@@ -237,6 +237,7 @@ async function run() {
 
   const MAX_ATTEMPTS = 3;
   let succeeded = 0;
+  const renderedRoutes = [];
   for (const route of allRoutes) {
     let html = null;
     for (let attempt = 1; attempt <= MAX_ATTEMPTS && !html; attempt++) {
@@ -254,11 +255,41 @@ async function run() {
     fs.writeFileSync(outPath, html, 'utf8');
     console.log(`[prerender] wrote ${path.relative(distDir, outPath)} (${html.length} bytes)`);
     succeeded += 1;
+    renderedRoutes.push(route);
   }
 
   await browser.close();
   await server.close();
   console.log(`[prerender] done — ${succeeded}/${allRoutes.length} routes prerendered.`);
+
+  writeSitemap(renderedRoutes);
+}
+
+// Regenerate sitemap.xml from the routes that actually rendered, so product
+// pages discovered from live inventory are always listed. The static
+// public/sitemap.xml remains the fallback if prerendering aborts.
+function writeSitemap(routes) {
+  if (!routes || routes.length === 0) return;
+  const today = new Date().toISOString().slice(0, 10);
+  const priorityFor = (r) =>
+    r === '/' ? '1.0'
+      : r === '/shop' || r === '/bespoke-crocodile-jacket' || r.startsWith('/lookbook') ? '0.9'
+        : r.startsWith('/shop/') ? '0.8'
+          : r.startsWith('/journal/') ? '0.5'
+            : '0.7';
+  const changefreqFor = (r) =>
+    r === '/shop' || r.startsWith('/shop/') ? 'daily' : r === '/' ? 'weekly' : 'monthly';
+
+  const urls = routes
+    .map((r) => {
+      const loc = r === '/' ? 'https://www.matteoperin.com/' : `https://www.matteoperin.com${r}`;
+      return `    <url>\n        <loc>${loc}</loc>\n        <lastmod>${today}</lastmod>\n        <changefreq>${changefreqFor(r)}</changefreq>\n        <priority>${priorityFor(r)}</priority>\n    </url>`;
+    })
+    .join('\n');
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`;
+  fs.writeFileSync(path.join(distDir, 'sitemap.xml'), xml, 'utf8');
+  console.log(`[prerender] wrote sitemap.xml (${routes.length} urls)`);
 }
 
 run().catch((err) => {

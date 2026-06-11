@@ -225,6 +225,8 @@ export const CrocJacketLanding: React.FC = () => {
                     description: 'One-of-one bespoke crocodile jacket. Hand-selected Nile or Porosus crocodile, hand-painted patina, over 100 hours of artisanal labor in Verona, Italy. CITES-certified hides. Limited to 3 commissions per year.',
                     brand: { '@type': 'Brand', name: 'Matteo Perin' },
                     url: 'https://www.matteoperin.com/bespoke-crocodile-jacket',
+                    material: 'CITES-certified Nile (Niloticus) or Porosus crocodile, hand-painted patina, Italian silk lining',
+                    countryOfOrigin: { '@type': 'Country', name: 'Italy' },
                     offers: {
                         '@type': 'Offer',
                         priceCurrency: 'USD',
@@ -233,6 +235,49 @@ export const CrocJacketLanding: React.FC = () => {
                         url: 'https://www.matteoperin.com/bespoke-crocodile-jacket',
                         itemCondition: 'https://schema.org/NewCondition',
                     },
+                })}</script>
+
+                {/* FAQ structured data — mirrors the on-page accordion content */}
+                <script type="application/ld+json">{JSON.stringify({
+                    '@context': 'https://schema.org',
+                    '@type': 'FAQPage',
+                    mainEntity: [
+                        {
+                            '@type': 'Question',
+                            name: 'What is the bespoke crocodile jacket made of?',
+                            acceptedAnswer: { '@type': 'Answer', text: 'Certified, CITES-regulated Nile (Niloticus) or Porosus crocodile hides — only 1 in 100 skins qualifies. The jacket is finished with a hand-painted patina, pure Italian silk lining, and custom cast palladium hardware, with over 100 hours of artisanal hand-stitching in Verona, Italy.' },
+                        },
+                        {
+                            '@type': 'Question',
+                            name: 'How does bespoke sizing and fitting work?',
+                            acceptedAnswer: { '@type': 'Answer', text: 'Every jacket is drafted from absolute zero — no pre-existing pattern. A senior artisan conducts a measurement session at your location (available globally), mapping over 40 unique body measurements. Standard sizing does not apply.' },
+                        },
+                        {
+                            '@type': 'Question',
+                            name: 'How long does a commission take and how is it delivered?',
+                            acceptedAnswer: { '@type': 'Answer', text: 'Production takes 8–12 weeks from the measurement session. Delivery is complimentary worldwide: the jacket is hand-delivered by white-glove courier in a custom leather-bound presentation case.' },
+                        },
+                        {
+                            '@type': 'Question',
+                            name: 'How does payment work?',
+                            acceptedAnswer: { '@type': 'Answer', text: 'A $25,000 deposit secures your commission slot. The remaining balance of $160,000 is invoiced before production begins. Because each piece is made to order, returns are not accepted once production has commenced.' },
+                        },
+                        {
+                            '@type': 'Question',
+                            name: 'Is authenticity documented?',
+                            acceptedAnswer: { '@type': 'Answer', text: 'Each jacket ships with a signed certificate of authenticity, an individual serial number, and full provenance documentation tracing the skin from conservation center to finished garment. Lifetime maintenance and reconditioning is included.' },
+                        },
+                    ],
+                })}</script>
+
+                {/* Breadcrumb structured data */}
+                <script type="application/ld+json">{JSON.stringify({
+                    '@context': 'https://schema.org',
+                    '@type': 'BreadcrumbList',
+                    itemListElement: [
+                        { '@type': 'ListItem', position: 1, name: 'Matteo Perin', item: 'https://www.matteoperin.com/' },
+                        { '@type': 'ListItem', position: 2, name: 'Bespoke Crocodile Jacket', item: 'https://www.matteoperin.com/bespoke-crocodile-jacket' },
+                    ],
                 })}</script>
 
                 {/* Twitter Card */}
