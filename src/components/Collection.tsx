@@ -256,7 +256,8 @@ export const Collection: React.FC = () => {
                             The Collection
                         </TextReveal>
                     </div>
-                    <div className="hidden md:block text-right">
+                    {/* Progress readout — hidden until the journey begins so a static "0%" never ships */}
+                    <div className={`hidden md:block text-right transition-opacity duration-500 ${scrollProgress > 0.01 ? 'opacity-100' : 'opacity-0'}`} aria-hidden="true">
                         <span className="font-serif text-xl text-matteo-charcoal dark:text-white">
                             {Math.round(scrollProgress * 100)}%
                         </span>
