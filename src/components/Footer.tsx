@@ -128,10 +128,13 @@ export const Footer: React.FC = () => {
                                 </div>
                             </div>
 
-                            <div className={`absolute inset-0 flex items-center transition-all duration-500 transform ${subscribed ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'}`}>
-                                <div className="text-matteo-orange font-serif italic text-lg">
-                                    "Welcome to the inner circle."
-                                </div>
+                            {/* Success note mounts only after submit so it never ships in the static markup */}
+                            <div className={`absolute inset-0 flex items-center transition-all duration-500 transform ${subscribed ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'}`} aria-live="polite">
+                                {subscribed && (
+                                    <div className="text-matteo-orange font-serif italic text-lg">
+                                        "Welcome to the inner circle."
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
