@@ -265,7 +265,7 @@ export const TheHouse: React.FC = () => {
                     <RevealOnScroll>
                         <p className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone mb-8">Begin The Process</p>
                         <h2 className="font-serif text-4xl md:text-6xl text-matteo-charcoal dark:text-white mb-12">
-                            "Style is biography.<br />Write it"
+                            "Style is biography.<br />Write it."
                         </h2>
                         <Link
                             to="/bespoke"
