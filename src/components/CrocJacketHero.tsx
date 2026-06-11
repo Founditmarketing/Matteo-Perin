@@ -70,11 +70,13 @@ export const CrocJacketHero: React.FC = () => {
                         </span>
                     </div>
 
-                    {/* Title */}
-                    <h2 className="font-serif text-4xl text-matteo-charcoal dark:text-white leading-[0.95] tracking-tight mb-5 font-light">
+                    {/* Title — rendered as <p> so the page ships a single H2 for this
+                        section (the desktop variant's); both variants live in the DOM
+                        and are gated by lg: media classes. */}
+                    <p className="font-serif text-4xl text-matteo-charcoal dark:text-white leading-[0.95] tracking-tight mb-5 font-light">
                         Bespoke Crocodile<br />
                         <span className="italic">Jacket.</span>
-                    </h2>
+                    </p>
 
                     {/* Price + Deposit */}
                     <div className="flex items-baseline gap-4 mb-4">
