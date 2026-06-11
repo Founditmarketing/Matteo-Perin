@@ -281,7 +281,7 @@ export const Collection: React.FC = () => {
                 >
 
                     <div className="hidden md:flex flex-col justify-center w-[25vw] max-w-sm shrink-0 pr-8 border-r border-matteo-charcoal/10 dark:border-white/10 h-[400px]">
-                        <span className="block mt-8 font-sans text-[9px] uppercase tracking-widest text-matteo-orange">
+                        <span className="block mt-8 font-sans text-[10px] uppercase tracking-widest text-matteo-orange">
                             Latest
                         </span>
                     </div>
@@ -347,7 +347,7 @@ export const Collection: React.FC = () => {
                 <div
                     className={`hidden md:flex absolute bottom-8 left-1/2 -translate-x-1/2 flex-col items-center gap-2 transition-opacity duration-700 ${isFinished ? 'opacity-100' : 'opacity-0'}`}
                 >
-                    <span className="font-sans text-[9px] uppercase tracking-widest text-matteo-stone">Continue</span>
+                    <span className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone">Continue</span>
                     <div className="w-[1px] h-8 bg-matteo-stone animate-bounce"></div>
                 </div>
 

@@ -190,18 +190,18 @@ export const TheHouse: React.FC = () => {
 
                         {/* Verona Detail */}
                         <RevealOnScroll className="border-t border-matteo-charcoal/10 dark:border-white/10 pt-8">
-                            <span className="font-mono text-[9px] text-matteo-stone uppercase tracking-widest mb-2 block">HQ / Production</span>
+                            <span className="font-mono text-[10px] text-matteo-stone uppercase tracking-widest mb-2 block">HQ / Production</span>
                             <h3 className="font-serif text-4xl text-matteo-charcoal dark:text-white mb-6">The Atelier</h3>
-                            <p className="font-serif text-matteo-charcoal/70 dark:text-gray-400 leading-relaxed mb-8">
+                            <p className="font-serif text-matteo-charcoal/70 dark:text-matteo-stone leading-relaxed mb-8">
                                 Located in the heart of Verona, this is where the alchemy happens. Our master tailors and leather artisans work here to execute commissions with a level of detail that mass production cannot replicate.
                             </p>
                         </RevealOnScroll>
 
                         {/* Jackson Detail */}
                         <RevealOnScroll delay={0.2} className="border-t border-matteo-charcoal/10 dark:border-white/10 pt-8">
-                            <span className="font-mono text-[9px] text-matteo-stone uppercase tracking-widest mb-2 block">Flagship Store</span>
+                            <span className="font-mono text-[10px] text-matteo-stone uppercase tracking-widest mb-2 block">Flagship Store</span>
                             <h3 className="font-serif text-4xl text-matteo-charcoal dark:text-white mb-6">The Showroom</h3>
-                            <p className="font-serif text-matteo-charcoal/70 dark:text-gray-400 leading-relaxed mb-8">
+                            <p className="font-serif text-matteo-charcoal/70 dark:text-matteo-stone leading-relaxed mb-8">
                                 Our only physical retail outpost. A space designed to bridge the gap between Italian luxury and the rugged American West. Here, clients can experience our fabrics and fittings in person.
                             </p>
                             <div className="font-sans text-xs uppercase tracking-widest text-matteo-charcoal dark:text-white">
@@ -249,7 +249,7 @@ export const TheHouse: React.FC = () => {
                                             <h3 className="font-serif text-3xl md:text-4xl">{pillar.title}</h3>
                                         </div>
                                         <div className="md:col-span-6">
-                                            <p className="font-serif text-lg text-gray-400 leading-relaxed max-w-xl group-hover:text-white transition-colors">
+                                            <p className="font-serif text-lg text-matteo-stone leading-relaxed max-w-xl group-hover:text-white transition-colors">
                                                 {pillar.desc}
                                             </p>
                                         </div>

@@ -74,13 +74,13 @@ export const Footer: React.FC = () => {
                             <SpinningLogo size={40} className="opacity-100" />
                             <span className="font-serif tracking-widest text-lg">MATTEO PERIN</span>
                         </div>
-                        <p className="font-sans text-xs text-gray-400 leading-loose">
+                        <p className="font-sans text-xs text-white/60 leading-loose">
                             164 E Deloney Ave<br />
                             Jackson, Wyoming 83001<br /><br />
                             <a href="mailto:concierge@matteoperin.com" className="hover:text-white transition-colors">concierge@matteoperin.com</a><br />
                             <a href="tel:3072649655" className="hover:text-white transition-colors">307.264.9655</a>
                         </p>
-                        <div className="mt-6 font-sans text-[10px] text-gray-500 uppercase tracking-widest leading-relaxed">
+                        <div className="mt-6 font-sans text-[10px] text-white/40 uppercase tracking-widest leading-relaxed">
                             <span className="block text-matteo-orange mb-2">Showroom Hours</span>
                             M-F: 10am - 6pm<br />
                             Sat: 10am - 5pm<br />
@@ -91,7 +91,7 @@ export const Footer: React.FC = () => {
                     {/* Links */}
                     <div className="col-span-1">
                         <h4 className="font-sans text-xs uppercase tracking-luxury text-matteo-orange mb-6">Explore</h4>
-                        <ul className="space-y-4 font-serif text-gray-300">
+                        <ul className="space-y-4 font-serif text-white/80">
                             <li><Link to="/the-house" onClick={() => window.scrollTo(0, 0)} className="hover:text-white transition-colors block py-1">The House</Link></li>
                             <li><a href="/#collection" onClick={(e) => handleNav(e, '/#collection')} className="hover:text-white transition-colors block py-1">Collections</a></li>
                             <li><Link to="/bespoke" onClick={() => window.scrollTo(0, 0)} className="hover:text-white transition-colors block py-1">Bespoke Process</Link></li>
@@ -106,18 +106,18 @@ export const Footer: React.FC = () => {
                     {/* Newsletter */}
                     <div className="col-span-1 md:col-span-2">
                         <h4 className="font-sans text-xs uppercase tracking-luxury text-matteo-orange mb-6">Updates</h4>
-                        <p className="font-sans text-sm text-gray-400 mb-6 max-w-md">Private invitations. Early access.</p>
+                        <p className="font-sans text-sm text-white/60 mb-6 max-w-md">Private invitations. Early access.</p>
 
                         <div className="relative h-12 overflow-hidden">
                             <div className={`transition-all duration-500 transform ${subscribed ? '-translate-y-full opacity-0' : 'translate-y-0 opacity-100'}`}>
-                                <div className="flex border-b border-gray-600 pb-2 max-w-md">
+                                <div className="flex border-b border-white/20 pb-2 max-w-md">
                                     <input
                                         type="email"
                                         placeholder="Your Email Address"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
                                         onKeyDown={(e) => e.key === 'Enter' && handleSubscribe()}
-                                        className="bg-transparent w-full outline-none text-white font-serif placeholder-gray-600 focus:placeholder-gray-400"
+                                        className="bg-transparent w-full outline-none text-white font-serif placeholder-white/30 focus:placeholder-white/50"
                                     />
                                     <button
                                         onClick={handleSubscribe}
@@ -140,13 +140,13 @@ export const Footer: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="flex flex-col md:flex-row justify-between items-center py-8 border-t border-white/5 text-gray-600">
+                <div className="flex flex-col md:flex-row justify-between items-center py-8 border-t border-white/5 text-white/40">
                     <div className="flex gap-4 items-center">
                         <p className="font-sans text-[10px] uppercase tracking-wider">© 2026 Matteo Perin.</p>
-                        <span className="text-gray-700">|</span>
+                        <span className="text-white/25">|</span>
                         <Link to="/privacy" onClick={() => window.scrollTo(0, 0)} className="font-sans text-[10px] uppercase tracking-wider hover:text-matteo-orange transition-colors">Privacy</Link>
-                        <span className="text-gray-700">|</span>
-                        <Link to="/dossier" onClick={() => window.scrollTo(0, 0)} className="font-sans text-[10px] uppercase tracking-wider text-gray-500 hover:text-white transition-colors">Client Dossier</Link>
+                        <span className="text-white/25">|</span>
+                        <Link to="/dossier" onClick={() => window.scrollTo(0, 0)} className="font-sans text-[10px] uppercase tracking-wider text-white/40 hover:text-white transition-colors">Client Dossier</Link>
                     </div>
                 </div>
 

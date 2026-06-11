@@ -26,7 +26,7 @@ export const CartSidebar: React.FC = () => {
       <div className="relative w-full max-w-md bg-matteo-cream dark:bg-[#111] h-full shadow-2xl flex flex-col animate-fade-in-up border-l border-matteo-charcoal/5 dark:border-white/5 transition-colors duration-500">
         <div className="p-8 flex justify-between items-center border-b border-matteo-charcoal/5 dark:border-white/5">
           <div>
-              <span className="font-sans text-[9px] uppercase tracking-[0.2em] text-matteo-orange block mb-1">Your Selection</span>
+              <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-matteo-orange block mb-1">Your Selection</span>
               <h2 className="font-serif text-2xl text-matteo-charcoal dark:text-white">The Bag</h2>
           </div>
           <button onClick={() => setIsCartOpen(false)} className="text-matteo-stone hover:text-matteo-charcoal dark:hover:text-white transition-colors">
@@ -60,7 +60,7 @@ export const CartSidebar: React.FC = () => {
                             <div className="w-24 h-32 bg-[#F0F0F0] dark:bg-[#1a1a1a] overflow-hidden shrink-0 relative">
                                 <img src={item.image} alt={item.title} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 dark:brightness-90" />
                                 {item.customizations?.monogram && (
-                                    <div className="absolute bottom-0 right-0 bg-matteo-charcoal text-white text-[8px] p-1 font-serif">
+                                    <div className="absolute bottom-0 right-0 bg-matteo-charcoal text-white text-[10px] p-1 font-serif">
                                         {item.customizations.monogram}
                                     </div>
                                 )}
@@ -76,12 +76,12 @@ export const CartSidebar: React.FC = () => {
                                     {item.customizations && (
                                         <div className="mb-2 space-y-1">
                                             {item.customizations.material && (
-                                                <p className="font-sans text-[9px] text-matteo-charcoal/80 dark:text-gray-400">
+                                                <p className="font-sans text-[10px] text-matteo-charcoal/80 dark:text-gray-400">
                                                     Material: <span className="text-matteo-stone">{item.customizations.material}</span>
                                                 </p>
                                             )}
                                             {item.customizations.monogram && (
-                                                <p className="font-sans text-[9px] text-matteo-charcoal/80 dark:text-gray-400">
+                                                <p className="font-sans text-[10px] text-matteo-charcoal/80 dark:text-gray-400">
                                                     Monogram: <span className="text-matteo-stone">{item.customizations.monogram}</span>
                                                 </p>
                                             )}
@@ -93,7 +93,7 @@ export const CartSidebar: React.FC = () => {
                                         {item.id === 14 && <span className="text-matteo-orange ml-1">(Deposit)</span>}
                                     </span>
                                     {item.id === 14 && (
-                                        <span className="block font-sans text-[8px] uppercase tracking-[0.1em] text-matteo-stone mt-1">
+                                        <span className="block font-sans text-[10px] uppercase tracking-[0.1em] text-matteo-stone mt-1">
                                             Full commission: $185,000 · Pay the rest later
                                         </span>
                                     )}
@@ -102,7 +102,7 @@ export const CartSidebar: React.FC = () => {
                                 {/* Quantity Controls + Remove (no stepper on one-of-one pieces) */}
                                 <div className="flex items-center justify-between mt-3">
                                     {item.stock === 1 ? (
-                                        <span className="font-sans text-[9px] uppercase tracking-[0.2em] text-matteo-orange">
+                                        <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-matteo-orange">
                                             One of One
                                         </span>
                                     ) : (
@@ -128,7 +128,7 @@ export const CartSidebar: React.FC = () => {
                                     )}
                                     <button 
                                         onClick={() => removeFromCart(item.cartItemId)}
-                                        className="font-sans text-[9px] uppercase tracking-widest text-matteo-stone hover:text-matteo-orange transition-colors"
+                                        className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone hover:text-matteo-orange transition-colors"
                                     >
                                         Remove
                                     </button>
@@ -151,7 +151,7 @@ export const CartSidebar: React.FC = () => {
                 </p>
                 {cartItems.some(item => item.id === 14) && (
                     <div className="bg-matteo-orange/5 dark:bg-matteo-orange/10 border border-matteo-orange/20 rounded-sm p-3 mb-4">
-                        <p className="font-sans text-[9px] uppercase tracking-[0.1em] text-matteo-charcoal/60 dark:text-white/50 leading-relaxed">
+                        <p className="font-sans text-[10px] uppercase tracking-[0.1em] text-matteo-charcoal/60 dark:text-white/50 leading-relaxed">
                             <span className="text-matteo-orange font-medium">Deposit Item Included:</span> Your $25,000 deposit secures the Bespoke Crocodile Jacket commission. The remaining balance of $160,000 will be invoiced separately.
                         </p>
                     </div>

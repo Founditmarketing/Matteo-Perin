@@ -82,8 +82,10 @@ export const Navigation: React.FC = () => {
   const isHome = location.pathname === '/';
   const showSolidNav = scrolled && !mobileMenuOpen;
 
-  // Smart Contrast: Force White on Dark Hero pages (Home, Casa, The House, Bespoke, Lookbook)
-  const darkHeroPages = ['/', '/furniture', '/the-house', '/bespoke', '/lookbook/men', '/lookbook/women'];
+  // Smart Contrast: force white only on pages that truly open on a dark hero.
+  // (/bespoke and both lookbooks open on cream — white links with text-shadow
+  // halos were barely legible there.)
+  const darkHeroPages = ['/', '/furniture', '/the-house'];
   const hasDarkHero = darkHeroPages.includes(location.pathname);
   const textColorClass = (!showSolidNav && hasDarkHero)
     ? 'text-white [text-shadow:0_1px_8px_rgba(0,0,0,0.6),0_0_2px_rgba(0,0,0,0.4)]'
@@ -109,7 +111,7 @@ export const Navigation: React.FC = () => {
           onTouchEnd={endHold}
           onTouchCancel={endHold}
           onContextMenu={(e) => e.preventDefault()}
-          className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[300000] select-none touch-none focus:outline-none focus:ring-0 active:outline-none"
+          className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[300000] select-none touch-none"
           style={{ WebkitTouchCallout: 'none', WebkitUserSelect: 'none' }}
         >
           <SpinningLogo
@@ -161,7 +163,7 @@ export const Navigation: React.FC = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007Z" />
               </svg>
               {cartCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-matteo-orange text-white font-sans text-[9px] leading-4 text-center">
+                <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-matteo-orange text-white font-sans text-[10px] leading-4 text-center">
                   {cartCount}
                 </span>
               )}

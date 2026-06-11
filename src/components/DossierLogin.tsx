@@ -75,7 +75,7 @@ export const DossierLogin: React.FC = () => {
                 </div>
 
                 <div className="text-center mb-16">
-                    <span className="font-sans text-[9px] uppercase tracking-[0.4em] text-white/40 block mb-4">
+                    <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-white/40 block mb-4">
                         Secure Transmission
                     </span>
                     <h1 className="font-serif text-3xl md:text-4xl font-light tracking-wide text-white">
@@ -131,7 +131,7 @@ export const DossierLogin: React.FC = () => {
                 <div className="mt-12 text-center pointer-events-auto">
                     <button 
                         onClick={() => { setIsSignUp(!isSignUp); setError(null); }}
-                        className="font-sans text-[9px] uppercase tracking-[0.2em] text-white/30 hover:text-white transition-colors border-b border-transparent hover:border-white/30 pb-1"
+                        className="font-sans text-[10px] uppercase tracking-[0.2em] text-white/30 hover:text-white transition-colors border-b border-transparent hover:border-white/30 pb-1"
                     >
                         {isSignUp ? "Already a Patron? Authenticate here." : "New Client? Request Dossier setup."}
                     </button>

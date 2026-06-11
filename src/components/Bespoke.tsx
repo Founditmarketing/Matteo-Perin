@@ -326,7 +326,7 @@ export const Bespoke: React.FC = () => {
                             <Logo dark={false} className="w-10 h-10 opacity-50" />
                             <button
                                 onClick={() => { setIsFormOpen(false); setStep(0); setIsSubmitted(false); }}
-                                className="font-sans text-[9px] uppercase tracking-widest text-white/50 hover:text-white transition-colors flex items-center gap-2 group"
+                                className="font-sans text-[10px] uppercase tracking-widest text-white/50 hover:text-white transition-colors flex items-center gap-2 group"
                             >
                                 <span className="group-hover:mr-2 transition-all">End Session</span>
                                 <span className="text-xl">×</span>

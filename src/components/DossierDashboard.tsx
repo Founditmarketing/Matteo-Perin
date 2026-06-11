@@ -94,7 +94,7 @@ export const DossierDashboard: React.FC = () => {
                             <p className="font-serif text-sm text-white/60 leading-relaxed mb-8">
                                 Connect directly with the Master Tailor to begin a new bespoke journey or exotic leather commission.
                             </p>
-                            <button className="w-full border border-white/30 text-white font-sans text-[9px] uppercase tracking-[0.3em] py-4 hover:bg-white hover:text-black transition-colors duration-500">
+                            <button className="w-full border border-white/30 text-white font-sans text-[10px] uppercase tracking-[0.3em] py-4 hover:bg-white hover:text-black transition-colors duration-500">
                                 Open Secure Comms
                             </button>
                         </section>
@@ -116,7 +116,7 @@ export const DossierDashboard: React.FC = () => {
                                         <img src={order.image} alt={order.title} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" />
                                     </div>
                                     <div className="flex-1">
-                                        <span className="font-sans text-[9px] uppercase tracking-[0.3em] text-white/40 block mb-2">{order.category}</span>
+                                        <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-white/40 block mb-2">{order.category}</span>
                                         <h3 className="font-serif text-2xl tracking-wide text-white mb-3">{order.title}</h3>
                                         <span className="font-serif text-lg text-white/70">${order.price.toLocaleString()}</span>
                                     </div>

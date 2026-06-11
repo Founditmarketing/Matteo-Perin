@@ -302,7 +302,7 @@ export const WomensLookbook: React.FC = () => {
                                 <h2 className="font-serif text-4xl md:text-5xl text-matteo-charcoal dark:text-white mb-8">
                                     {selectedLook.title}
                                 </h2>
-                                <p className="font-serif text-lg text-gray-500 dark:text-gray-400 mb-12 leading-relaxed">
+                                <p className="font-serif text-lg text-matteo-stone dark:text-matteo-stone mb-12 leading-relaxed">
                                     A bespoke commission, tailored to the specific movements and environment of the client. Each detail is negotiable; the standard of excellence is not.
                                 </p>
 

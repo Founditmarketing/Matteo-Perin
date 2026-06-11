@@ -24,7 +24,7 @@ const EditorialCard: React.FC<{ product: Product; featured?: boolean }> = ({ pro
                 />
                 {/* Modern Hover Badge */}
                 <div className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                    <span className="bg-white/90 dark:bg-black/90 text-matteo-charcoal dark:text-white text-[9px] uppercase tracking-widest px-3 py-1 ">
+                    <span className="bg-white/90 dark:bg-black/90 text-matteo-charcoal dark:text-white text-[10px] uppercase tracking-widest px-3 py-1 ">
                         View
                     </span>
                 </div>
@@ -58,7 +58,7 @@ const GridCard: React.FC<{ product: Product }> = ({ product }) => {
 
                 {/* Modern "Quick Shop" Overlay on Hover */}
                 <div className="absolute inset-x-0 bottom-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex justify-between items-end bg-gradient-to-t from-black/60 to-transparent">
-                    <span className="text-white font-sans text-[9px] uppercase tracking-widest">
+                    <span className="text-white font-sans text-[10px] uppercase tracking-widest">
                         Quick Add +
                     </span>
                 </div>
@@ -69,7 +69,7 @@ const GridCard: React.FC<{ product: Product }> = ({ product }) => {
                     <h3 className="font-serif text-lg text-matteo-charcoal dark:text-white leading-tight mb-1 group-hover:text-matteo-orange transition-colors">
                         {product.title}
                     </h3>
-                    <p className="font-sans text-[9px] uppercase tracking-widest text-matteo-stone">
+                    <p className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone">
                         {product.category}
                     </p>
                 </div>

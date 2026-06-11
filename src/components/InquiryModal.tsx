@@ -40,7 +40,7 @@ const FloatingInput: React.FC<{
             )}
             <label
                 htmlFor={id}
-                className={`absolute left-0 font-sans text-[10px] uppercase tracking-widest transition-all duration-300 pointer-events-none ${isActive ? '-top-4 text-matteo-orange text-[8px]' : 'top-3 text-matteo-charcoal/40 dark:text-white/40'}`}
+                className={`absolute left-0 font-sans text-[10px] uppercase tracking-widest transition-all duration-300 pointer-events-none ${isActive ? '-top-4 text-matteo-orange text-[10px]' : 'top-3 text-matteo-charcoal/40 dark:text-white/40'}`}
             >
                 {label} {required && '*'}
             </label>
@@ -148,7 +148,7 @@ export const InquiryModal: React.FC = () => {
                             <div className="md:hidden flex items-center gap-4 mb-6 pb-6 border-b border-matteo-charcoal/10 dark:border-white/10">
                                 <img src={selectedProduct.image} alt={selectedProduct.title} className="w-16 h-16 object-cover object-top" />
                                 <div>
-                                    <span className="font-sans text-[8px] uppercase tracking-widest text-matteo-charcoal/50 dark:text-white/50 block mb-1">REF: MP-{selectedProduct.id.toString().padStart(4, '0')}</span>
+                                    <span className="font-sans text-[10px] uppercase tracking-widest text-matteo-charcoal/50 dark:text-white/50 block mb-1">REF: MP-{selectedProduct.id.toString().padStart(4, '0')}</span>
                                     <h3 className="font-serif text-lg leading-tight text-matteo-charcoal dark:text-white">{selectedProduct.title}</h3>
                                 </div>
                             </div>

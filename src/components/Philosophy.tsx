@@ -136,7 +136,7 @@ export const Philosophy: React.FC = () => {
                             ref={(el) => { observerRefs.current[index] = el; }}
                             className={`transition-all duration-1000 ease-out ${activeSection === index ? 'opacity-100 translate-y-0' : 'opacity-20 translate-y-12'}`}
                         >
-                            <span className="font-sans text-[9px] text-matteo-orange uppercase tracking-[0.25em] mb-6 block border-l-2 border-matteo-orange pl-4">
+                            <span className="font-sans text-[10px] text-matteo-orange uppercase tracking-[0.25em] mb-6 block border-l-2 border-matteo-orange pl-4">
                                 0{index + 1}. {section.sub}
                             </span>
                             <h3 className="font-serif text-3xl md:text-4xl text-matteo-charcoal dark:text-white mb-8 leading-tight">{section.title}</h3>

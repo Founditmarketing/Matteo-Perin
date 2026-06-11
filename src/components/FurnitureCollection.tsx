@@ -697,7 +697,7 @@ const CollectionCard: React.FC<{ piece: FurniturePiece; index: number; onOpen: (
 
           {/* Category Tag */}
           <div className="absolute top-4 left-4">
-            <span className="px-3 py-1 bg-white/10 backdrop-blur-sm text-white text-[9px] font-sans uppercase tracking-[0.2em]">
+            <span className="px-3 py-1 bg-white/10 backdrop-blur-sm text-white text-[10px] font-sans uppercase tracking-[0.2em]">
               {FURNITURE_CATEGORIES.find(c => c.id === piece.category)?.label || piece.category}
             </span>
           </div>

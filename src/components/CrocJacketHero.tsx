@@ -51,11 +51,8 @@ export const CrocJacketHero: React.FC = () => {
                     
                     {/* Availability badge on image */}
                     <div className="absolute bottom-4 left-4 flex items-center gap-2 z-10">
-                        <span className="relative flex h-2 w-2">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                        </span>
-                        <span className="font-sans text-[7px] uppercase tracking-[0.15em] text-white/80 bg-black/30 backdrop-blur-sm px-2 py-1">
+                        <span className="inline-flex rounded-full h-2 w-2 bg-matteo-orange"></span>
+                        <span className="font-sans text-[10px] uppercase tracking-[0.15em] text-white/80 bg-black/30 backdrop-blur-sm px-2 py-1">
                             Accepting Commissions
                         </span>
                     </div>
@@ -66,7 +63,7 @@ export const CrocJacketHero: React.FC = () => {
                     {/* Eyebrow */}
                     <div className="flex items-center gap-3 mb-5">
                         <span className="w-8 h-[1px] bg-matteo-orange" />
-                        <span className="font-sans text-[9px] uppercase tracking-[0.3em] text-matteo-orange">
+                        <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-matteo-orange">
                             Bespoke Exotics
                         </span>
                     </div>
@@ -82,11 +79,11 @@ export const CrocJacketHero: React.FC = () => {
                     {/* Price + Deposit */}
                     <div className="flex items-baseline gap-4 mb-4">
                         <span className="font-serif text-xl text-matteo-charcoal dark:text-white">$185,000</span>
-                        <span className="font-sans text-[8px] uppercase tracking-[0.15em] text-matteo-stone">Full Commission</span>
+                        <span className="font-sans text-[10px] uppercase tracking-[0.15em] text-matteo-stone">Full Commission</span>
                     </div>
                     <div className="flex items-baseline gap-2 mb-6">
                         <span className="font-serif text-base text-matteo-orange">$25,000</span>
-                        <span className="font-sans text-[7px] uppercase tracking-[0.12em] text-matteo-stone">Deposit to Reserve</span>
+                        <span className="font-sans text-[10px] uppercase tracking-[0.12em] text-matteo-stone">Deposit to Reserve</span>
                     </div>
 
                     {/* Description */}
@@ -104,7 +101,7 @@ export const CrocJacketHero: React.FC = () => {
                         ].map((stat) => (
                             <div key={stat.label} className="text-center">
                                 <span className="font-serif text-lg text-matteo-charcoal dark:text-white block mb-0.5">{stat.value}</span>
-                                <span className="font-sans text-[7px] uppercase tracking-[0.15em] text-matteo-stone">{stat.label}</span>
+                                <span className="font-sans text-[10px] uppercase tracking-[0.15em] text-matteo-stone">{stat.label}</span>
                             </div>
                         ))}
                     </div>
@@ -130,7 +127,7 @@ export const CrocJacketHero: React.FC = () => {
                     <RevealOnScroll>
                         <div className="flex items-center gap-4 mb-16">
                             <span className="w-12 h-[1px] bg-matteo-orange" />
-                            <span className="font-sans text-[9px] uppercase tracking-[0.3em] text-matteo-orange">
+                            <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-matteo-orange">
                                 Bespoke Exotics
                             </span>
                         </div>
@@ -160,11 +157,8 @@ export const CrocJacketHero: React.FC = () => {
 
                                     {/* Availability badge */}
                                     <div className="absolute bottom-6 left-6 flex items-center gap-2.5 z-10">
-                                        <span className="relative flex h-2 w-2">
-                                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                                        </span>
-                                        <span className="font-sans text-[8px] uppercase tracking-[0.2em] text-white/80 bg-black/30 backdrop-blur-sm px-2 py-1">
+                                        <span className="inline-flex rounded-full h-2 w-2 bg-matteo-orange"></span>
+                                        <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-white/80 bg-black/30 backdrop-blur-sm px-2 py-1">
                                             Accepting Commissions
                                         </span>
                                     </div>
@@ -186,11 +180,11 @@ export const CrocJacketHero: React.FC = () => {
                                 <div className="mb-8 pb-8 border-b border-matteo-charcoal/10 dark:border-white/10">
                                     <div className="flex items-baseline gap-3 mb-2">
                                         <span className="font-serif text-2xl text-matteo-charcoal dark:text-white">$185,000</span>
-                                        <span className="font-sans text-[9px] uppercase tracking-[0.15em] text-matteo-stone">Full Commission</span>
+                                        <span className="font-sans text-[10px] uppercase tracking-[0.15em] text-matteo-stone">Full Commission</span>
                                     </div>
                                     <div className="flex items-baseline gap-2">
                                         <span className="font-serif text-lg text-matteo-orange">$25,000</span>
-                                        <span className="font-sans text-[8px] uppercase tracking-[0.15em] text-matteo-stone">Deposit to Reserve</span>
+                                        <span className="font-sans text-[10px] uppercase tracking-[0.15em] text-matteo-stone">Deposit to Reserve</span>
                                     </div>
                                 </div>
 
@@ -209,7 +203,7 @@ export const CrocJacketHero: React.FC = () => {
                                     ].map((stat) => (
                                         <div key={stat.label} className="text-center">
                                             <span className="font-serif text-lg text-matteo-charcoal dark:text-white block mb-1">{stat.value}</span>
-                                            <span className="font-sans text-[7px] uppercase tracking-[0.2em] text-matteo-stone">{stat.label}</span>
+                                            <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-matteo-stone">{stat.label}</span>
                                         </div>
                                     ))}
                                 </div>
@@ -224,7 +218,7 @@ export const CrocJacketHero: React.FC = () => {
                                     </Link>
                                     <Link
                                         to="/bespoke-crocodile-jacket"
-                                        className="font-sans text-[9px] uppercase tracking-[0.2em] text-matteo-stone hover:text-matteo-orange transition-colors border-b border-matteo-charcoal/10 dark:border-white/10 hover:border-matteo-orange pb-1"
+                                        className="font-sans text-[10px] uppercase tracking-[0.2em] text-matteo-stone hover:text-matteo-orange transition-colors border-b border-matteo-charcoal/10 dark:border-white/10 hover:border-matteo-orange pb-1"
                                     >
                                         View Details →
                                     </Link>

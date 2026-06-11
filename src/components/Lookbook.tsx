@@ -153,7 +153,7 @@ export const Lookbook: React.FC = () => {
 
                                 <div className="mt-4 flex justify-between items-end opacity-0 group-hover:opacity-100 transition-opacity duration-700 transform translate-y-2 group-hover:translate-y-0">
                                     <span className="font-serif text-matteo-charcoal dark:text-white text-lg">{look.title}</span>
-                                    <span className="font-sans text-[9px] uppercase tracking-widest text-matteo-stone">View Detail</span>
+                                    <span className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone">View Detail</span>
                                 </div>
                             </motion.div>
                         ))}

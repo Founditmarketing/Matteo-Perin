@@ -464,7 +464,7 @@ export const InventoryProductPage: React.FC = () => {
                                     {/* Image counter & dot indicators */}
                                     {currentImages.length > 1 && (
                                         <div className="absolute bottom-4 left-0 right-0 flex flex-col items-center gap-2 z-10">
-                                            <span className="font-sans text-[9px] uppercase tracking-widest text-matteo-charcoal/50 dark:text-white/50">
+                                            <span className="font-sans text-[10px] uppercase tracking-widest text-matteo-charcoal/50 dark:text-white/50">
                                                 {activeImageIndex + 1} / {currentImages.length}
                                             </span>
                                             <div className="flex justify-center gap-1.5">

@@ -263,7 +263,7 @@ export const DigitalConcierge: React.FC = () => {
                 <div className="w-12 h-12 rounded-full border border-white flex items-center justify-center mb-2">
                     <span className="font-serif italic text-white text-xl">M</span>
                 </div>
-                <span className="font-sans text-[8px] uppercase tracking-[0.4em] text-white">Concierge</span>
+                <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-white">Concierge</span>
             </button>
 
             {/* The Elegant Drawer Subsystem */}
@@ -325,7 +325,7 @@ export const DigitalConcierge: React.FC = () => {
                                             </div>
                                         ) : (
                                             <div className="w-full flex flex-col items-start pr-6">
-                                                <span className="font-sans text-[8px] uppercase tracking-[0.4em] text-white/30 mb-4 block">Concierge Analysis</span>
+                                                <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-white/30 mb-4 block">Concierge Analysis</span>
                                                 {/* Poetic AI Markdown Box */}
                                                 <div className="prose prose-invert prose-p:text-lg md:prose-p:text-xl text-left text-white/70 prose-a:text-white prose-a:border-b prose-a:border-white/30 hover:prose-a:border-white w-full leading-relaxed mb-8">
                                                     <ReactMarkdown>{msg.text}</ReactMarkdown>
@@ -350,7 +350,7 @@ export const DigitalConcierge: React.FC = () => {
                                                                     </div>
                                                                     <div className="text-left">
                                                                         <h3 className="font-serif text-2xl text-white mb-2 tracking-wide leading-tight group-hover:text-white/80 transition-colors">{product.title}</h3>
-                                                                        <span className="font-sans text-[9px] uppercase tracking-[0.4em] text-white/50 group-hover:text-white transition-all duration-500 underline decoration-white/20 underline-offset-4">
+                                                                        <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-white/50 group-hover:text-white transition-all duration-500 underline decoration-white/20 underline-offset-4">
                                                                             Discover Piece &rarr;
                                                                         </span>
                                                                     </div>
@@ -366,7 +366,7 @@ export const DigitalConcierge: React.FC = () => {
                                                         <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
                                                         <h3 className="font-serif text-2xl text-white tracking-widest uppercase mb-4">Dossier Transmitted</h3>
                                                         <div className="w-8 h-[1px] bg-white/30 mx-auto mb-4"></div>
-                                                        <p className="font-sans text-[9px] uppercase tracking-[0.3em] text-white/50 leading-relaxed">The Atelier has received your initial specifications. <br/><br/>Casa Matteo Perin will contact you shortly.</p>
+                                                        <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-white/50 leading-relaxed">The Atelier has received your initial specifications. <br/><br/>Casa Matteo Perin will contact you shortly.</p>
                                                     </div>
                                                 )}
                                             </div>
@@ -409,11 +409,11 @@ export const DigitalConcierge: React.FC = () => {
                                         disabled={!input.trim() || isTyping}
                                         className="px-6 h-12 bg-white text-black flex items-center justify-center disabled:opacity-10 disabled:bg-transparent disabled:text-white transition-all duration-500 hover:bg-[#eaeaea] hover:scale-[1.02] active:scale-95"
                                     >
-                                        <span className="font-sans text-[9px] font-bold leading-none uppercase tracking-[0.2em]">Send</span>
+                                        <span className="font-sans text-[10px] font-bold leading-none uppercase tracking-[0.2em]">Send</span>
                                     </button>
                                 </form>
                                 <div className="text-center mt-3 pointer-events-none">
-                                    <span className="font-sans text-[8px] uppercase tracking-[0.5em] text-white/20">The Concierge Intelligence</span>
+                                    <span className="font-sans text-[10px] uppercase tracking-[0.5em] text-white/20">The Concierge Intelligence</span>
                                 </div>
                             </div>
                         </motion.div>

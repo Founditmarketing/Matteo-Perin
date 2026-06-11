@@ -106,7 +106,7 @@ export const ProductDetail: React.FC = () => {
 
                 {/* Breadcrumb */}
                 <div className="mb-12 flex justify-center md:justify-start">
-                    <Link to="/collection" className="font-sans text-[9px] uppercase tracking-luxury text-matteo-stone hover:text-matteo-orange transition-colors p-4 -ml-4">
+                    <Link to="/collection" className="font-sans text-[10px] uppercase tracking-luxury text-matteo-stone hover:text-matteo-orange transition-colors p-4 -ml-4">
                         Collection
                     </Link>
                 </div>
@@ -165,19 +165,19 @@ export const ProductDetail: React.FC = () => {
                                 {/* The Fact Sheet */}
                                 <div className="grid grid-cols-2 gap-4 border-t border-b border-matteo-charcoal/10 dark:border-white/10 py-6 mb-8">
                                     <div>
-                                        <span className="font-sans text-[9px] uppercase tracking-luxury text-matteo-stone block mb-1">Origin</span>
+                                        <span className="font-sans text-[10px] uppercase tracking-luxury text-matteo-stone block mb-1">Origin</span>
                                         <span className="font-serif text-lg">Biella, Italy</span>
                                     </div>
                                     <div>
-                                        <span className="font-sans text-[9px] uppercase tracking-luxury text-matteo-stone block mb-1">Material</span>
+                                        <span className="font-sans text-[10px] uppercase tracking-luxury text-matteo-stone block mb-1">Material</span>
                                         <span className="font-serif text-lg">{product.id === 14 ? 'Nile or Porosus Crocodile' : 'Super 200s Wool'}</span>
                                     </div>
                                     <div>
-                                        <span className="font-sans text-[9px] uppercase tracking-luxury text-matteo-stone block mb-1">Time</span>
+                                        <span className="font-sans text-[10px] uppercase tracking-luxury text-matteo-stone block mb-1">Time</span>
                                         <span className="font-serif text-lg">{product.id === 14 ? '100+ Hours' : '65+ Hours'}</span>
                                     </div>
                                     <div>
-                                        <span className="font-sans text-[9px] uppercase tracking-luxury text-matteo-stone block mb-1">Edition</span>
+                                        <span className="font-sans text-[10px] uppercase tracking-luxury text-matteo-stone block mb-1">Edition</span>
                                         <span className="font-serif text-lg">Bespoke</span>
                                     </div>
                                 </div>
@@ -196,7 +196,7 @@ export const ProductDetail: React.FC = () => {
                                     </button>
                                 </Magnetic>
                                 {product.id === 14 && (
-                                    <p className="font-sans text-[9px] uppercase tracking-[0.12em] text-matteo-stone text-center mb-12 leading-relaxed">
+                                    <p className="font-sans text-[10px] uppercase tracking-[0.12em] text-matteo-stone text-center mb-12 leading-relaxed">
                                         Remaining balance of $160,000 invoiced before production begins
                                     </p>
                                 )}

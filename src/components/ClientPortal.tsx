@@ -82,7 +82,7 @@ export const ClientPortal: React.FC = () => {
                                     </div>
                                     <div className="flex justify-between items-center pt-2">
                                         <span className="font-sans text-xs text-white">Current Stage: <span className="font-serif italic text-gray-400">{currentStage}</span></span>
-                                        <span className="font-mono text-[9px] text-gray-600 uppercase border border-white/5 px-2 py-1">{location}</span>
+                                        <span className="font-mono text-[10px] text-gray-600 uppercase border border-white/5 px-2 py-1">{location}</span>
                                     </div>
                                 </div>
                             </div>
@@ -144,7 +144,7 @@ export const ClientPortal: React.FC = () => {
                                 onClick={() => navigate(`/product/${item.id}`)}
                             >
                                 <div className="aspect-[4/5] bg-white/5 overflow-hidden mb-4 relative">
-                                    <div className="absolute top-2 left-2 bg-matteo-orange text-black font-sans text-[8px] uppercase tracking-widest px-2 py-1 z-20">
+                                    <div className="absolute top-2 left-2 bg-matteo-orange text-black font-sans text-[10px] uppercase tracking-widest px-2 py-1 z-20">
                                         Reserved
                                     </div>
                                     <img

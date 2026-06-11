@@ -176,7 +176,7 @@ export const ArticleDetail: React.FC = () => {
                     <div className="hidden lg:block w-1/5 h-full">
                         <div className="sticky top-32 flex flex-col gap-12">
                             <div>
-                                <span className="font-sans text-[9px] uppercase tracking-widest text-matteo-stone block mb-4">Share</span>
+                                <span className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone block mb-4">Share</span>
                                 <div className="flex flex-col gap-2 items-start">
                                     <button className="font-serif italic text-matteo-charcoal dark:text-white hover:text-matteo-orange dark:hover:text-matteo-orange transition-colors">Instagram</button>
                                     <button className="font-serif italic text-matteo-charcoal dark:text-white hover:text-matteo-orange dark:hover:text-matteo-orange transition-colors">Facebook</button>
@@ -184,7 +184,7 @@ export const ArticleDetail: React.FC = () => {
                                 </div>
                             </div>
                             <div>
-                                <span className="font-sans text-[9px] uppercase tracking-widest text-matteo-stone block mb-4">Reading Time</span>
+                                <span className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone block mb-4">Reading Time</span>
                                 <span className="font-serif text-xl text-matteo-charcoal dark:text-white">4 Min</span>
                             </div>
                         </div>
@@ -227,11 +227,11 @@ export const ArticleDetail: React.FC = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-24 w-full">
                             <RevealOnScroll className="md:mt-12">
                                 <img src={IMAGES.atelier} alt="Process 1" className="w-full aspect-[3/4] object-cover grayscale hover:grayscale-0 transition-all duration-1000" />
-                                <span className="block mt-2 font-sans text-[9px] uppercase tracking-widest text-matteo-stone">Fig 1. Pattern Cutting</span>
+                                <span className="block mt-2 font-sans text-[10px] uppercase tracking-widest text-matteo-stone">Fig 1. Pattern Cutting</span>
                             </RevealOnScroll>
                             <RevealOnScroll delay={0.2}>
                                 <img src={IMAGES.jacket_detail} alt="Process 2" className="w-full aspect-[3/4] object-cover grayscale hover:grayscale-0 transition-all duration-1000" />
-                                <span className="block mt-2 font-sans text-[9px] uppercase tracking-widest text-matteo-stone">Fig 2. Fabric Selection</span>
+                                <span className="block mt-2 font-sans text-[10px] uppercase tracking-widest text-matteo-stone">Fig 2. Fabric Selection</span>
                             </RevealOnScroll>
                         </div>
 

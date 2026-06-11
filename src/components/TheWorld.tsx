@@ -135,12 +135,12 @@ export const TheWorld: React.FC = () => {
                    {/* Context HUD */}
                    <div className="flex items-center gap-6 mb-8 border-b border-white/20 pb-8">
                        <div>
-                           <span className="font-sans text-[9px] uppercase tracking-widest text-white/50 block mb-1">Location</span>
+                           <span className="font-sans text-[10px] uppercase tracking-widest text-white/50 block mb-1">Location</span>
                            <span className="font-sans text-sm uppercase tracking-widest text-white">{activePillar.context}</span>
                        </div>
                        <div className="h-8 w-[1px] bg-white/20"></div>
                        <div>
-                           <span className="font-sans text-[9px] uppercase tracking-widest text-white/50 block mb-1">Local Time</span>
+                           <span className="font-sans text-[10px] uppercase tracking-widest text-white/50 block mb-1">Local Time</span>
                            <span className="font-sans text-sm uppercase tracking-widest text-white">{activePillar.time}</span>
                        </div>
                    </div>

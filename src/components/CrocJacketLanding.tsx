@@ -541,12 +541,9 @@ export const CrocJacketLanding: React.FC = () => {
 
                         {/* Availability Indicator */}
                         <motion.div variants={fadeUpVariant} className="flex items-center gap-3 mb-10">
-                            <span className="relative flex h-2.5 w-2.5">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-                            </span>
-                            <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-emerald-600 dark:text-emerald-400">
-                                Accepting Commissions — 4 slots remaining
+                            <span className="inline-flex rounded-full h-2.5 w-2.5 bg-matteo-orange"></span>
+                            <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-matteo-orange">
+                                Accepting Commissions — Three Per Year
                             </span>
                         </motion.div>
 
@@ -599,15 +596,15 @@ export const CrocJacketLanding: React.FC = () => {
                         <motion.div variants={fadeUpVariant} className="grid grid-cols-3 gap-4 py-6 border-t border-b border-matteo-charcoal/10 dark:border-white/10 mb-8">
                             <div className="text-center">
                                 <div className="font-serif text-lg text-matteo-charcoal dark:text-white mb-1">100+</div>
-                                <div className="font-sans text-[8px] uppercase tracking-[0.15em] text-matteo-stone">Hours Crafted</div>
+                                <div className="font-sans text-[10px] uppercase tracking-[0.15em] text-matteo-stone">Hours Crafted</div>
                             </div>
                             <div className="text-center border-x border-matteo-charcoal/10 dark:border-white/10">
                                 <div className="font-serif text-lg text-matteo-charcoal dark:text-white mb-1">1 of 1</div>
-                                <div className="font-sans text-[8px] uppercase tracking-[0.15em] text-matteo-stone">Unique Piece</div>
+                                <div className="font-sans text-[10px] uppercase tracking-[0.15em] text-matteo-stone">Unique Piece</div>
                             </div>
                             <div className="text-center">
                                 <div className="font-serif text-lg text-matteo-charcoal dark:text-white mb-1">Italy</div>
-                                <div className="font-sans text-[8px] uppercase tracking-[0.15em] text-matteo-stone">Handcrafted</div>
+                                <div className="font-sans text-[10px] uppercase tracking-[0.15em] text-matteo-stone">Handcrafted</div>
                             </div>
                         </motion.div>
 
@@ -798,9 +795,9 @@ export const CrocJacketLanding: React.FC = () => {
                 <div className="flex-shrink-0">
                     <div className="flex items-baseline gap-1.5">
                         <span className="font-serif text-lg text-matteo-orange">$25,000</span>
-                        <span className="font-sans text-[7px] uppercase tracking-[0.1em] text-matteo-stone">Deposit</span>
+                        <span className="font-sans text-[10px] uppercase tracking-[0.1em] text-matteo-stone">Deposit</span>
                     </div>
-                    <div className="font-sans text-[7px] uppercase tracking-[0.1em] text-matteo-stone">Full price: $185,000</div>
+                    <div className="font-sans text-[10px] uppercase tracking-[0.1em] text-matteo-stone">Full price: $185,000</div>
                 </div>
                 <button
                     onClick={handleBuyNow}

@@ -121,19 +121,19 @@ export const Checkout: React.FC = () => {
                                 </div>
                                 <p className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone mt-1 mb-3">{item.category}</p>
                                 {item.id === 14 && (
-                                    <p className="font-sans text-[9px] uppercase tracking-wider text-matteo-orange mb-3">
+                                    <p className="font-sans text-[10px] uppercase tracking-wider text-matteo-orange mb-3">
                                         Commission deposit · Full commission $185,000 · Balance invoiced before production
                                     </p>
                                 )}
                                 {item.customizations && (
                                     <div className="mb-3">
-                                        {item.customizations.material && <p className="font-sans text-[9px] uppercase tracking-wider text-matteo-charcoal/60 dark:text-white/60">{item.customizations.material}</p>}
-                                        {item.customizations.monogram && <p className="font-sans text-[9px] uppercase tracking-wider text-matteo-charcoal/60 dark:text-white/60">Monogram: {item.customizations.monogram}</p>}
+                                        {item.customizations.material && <p className="font-sans text-[10px] uppercase tracking-wider text-matteo-charcoal/60 dark:text-white/60">{item.customizations.material}</p>}
+                                        {item.customizations.monogram && <p className="font-sans text-[10px] uppercase tracking-wider text-matteo-charcoal/60 dark:text-white/60">Monogram: {item.customizations.monogram}</p>}
                                     </div>
                                 )}
                                 <div className="flex items-center justify-between">
                                     {item.stock === 1 ? (
-                                        <span className="font-sans text-[9px] uppercase tracking-[0.2em] text-matteo-orange">
+                                        <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-matteo-orange">
                                             One of One
                                         </span>
                                     ) : (
@@ -159,7 +159,7 @@ export const Checkout: React.FC = () => {
                                     )}
                                     <button
                                         onClick={() => removeFromCart(item.cartItemId)}
-                                        className="font-sans text-[9px] uppercase tracking-widest text-matteo-stone hover:text-matteo-orange transition-colors"
+                                        className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone hover:text-matteo-orange transition-colors"
                                     >
                                         Remove
                                     </button>

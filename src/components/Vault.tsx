@@ -94,7 +94,7 @@ export const Vault: React.FC = () => {
                         </div>
 
                         <div className="h-4 flex items-center justify-center">
-                            {error && <p className="text-[#bf360c] text-[9px] tracking-[0.4em] uppercase font-sans animate-bounce">Access Denied</p>}
+                            {error && <p className="text-[#CB5C38] text-[10px] tracking-[0.4em] uppercase font-sans animate-bounce">Access Denied</p>}
                         </div>
 
                         <button type="submit" className="group relative overflow-hidden border border-white/20 py-6 font-sans text-[10px] uppercase tracking-[0.4em] transition-all duration-700">
@@ -104,7 +104,7 @@ export const Vault: React.FC = () => {
                     </form>
 
                     <div className="mt-24">
-                        <Link to="/" className="inline-block border-b border-white/20 pb-2 text-[9px] font-sans uppercase tracking-[0.4em] text-white/30 hover:text-white hover:border-white transition-all duration-700">
+                        <Link to="/" className="inline-block border-b border-white/20 pb-2 text-[10px] font-sans uppercase tracking-[0.4em] text-white/30 hover:text-white hover:border-white transition-all duration-700">
                             Return to Surface
                         </Link>
                     </div>
@@ -130,7 +130,7 @@ export const Vault: React.FC = () => {
                     <span className="font-sans text-[10px] uppercase tracking-widest text-white font-medium">Exit Vault</span>
                 </Link>
                 <div className="text-right">
-                    <span className="font-sans text-[9px] uppercase tracking-[0.3em] text-matteo-stone block mb-1">Private Stock</span>
+                    <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-matteo-stone block mb-1">Private Stock</span>
                     <span className="font-serif italic text-white/40">Casa Matteo Perin</span>
                 </div>
             </div>
@@ -187,7 +187,7 @@ export const Vault: React.FC = () => {
                                     />
                                     <div className="absolute inset-0 z-30 cursor-crosshair"></div>
                                     <div className="absolute bottom-8 right-8 z-40 bg-black/80  px-6 py-4 border border-white/10 shadow-2xl">
-                                        <span className="font-sans text-[8px] uppercase tracking-[0.4em] text-white/40 block mb-1">Status</span>
+                                        <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-white/40 block mb-1">Status</span>
                                         <span className="font-serif italic text-white/90 text-lg">Available</span>
                                     </div>
                                 </RevealOnScroll>
@@ -198,7 +198,7 @@ export const Vault: React.FC = () => {
                                 <RevealOnScroll delay={0.2}>
                                     <div className="flex items-center gap-6 mb-10">
                                         <div className="w-16 h-[1px] bg-white/20"></div>
-                                        <span className="font-sans text-[9px] uppercase tracking-[0.5em] text-white/40">
+                                        <span className="font-sans text-[10px] uppercase tracking-[0.5em] text-white/40">
                                             Archive No. {item.category.split(' ')[1] || '001'}
                                         </span>
                                     </div>
@@ -214,19 +214,19 @@ export const Vault: React.FC = () => {
                                     {/* Spec Sheet Grid */}
                                     <div className="grid grid-cols-2 gap-y-12 gap-x-8 mb-16 border-t border-b border-white/10 py-12">
                                         <div>
-                                            <span className="font-sans text-[8px] uppercase tracking-[0.4em] text-white/30 block mb-3">Valuation</span>
+                                            <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-white/30 block mb-3">Valuation</span>
                                             <span className="font-serif text-2xl text-white/90">${item.price.toLocaleString()}</span>
                                         </div>
                                         <div>
-                                            <span className="font-sans text-[8px] uppercase tracking-[0.4em] text-white/30 block mb-3">Edition</span>
+                                            <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-white/30 block mb-3">Edition</span>
                                             <span className="font-serif text-2xl text-white/90 italic">Pièce Unique</span>
                                         </div>
                                         <div>
-                                            <span className="font-sans text-[8px] uppercase tracking-[0.4em] text-white/30 block mb-3">Acquisition</span>
+                                            <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-white/30 block mb-3">Acquisition</span>
                                             <span className="font-serif text-2xl text-white/90 italic">Private</span>
                                         </div>
                                         <div>
-                                            <span className="font-sans text-[8px] uppercase tracking-[0.4em] text-white/30 block mb-3">Location</span>
+                                            <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-white/30 block mb-3">Location</span>
                                             <span className="font-serif text-2xl text-white/90 italic">Milan Vault</span>
                                         </div>
                                     </div>

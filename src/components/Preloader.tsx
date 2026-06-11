@@ -63,7 +63,7 @@ export const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
              </div>
              
              <div className="flex flex-col items-center gap-4">
-                 <span className="font-sans text-[9px] uppercase tracking-[0.3em] text-matteo-charcoal">
+                 <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-matteo-charcoal">
                     {progress < 100 ? 'Atelier Loading' : 'Welcome'}
                  </span>
                  <div className="w-32 h-[1px] bg-matteo-charcoal/10 relative overflow-hidden">

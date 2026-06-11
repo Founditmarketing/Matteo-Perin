@@ -33,7 +33,7 @@ const SecurityNetwork: React.FC = () => {
 
         const animate = () => {
             ctx.clearRect(0, 0, width, height);
-            ctx.fillStyle = '#F06436'; // Matteo Orange
+            ctx.fillStyle = '#CB5C38'; // Matteo Orange
             ctx.strokeStyle = 'rgba(240, 100, 54, 0.15)'; // Faint orange lines
 
             particles.forEach((p, i) => {
@@ -133,7 +133,7 @@ export const PrivateAccess: React.FC = () => {
                     <h1 className="font-serif text-3xl md:text-4xl font-light mb-2 tracking-tight text-white">
                         The Vault
                     </h1>
-                    <p className="font-sans text-[9px] uppercase tracking-[0.3em] text-gray-500 mb-16">
+                    <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-gray-500 mb-16">
                         By Invitation Only
                     </p>
 
@@ -157,17 +157,17 @@ export const PrivateAccess: React.FC = () => {
                             {/* Status Message Overlay */}
                             <div className="absolute top-full left-0 w-full text-center mt-4">
                                 {status === 'verifying' && (
-                                    <span className="font-mono text-[9px] text-matteo-orange animate-pulse">
+                                    <span className="font-mono text-[10px] text-matteo-orange animate-pulse">
                                         VERIFYING IDENTITY...
                                     </span>
                                 )}
                                 {status === 'denied' && (
-                                    <span className="font-mono text-[9px] text-red-500">
+                                    <span className="font-mono text-[10px] text-red-500">
                                         ACCESS DENIED
                                     </span>
                                 )}
                                 {status === 'granted' && (
-                                    <span className="font-mono text-[9px] text-green-500">
+                                    <span className="font-mono text-[10px] text-green-500">
                                         WELCOME
                                     </span>
                                 )}
@@ -183,7 +183,7 @@ export const PrivateAccess: React.FC = () => {
                         `}
                         >
                             <div className="absolute inset-0 bg-matteo-orange translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)]"></div>
-                            <span className="relative z-10 font-sans text-[9px] uppercase tracking-[0.2em] group-hover:text-black transition-colors duration-500">
+                            <span className="relative z-10 font-sans text-[10px] uppercase tracking-[0.2em] group-hover:text-black transition-colors duration-500">
                                 Unlock
                             </span>
                         </button>
