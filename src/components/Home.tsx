@@ -11,7 +11,6 @@ import { Contact } from './Contact';
 import { Interlude } from './Interlude';
 import { CrocJacketHero } from './CrocJacketHero';
 import { HiddenInventoryTest } from './HiddenInventoryTest';
-import { TheSeam } from './TheSeam';
 
 interface HomeProps {
   startAnimation?: boolean;
@@ -38,7 +37,6 @@ export const Home: React.FC<HomeProps> = ({ startAnimation = true }) => {
       <Collection />
       <CrocJacketHero />
       <Interlude />
-      <TheSeam />
       <Contact />
     </>
   );
