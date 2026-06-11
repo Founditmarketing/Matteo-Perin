@@ -89,12 +89,16 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 
-  <!-- Non-blocking Google Fonts (swap = text appears immediately with fallback) -->
+  <!-- Google Fonts. Loaded normally (preconnect above + display=swap in the URL):
+       the old media="print" onload hack deferred ALL font CSS until after load,
+       guaranteeing a long flash of Times/Arial on a typography-led site. -->
   <link
     href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap"
-    rel="stylesheet" media="print" onload="this.media='all'" />
+    rel="stylesheet" />
+
+  <!-- Without JS the IntersectionObserver never reveals scroll content -->
   <noscript>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet" />
+    <style>.reveal-hidden{opacity:1 !important;transform:none !important}</style>
   </noscript>
 
   <!-- PWA Manifest -->
@@ -110,6 +114,8 @@
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       if (typeof Lenis === 'undefined') return;
+      // Respect reduced-motion: native scrolling, no smoothing layer
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
       const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
       const lenis = new Lenis({
         duration: 1.2,

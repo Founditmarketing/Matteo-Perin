@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { motion, useScroll, useTransform, useSpring, useMotionValue } from 'framer-motion';
 import { Magnetic } from './Magnetic';
+import { ResponsiveImage } from './ResponsiveImage';
 import { useNavigate } from 'react-router-dom';
 
 // Scroll-Driven DualHero (Scrollytelling)
@@ -51,14 +52,14 @@ export const DualHero: React.FC = () => {
         mouseY.set(y * 15);
     };
 
-    // Specific local assets
+    // Specific local assets (.webp bases — ResponsiveImage serves -sm/-md/-lg variants)
     const slide1 = {
-        image: "/assets/hero_grand_estate.jpg",
+        image: "/assets/hero_grand_estate.webp",
         subtitle: "BORN IN EXCELLENCE",
         title: "Grand Estate"
     };
     const slide2 = {
-        image: "/assets/hero_teton_buffalo_v2.jpg",
+        image: "/assets/hero_teton_buffalo_v2.webp",
         subtitle: "LIVED IN THE WORLD",
         title: "Teton Bison"
     };
@@ -96,14 +97,20 @@ export const DualHero: React.FC = () => {
                         To get a clean "Intro -> Scroll" handoff without complex layout effects, we can just rely on the scroll scale starting at 1.
                         Let's apply the Intro scale to the IMAGE itself, separate from the container scroll scale.
                      */}
-                    <motion.img
-                        src={slide1.image}
-                        alt={slide1.title}
-                        className="w-full h-full object-cover"
+                    <motion.div
+                        className="w-full h-full"
                         initial={{ scale: 1.05 }}
                         animate={{ scale: 1 }}
                         transition={{ duration: 1.0, ease: "easeOut" }}
-                    />
+                    >
+                        <ResponsiveImage
+                            baseSrc={slide1.image}
+                            alt="The grand estate — where the house's Italian provenance begins"
+                            className="w-full h-full object-cover"
+                            fetchPriority="high"
+                            loading="eager"
+                        />
+                    </motion.div>
                     {/* Dark gradient for text readability */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/10" />
                 </motion.div>
@@ -113,10 +120,11 @@ export const DualHero: React.FC = () => {
                     className="absolute inset-0 w-full h-full z-10"
                     style={{ opacity: natureOpacity, x: springX, y: bgY, scale }}
                 >
-                    <img
-                        src={slide2.image}
-                        alt={slide2.title}
+                    <ResponsiveImage
+                        baseSrc={slide2.image}
+                        alt="Bison beneath the Tetons — the Wyoming frontier the pieces are proven in"
                         className="w-full h-full object-cover"
+                        loading="eager"
                     />
                     {/* Dark gradient for text readability */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/10" />

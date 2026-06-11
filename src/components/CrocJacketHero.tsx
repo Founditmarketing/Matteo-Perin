@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useScroll, useTransform, useSpring, useInView } from 'framer-motion';
 import { RevealOnScroll } from './RevealOnScroll';
+import { ResponsiveImage } from './ResponsiveImage';
 
 /**
  * CrocJacketHero – Homepage feature for the Bespoke Crocodile Jacket.
@@ -40,8 +41,8 @@ export const CrocJacketHero: React.FC = () => {
             <div className="block lg:hidden">
                 {/* Full-width image — NO parallax, just a clean static image */}
                 <div className="relative w-full overflow-hidden">
-                    <img
-                        src="/assets/croc-jacket/matteo_croc_new_1.jpg"
+                    <ResponsiveImage
+                        baseSrc="/assets/croc-jacket/matteo_croc_new_1.webp"
                         alt="Bespoke Crocodile Jacket by Matteo Perin"
                         className="w-full aspect-[3/4] object-cover object-center"
                     />
@@ -144,12 +145,16 @@ export const CrocJacketHero: React.FC = () => {
                                     ref={imageContainerRef}
                                     className="relative aspect-[3/4] overflow-hidden bg-[#EBEBEB] dark:bg-[#1a1a1a] group"
                                 >
-                                    <motion.img
-                                        src="/assets/croc-jacket/matteo_croc_new_1.jpg"
-                                        alt="Bespoke Crocodile Jacket by Matteo Perin"
-                                        className="w-full h-full object-cover object-[center_30%] transition-transform duration-[2s] ease-out group-hover:scale-[1.03] dark:brightness-90"
+                                    <motion.div
+                                        className="w-full h-full transition-transform duration-[2s] ease-out group-hover:scale-[1.03]"
                                         style={{ y: imageSpring, scale: scaleSpring }}
-                                    />
+                                    >
+                                        <ResponsiveImage
+                                            baseSrc="/assets/croc-jacket/matteo_croc_new_1.webp"
+                                            alt="Bespoke Crocodile Jacket by Matteo Perin"
+                                            className="w-full h-full object-cover object-[center_30%] dark:brightness-90"
+                                        />
+                                    </motion.div>
                                     {/* Subtle vignette */}
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent pointer-events-none" />
 

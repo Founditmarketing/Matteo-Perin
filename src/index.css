@@ -91,16 +91,47 @@ html.dark body {
   }
 }
 
-/* Reveal On Scroll Animation Classes — visible by default to prevent Lenis scroll issues */
+/* Reveal On Scroll Animation Classes.
+   RevealOnScroll.tsx guards against stuck-hidden states (immediate viewport
+   check on mount + fast-scroll fallback), so elements can safely start hidden. */
 .reveal-hidden {
-  opacity: 1;
-  transform: translateY(0);
-  transition: opacity 0.6s ease-out, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.7s ease-out, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .reveal-visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* Reduced motion: no entrance choreography, no looping attention animations */
+@media (prefers-reduced-motion: reduce) {
+  .reveal-hidden {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .animate-fade-in-up {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .animate-bounce,
+  .animate-ping,
+  .animate-pulse,
+  .animate-marquee,
+  .animate-cinematic-reveal {
+    animation: none;
+  }
+}
+
+/* Keyboard focus, in the house accent */
+:focus-visible {
+  outline: 1px solid #CB5C38;
+  outline-offset: 3px;
 }
 
 /* Google Places Autocomplete dropdown — keep above the high z-index UI */
