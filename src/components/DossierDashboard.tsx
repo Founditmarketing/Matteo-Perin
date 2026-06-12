@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
 import { supabase } from '../lib/supabaseClient';
 import { useNavigate } from 'react-router-dom';
@@ -44,7 +45,11 @@ export const DossierDashboard: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-[#0a0a0a] text-matteo-cream font-serif pt-32 pb-24 px-6 md:px-12 selection:bg-white selection:text-black">
-            
+            <Helmet>
+                <title>Dossier Dashboard | Matteo Perin</title>
+                <meta name="robots" content="noindex, nofollow" />
+            </Helmet>
+
             <div className="max-w-5xl mx-auto">
                 {/* Header */}
                 <header className="flex flex-col md:flex-row justify-between items-start md:items-end mb-24 border-b border-white/10 pb-12 gap-8">
@@ -113,7 +118,7 @@ export const DossierDashboard: React.FC = () => {
                                     className="group flex flex-col sm:flex-row gap-8 items-start sm:items-center bg-[#050505] border border-white/5 p-6 hover:border-white/20 transition-colors duration-500"
                                 >
                                     <div className="w-24 h-32 flex-shrink-0 overflow-hidden bg-black/50">
-                                        <img src={order.image} alt={order.title} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" />
+                                        <img src={order.image} alt={order.title} loading="lazy" decoding="async" className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" />
                                     </div>
                                     <div className="flex-1">
                                         <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-white/40 block mb-2">{order.category}</span>

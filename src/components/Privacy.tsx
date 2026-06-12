@@ -1,8 +1,14 @@
 import React from 'react';
+import { Helmet } from 'react-helmet-async';
 
 export const Privacy: React.FC = () => {
   return (
     <div className="bg-matteo-cream min-h-screen pt-32 pb-24">
+      <Helmet>
+        <title>Privacy Policy | Matteo Perin</title>
+        <meta name="description" content="How Matteo Perin collects, uses, and protects your personal information across our atelier, showroom, and online services." />
+        <link rel="canonical" href="https://www.matteoperin.com/privacy" />
+      </Helmet>
       <div className="max-w-3xl mx-auto px-6 md:px-12">
         
         <div className="mb-16">

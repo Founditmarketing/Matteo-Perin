@@ -80,7 +80,9 @@ export const Collection: React.FC = () => {
         const loadProducts = async () => {
             try {
                 const data = await ProductService.getProducts();
-                setProducts(data);
+                // The croc jacket has its own full-bleed feature directly below
+                // this slider on the homepage — showing it here too is a rerun.
+                setProducts(data.filter(p => p.id !== 14));
                 // Artificial easing for smoothness
                 setTimeout(() => setLoading(false), 200);
             } catch (error) {
@@ -350,7 +352,7 @@ export const Collection: React.FC = () => {
                     className={`hidden md:flex absolute bottom-8 left-1/2 -translate-x-1/2 flex-col items-center gap-2 transition-opacity duration-700 ${isFinished ? 'opacity-100' : 'opacity-0'}`}
                 >
                     <span className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone">Continue</span>
-                    <div className="w-[1px] h-8 bg-matteo-stone animate-bounce"></div>
+                    <div className="w-[1px] h-8 bg-matteo-stone animate-pulse" style={{ animationDuration: '2.5s' }}></div>
                 </div>
 
             </div>

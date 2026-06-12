@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import { Logo } from './Logo';
 import { SpinningLogo } from './SpinningLogo';
@@ -113,6 +114,10 @@ export const PrivateAccess: React.FC = () => {
 
     return (
         <div className="bg-[#050505] min-h-screen flex flex-col items-center justify-center text-white relative overflow-y-auto">
+            <Helmet>
+                <title>Private Access | Matteo Perin</title>
+                <meta name="robots" content="noindex, nofollow" />
+            </Helmet>
 
             <SecurityNetwork />
 

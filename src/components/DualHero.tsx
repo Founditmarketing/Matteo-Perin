@@ -133,83 +133,102 @@ export const DualHero: React.FC = () => {
                 {/* --- Content Overlay --- */}
 
                 <div className="absolute inset-0 z-20 flex flex-col justify-end p-8 md:p-16 pb-24 pointer-events-none">
-                    <div className="max-w-4xl pointer-events-auto relative">
+                    <div className="max-w-4xl">
 
-                        {/* Text 1: Atelier */}
-                        <motion.div
-                            className="absolute bottom-0 left-0 w-full"
-                            style={{ opacity: text1Opacity, y: text1Y }}
-                            {...initialOpacity} // Fade in on load
-                        >
-                            <h2 className="font-sans text-xs md:text-sm tracking-[0.3em] uppercase mb-6 text-white/80">
-                                {slide1.subtitle}
-                            </h2>
-                            <h1 className="font-serif text-6xl md:text-8xl lg:text-9xl leading-none text-white mb-12">
-                                <span className="block italic font-light text-white/90">The</span>
-                                <span className="block">Provenance</span>
-                            </h1>
-                            <div className="flex gap-16 pointer-events-none opacity-0" aria-hidden="true">
-                                <span className="py-2 block">&nbsp;</span>
+                        {/* Title stage: an invisible in-flow replica reserves exactly the
+                            height the cross-fading headlines need, so the declarative line
+                            and entries below can never collide with them. */}
+                        <div className="relative">
+                            <div className="invisible" aria-hidden="true">
+                                <h2 className="font-sans text-xs md:text-sm tracking-[0.3em] uppercase mb-6">
+                                    {slide1.subtitle}
+                                </h2>
+                                <div className="font-serif text-6xl md:text-8xl lg:text-9xl leading-none">
+                                    <span className="block italic font-light">The</span>
+                                    <span className="block">Provenance</span>
+                                </div>
                             </div>
-                        </motion.div>
 
-                        {/* Text 2: Nature */}
-                        <motion.div
-                            className="absolute bottom-0 left-0 w-full"
-                            style={{ opacity: text2Opacity, y: text2Y }}
-                        >
-                            <h2 className="font-sans text-xs md:text-sm tracking-[0.3em] uppercase mb-6 text-white/80">
-                                {slide2.subtitle}
-                            </h2>
-                            <h1 className="font-serif text-6xl md:text-8xl lg:text-9xl leading-none text-white mb-12">
-                                <span className="block italic font-light text-white/90">The</span>
-                                <span className="block">Resilience</span>
-                            </h1>
-                        </motion.div>
+                            {/* Text 1: Atelier */}
+                            <motion.div
+                                className="absolute inset-x-0 bottom-0"
+                                style={{ opacity: text1Opacity, y: text1Y }}
+                                {...initialOpacity} // Fade in on load
+                            >
+                                <h2 className="font-sans text-xs md:text-sm tracking-[0.3em] uppercase mb-6 text-white/80">
+                                    {slide1.subtitle}
+                                </h2>
+                                <h1 className="font-serif text-6xl md:text-8xl lg:text-9xl leading-none text-white">
+                                    <span className="block italic font-light text-white/90">The</span>
+                                    <span className="block">Provenance</span>
+                                </h1>
+                            </motion.div>
 
-                        {/* Persistent Buttons (Always Visible/Interactable) */}
-                        <div className="relative mt-[200px] md:mt-[240px] flex gap-16">
-                            {/* Placeholder for layout */}
+                            {/* Text 2: Nature */}
+                            <motion.div
+                                className="absolute inset-x-0 bottom-0"
+                                style={{ opacity: text2Opacity, y: text2Y }}
+                            >
+                                <h2 className="font-sans text-xs md:text-sm tracking-[0.3em] uppercase mb-6 text-white/80">
+                                    {slide2.subtitle}
+                                </h2>
+                                <h1 className="font-serif text-6xl md:text-8xl lg:text-9xl leading-none text-white">
+                                    <span className="block italic font-light text-white/90">The</span>
+                                    <span className="block">Resilience</span>
+                                </h1>
+                            </motion.div>
                         </div>
 
-                    </div>
-                </div>
+                        {/* The declarative line + entries, in normal flow below the stage */}
+                        <motion.div
+                            className="pointer-events-auto mt-8 md:mt-12"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.2, duration: 0.6 }}
+                        >
+                            <p className="font-serif italic text-base md:text-xl text-white/80 max-w-xl mb-4 md:mb-6 leading-relaxed">
+                                A bespoke Italian atelier in Jackson Hole — one-of-one pieces and private commissions.
+                            </p>
 
-                {/* Shared Buttons - Properly Positioned */}
-                <div className="absolute inset-0 z-30 flex flex-col justify-end p-8 md:p-16 pb-24 pointer-events-none">
-                    <motion.div
-                        className="max-w-4xl pointer-events-auto"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2, duration: 0.6 }}
-                    >
-                        <div className="h-[200px] md:h-[240px]"></div> {/* Spacer for text */}
-                        <div className="flex gap-16">
+                            <div className="flex flex-wrap items-center gap-x-12 gap-y-2">
                             <Magnetic>
                                 <button
                                     onClick={() => navigate('/lookbook/men')}
-                                    className="group relative py-2"
+                                    className="group relative py-3.5 min-h-[44px]"
                                 >
-                                    <span className="font-sans text-[11px] uppercase tracking-[0.25em] text-white/90 group-hover:text-white transition-colors duration-500">
+                                    <span className="font-sans text-xs md:text-sm uppercase tracking-[0.25em] text-white/90 group-hover:text-white transition-colors duration-500">
                                         Man
                                     </span>
-                                    <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-matteo-orange transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:w-full"></span>
+                                    <span className="absolute bottom-2 left-0 w-0 h-[1px] bg-matteo-orange transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:w-full"></span>
                                 </button>
                             </Magnetic>
 
                             <Magnetic>
                                 <button
                                     onClick={() => navigate('/lookbook/women')}
-                                    className="group relative py-2"
+                                    className="group relative py-3.5 min-h-[44px]"
                                 >
-                                    <span className="font-sans text-[11px] uppercase tracking-[0.25em] text-white/90 group-hover:text-white transition-colors duration-500">
+                                    <span className="font-sans text-xs md:text-sm uppercase tracking-[0.25em] text-white/90 group-hover:text-white transition-colors duration-500">
                                         Woman
                                     </span>
-                                    <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-matteo-orange transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:w-full"></span>
+                                    <span className="absolute bottom-2 left-0 w-0 h-[1px] bg-matteo-orange transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:w-full"></span>
                                 </button>
                             </Magnetic>
-                        </div>
-                    </motion.div>
+
+                            <Magnetic>
+                                <button
+                                    onClick={() => navigate('/shop')}
+                                    className="group relative py-3.5 min-h-[44px]"
+                                >
+                                    <span className="font-sans text-xs md:text-sm uppercase tracking-[0.25em] text-white group-hover:text-white transition-colors duration-500">
+                                        Shop One-of-One
+                                    </span>
+                                    <span className="absolute bottom-2 left-0 w-full h-[1px] bg-matteo-orange"></span>
+                                </button>
+                            </Magnetic>
+                            </div>
+                        </motion.div>
+                    </div>
                 </div>
 
                 {/* Scroll Indicator / Progress */}

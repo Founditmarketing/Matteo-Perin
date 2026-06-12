@@ -1,11 +1,15 @@
 
-import React from 'react';
+import React, { useRef } from 'react';
 import { useCart } from '../context/CartContext';
 import { useNavigate } from 'react-router-dom';
+import { useModalA11y } from '../lib/useModalA11y';
 
 export const CartSidebar: React.FC = () => {
   const { isCartOpen, setIsCartOpen, cartItems, removeFromCart, updateQuantity, cartTotal } = useCart();
   const navigate = useNavigate();
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  useModalA11y(isCartOpen, () => setIsCartOpen(false), panelRef);
 
   const handleCheckout = () => {
       setIsCartOpen(false);
@@ -23,14 +27,14 @@ export const CartSidebar: React.FC = () => {
       />
       
       {/* Sidebar */}
-      <div className="relative w-full max-w-md bg-matteo-cream dark:bg-[#111] h-full shadow-2xl flex flex-col animate-fade-in-up border-l border-matteo-charcoal/5 dark:border-white/5 transition-colors duration-500">
+      <div ref={panelRef} role="dialog" aria-modal="true" aria-label="Shopping bag" tabIndex={-1} className="relative w-full max-w-md bg-matteo-cream dark:bg-[#111] h-full shadow-2xl flex flex-col animate-fade-in-up border-l border-matteo-charcoal/5 dark:border-white/5 transition-colors duration-500 outline-none">
         <div className="p-8 flex justify-between items-center border-b border-matteo-charcoal/5 dark:border-white/5">
           <div>
               <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-matteo-orange block mb-1">Your Selection</span>
               <h2 className="font-serif text-2xl text-matteo-charcoal dark:text-white">The Bag</h2>
           </div>
-          <button onClick={() => setIsCartOpen(false)} className="text-matteo-stone hover:text-matteo-charcoal dark:hover:text-white transition-colors">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <button onClick={() => setIsCartOpen(false)} aria-label="Close bag" className="text-matteo-stone hover:text-matteo-charcoal dark:hover:text-white transition-colors">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
@@ -58,7 +62,7 @@ export const CartSidebar: React.FC = () => {
                     {cartItems.map(item => (
                         <div key={item.cartItemId} className="flex gap-6 group">
                             <div className="w-24 h-32 bg-[#F0F0F0] dark:bg-[#1a1a1a] overflow-hidden shrink-0 relative">
-                                <img src={item.image} alt={item.title} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 dark:brightness-90" />
+                                <img src={item.image} alt={item.title} loading="lazy" decoding="async" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 dark:brightness-90" />
                                 {item.customizations?.monogram && (
                                     <div className="absolute bottom-0 right-0 bg-matteo-charcoal text-white text-[10px] p-1 font-serif">
                                         {item.customizations.monogram}

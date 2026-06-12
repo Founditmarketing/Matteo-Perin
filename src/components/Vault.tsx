@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { ProductService } from '@/services/productService';
 import { Product } from '@/types';
 import { useInquiry } from '../context/InquiryContext';
@@ -17,16 +18,32 @@ export const Vault: React.FC = () => {
     });
     const [password, setPassword] = useState('');
     const [error, setError] = useState(false);
+    const [verifying, setVerifying] = useState(false);
 
-    const handleLogin = (e: React.FormEvent) => {
+    // The access code lives server-side (VAULT_ACCESS_CODE env var) so it
+    // never ships in the JS bundle.
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (password === 'Lusso*Atelier') {
-            sessionStorage.setItem('vault_auth', 'true');
-            setIsAuthenticated(true);
-            setError(false);
-        } else {
+        if (verifying || !password) return;
+        setVerifying(true);
+        try {
+            const response = await fetch('/api/vault-access', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: password }),
+            });
+            if (response.ok) {
+                sessionStorage.setItem('vault_auth', 'true');
+                setIsAuthenticated(true);
+                setError(false);
+            } else {
+                setError(true);
+                setPassword('');
+            }
+        } catch {
             setError(true);
-            setPassword('');
+        } finally {
+            setVerifying(false);
         }
     };
 
@@ -51,13 +68,21 @@ export const Vault: React.FC = () => {
         };
     }, []);
 
+    const helmet = (
+        <Helmet>
+            <title>The Vault | Matteo Perin</title>
+            <meta name="robots" content="noindex, nofollow" />
+        </Helmet>
+    );
+
     if (loading) {
-        return <div className="min-h-screen bg-[#050505] flex items-center justify-center"></div>;
+        return <div className="min-h-screen bg-[#050505] flex items-center justify-center">{helmet}</div>;
     }
 
     if (!isAuthenticated) {
         return (
             <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center font-serif text-white relative selection:bg-white selection:text-black overflow-hidden">
+                {helmet}
                 {/* Cinematic Atmospheric Details */}
                 <div className="absolute inset-0 z-0">
                     {/* noise removed */}
@@ -94,12 +119,12 @@ export const Vault: React.FC = () => {
                         </div>
 
                         <div className="h-4 flex items-center justify-center">
-                            {error && <p className="text-[#CB5C38] text-[10px] tracking-[0.4em] uppercase font-sans animate-bounce">Access Denied</p>}
+                            {error && <p className="text-[#CB5C38] text-[10px] tracking-[0.4em] uppercase font-sans animate-fade-in-up">Access Denied</p>}
                         </div>
 
-                        <button type="submit" className="group relative overflow-hidden border border-white/20 py-6 font-sans text-[10px] uppercase tracking-[0.4em] transition-all duration-700">
+                        <button type="submit" disabled={verifying} className="group relative overflow-hidden border border-white/20 py-6 font-sans text-[10px] uppercase tracking-[0.4em] transition-all duration-700 disabled:opacity-50">
                             <div className="absolute inset-0 bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-700 ease-[cubic-bezier(0.19,1,0.22,1)]"></div>
-                            <span className="relative z-10 text-white group-hover:text-[#050505] transition-colors duration-700">Unlock</span>
+                            <span className="relative z-10 text-white group-hover:text-[#050505] transition-colors duration-700">{verifying ? 'Verifying…' : 'Unlock'}</span>
                         </button>
                     </form>
 
@@ -115,6 +140,7 @@ export const Vault: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-[#050505] text-white relative overflow-hidden font-serif selection:bg-white selection:text-black">
+            {helmet}
 
             {/* Background Ambience */}
             <div className="fixed inset-0 pointer-events-none z-0">
@@ -152,7 +178,7 @@ export const Vault: React.FC = () => {
                     </p>
                 </RevealOnScroll>
 
-                <div className="absolute bottom-12 animate-bounce opacity-20 hover:opacity-100 transition-opacity duration-500 cursor-pointer">
+                <div className="absolute bottom-12 animate-pulse opacity-20 hover:opacity-100 transition-opacity duration-500 cursor-pointer" style={{ animationDuration: '3s' }}>
                     <span className="font-serif text-2xl">↓</span>
                 </div>
             </div>
@@ -183,6 +209,8 @@ export const Vault: React.FC = () => {
                                     <img
                                         src={item.image}
                                         alt={item.title}
+                                        loading="lazy"
+                                        decoding="async"
                                         className="w-full h-full object-cover grayscale contrast-125 brightness-75 group-hover:grayscale-0 group-hover:brightness-90 transition-[transform,filter] duration-[2s] ease-[cubic-bezier(0.16,1,0.3,1)] scale-100 group-hover:scale-105"
                                     />
                                     <div className="absolute inset-0 z-30 cursor-crosshair"></div>

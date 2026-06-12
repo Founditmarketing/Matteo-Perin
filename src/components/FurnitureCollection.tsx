@@ -453,9 +453,9 @@ const PhilosophySection: React.FC = () => {
           </p>
 
           <blockquote className="font-serif text-3xl md:text-5xl lg:text-6xl leading-[1.15] text-matteo-charcoal dark:text-matteo-cream tracking-tight">
-            "True <em className="not-italic text-matteo-orange">craftsmanship</em> does not occupy space{' '}
+            "True <em>craftsmanship</em> does not occupy space{' '}
             <br className="hidden md:block" />
-            — it <em className="not-italic text-matteo-orange">transforms</em> it."
+            — it <em>transforms</em> it."
           </blockquote>
 
           <div className="mt-12 flex items-center justify-center gap-4">
@@ -518,7 +518,7 @@ const EditorialSplit: React.FC<{
             <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-matteo-charcoal dark:text-matteo-cream leading-[1.05] tracking-tight mb-8">
               {title}
             </h2>
-            <p className="font-sans text-sm text-matteo-charcoal/80 dark:text-matteo-cream/80 leading-relaxed tracking-wide mb-10">
+            <p className="font-serif text-base md:text-lg text-matteo-charcoal/80 dark:text-matteo-cream/80 leading-relaxed mb-10">
               {text}
             </p>
             {cta && (
@@ -935,7 +935,7 @@ const ConsultationCTA: React.FC = () => {
         <div className="w-16 h-[1px] bg-matteo-orange mx-auto mb-12" />
         <p className="font-sans text-[10px] uppercase tracking-[0.4em] text-matteo-charcoal/80 dark:text-matteo-cream/80 mb-6">Private Consultation</p>
         <h2 className="font-serif text-3xl md:text-5xl text-matteo-charcoal dark:text-matteo-cream leading-[1.15] tracking-tight mb-8">Your Vision, <br />Our Craft</h2>
-        <p className="font-sans text-sm text-matteo-charcoal/80 dark:text-matteo-cream/80 leading-relaxed tracking-wide mb-12 max-w-lg mx-auto">Every Matteo Perin casa piece can be customized — dimensions, fabrics, finishes, and materials. Our design consultants guide you through every selection, creating a piece that is uniquely, irrevocably yours.</p>
+        <p className="font-serif text-base md:text-lg text-matteo-charcoal/80 dark:text-matteo-cream/80 leading-relaxed mb-12 max-w-lg mx-auto">Every Matteo Perin casa piece can be customized — dimensions, fabrics, finishes, and materials. Our design consultants guide you through every selection, creating a piece that is uniquely, irrevocably yours.</p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
           <Link to="/bespoke" state={{ inquire: true, look: "Casa Collection" }} className="group inline-flex items-center gap-3 px-10 py-4 bg-matteo-charcoal dark:bg-white text-white dark:text-matteo-charcoal hover:bg-matteo-orange dark:hover:bg-matteo-orange dark:hover:text-white transition-all duration-500"><span className="font-sans text-[11px] uppercase tracking-[0.25em]">Book a Consultation</span></Link>
           <Link to="/the-house" className="group inline-flex items-center gap-3 font-sans text-[11px] uppercase tracking-[0.25em] text-matteo-charcoal/80 dark:text-matteo-cream/80 hover:text-matteo-orange transition-colors duration-500"><span>Visit The House</span><span className="w-6 h-[1px] bg-current group-hover:w-10 transition-all duration-500" /></Link>

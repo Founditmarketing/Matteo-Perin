@@ -1,7 +1,6 @@
 
-import { PRODUCTS, VAULT_ITEMS, ARTICLES, LOOKBOOK_ITEMS } from '@/constants';
-import { Product, Article, LookbookItem, Material } from '@/types';
-import { LightspeedService } from './lightspeedService';
+import { PRODUCTS, VAULT_ITEMS, ARTICLES } from '@/constants';
+import { Product, Article, Material } from '@/types';
 
 // Simulate API delay for realistic loading states
 const SIMULATED_DELAY = 800; // ms
@@ -40,14 +39,6 @@ export const ProductService = {
         return new Promise((resolve) => {
             setTimeout(() => {
                 resolve(ARTICLES);
-            }, SIMULATED_DELAY);
-        });
-    },
-
-    async getLookbook(): Promise<LookbookItem[]> {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                resolve(LOOKBOOK_ITEMS);
             }, SIMULATED_DELAY);
         });
     },

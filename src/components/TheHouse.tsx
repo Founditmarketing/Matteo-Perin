@@ -118,6 +118,8 @@ export const TheHouse: React.FC = () => {
                         >
                             <img
                                 src="/assets/hero_grand_estate.jpg"
+                                loading="lazy"
+                                decoding="async"
                                 className="w-full h-full object-cover grayscale opacity-60"
                                 alt="Verona Atelier"
                                 style={{ transform: `scale(${1 + scrollProgress * 0.1})` }} // Subtle zoom out
@@ -132,6 +134,8 @@ export const TheHouse: React.FC = () => {
                         >
                             <img
                                 src="/assets/hero_teton_buffalo_v2.jpg"
+                                loading="lazy"
+                                decoding="async"
                                 className="w-full h-full object-cover opacity-70 grayscale"
                                 alt="Jackson Hole"
                                 style={{ transform: `scale(${1.1 - scrollProgress * 0.1})` }} // Subtle zoom in

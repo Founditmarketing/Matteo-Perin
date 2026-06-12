@@ -79,10 +79,6 @@ export default defineConfig(({ mode }) => {
       }
     },
     plugins: [react(), vercelApiMock()],
-    define: {
-      'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
-      'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY)
-    },
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
@@ -95,19 +91,17 @@ export default defineConfig(({ mode }) => {
       chunkSizeWarningLimit: 300,
       rollupOptions: {
         output: {
-          manualChunks: {
-            // Core React runtime (~140KB) — cached across all pages
-            'react-vendor': ['react', 'react-dom'],
-            // Router (~30KB) — used on every page
-            'router': ['react-router-dom'],
-            // Framer Motion (~200KB) — the biggest single lib
-            'framer-motion': ['framer-motion'],
-            // Stripe (~40KB) — only needed on checkout
-            'stripe': ['@stripe/stripe-js'],
-            // AI/Supabase (~80KB) — only needed for concierge
-            'ai-vendor': ['@google/generative-ai', '@supabase/supabase-js'],
-            // Helmet + markdown (~25KB)
-            'utils': ['react-helmet-async', 'react-markdown'],
+          // Function form: the array form silently failed to capture React
+          // (it shipped inside the router chunk while react-vendor built
+          // empty). Match by module path so each vendor lands where intended;
+          // everything else (markdown, supabase, ...) splits automatically
+          // along the React.lazy boundaries.
+          manualChunks(id: string) {
+            if (!id.includes('node_modules')) return;
+            const path = id.replace(/\\/g, '/');
+            if (/\/node_modules\/(react|react-dom|scheduler)\//.test(path)) return 'react-vendor';
+            if (/\/node_modules\/(react-router|react-router-dom|@remix-run)\//.test(path)) return 'router';
+            if (path.includes('/node_modules/framer-motion/')) return 'framer-motion';
           }
         }
       },

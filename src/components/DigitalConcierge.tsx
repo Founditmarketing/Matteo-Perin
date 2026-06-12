@@ -5,6 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import { PRODUCTS } from '../constants';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
+import { useModalA11y } from '../lib/useModalA11y';
 
 interface Message {
     role: 'user' | 'model';
@@ -22,8 +23,11 @@ const LOADING_PHRASES = [
 
 const LOCAL_STORAGE_KEY = 'matteo_client_dossier';
 
-export const DigitalConcierge: React.FC = () => {
-    const [isOpen, setIsOpen] = useState(false);
+// initialOpen: the App shell renders a lightweight launcher button and only
+// mounts this component (plus its supabase/markdown dependencies) on first
+// click — so the drawer should open immediately once loaded.
+export const DigitalConcierge: React.FC<{ initialOpen?: boolean }> = ({ initialOpen = false }) => {
+    const [isOpen, setIsOpen] = useState(initialOpen);
     const navigate = useNavigate();
     const [messages, setMessages] = useState<Message[]>([]);
     const [hasInitialized, setHasInitialized] = useState(false);
@@ -32,6 +36,9 @@ export const DigitalConcierge: React.FC = () => {
     const [loadingPhraseIndex, setLoadingPhraseIndex] = useState(0);
     const [sessionUser, setSessionUser] = useState<any>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const drawerRef = useRef<HTMLDivElement>(null);
+
+    useModalA11y(isOpen, () => setIsOpen(false), drawerRef);
 
     // Auto-scroll to bottom of chat
     useEffect(() => {
@@ -282,11 +289,16 @@ export const DigitalConcierge: React.FC = () => {
 
                         {/* The Drawer */}
                         <motion.div 
+                            ref={drawerRef}
+                            role="dialog"
+                            aria-modal="true"
+                            aria-label="Digital Concierge"
+                            tabIndex={-1}
                             initial={{ x: "100%" }}
                             animate={{ x: 0 }}
                             exit={{ x: "100%" }}
                             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-                            className="fixed top-0 right-0 h-[100dvh] w-full md:w-[480px] lg:w-[550px] bg-[#0a0a0a] border-l border-white/5 z-[99999] flex flex-col font-serif text-white shadow-2xl"
+                            className="fixed top-0 right-0 h-[100dvh] w-full md:w-[480px] lg:w-[550px] bg-[#0a0a0a] border-l border-white/5 z-[99999] flex flex-col font-serif text-white shadow-2xl outline-none"
                         >
                             {/* Drawer Header */}
                             <div className="w-full p-6 md:p-8 flex justify-between items-center z-10 border-b border-white/5 bg-[#0a0a0a]">
@@ -346,7 +358,7 @@ export const DigitalConcierge: React.FC = () => {
                                                                 <Link to={destination} key={product.id} onClick={() => setIsOpen(false)} className="w-full group relative block flex-shrink-0 animate-fade-in-up">
                                                                     <div className="w-full bg-[#050505] border border-white/10 p-4 mb-4 relative overflow-hidden flex items-center justify-center min-h-[40vh] transition-colors duration-700 group-hover:bg-[#0c0c0c] group-hover:border-white/30">
                                                                         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000 z-10 pointer-events-none"></div>
-                                                                        <img src={product.image} alt={product.title} className="w-full max-h-[45vh] object-contain filter drop-shadow-2xl transition-transform duration-[2s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]" />
+                                                                        <img src={product.image} alt={product.title} loading="lazy" decoding="async" className="w-full max-h-[45vh] object-contain filter drop-shadow-2xl transition-transform duration-[2s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]" />
                                                                     </div>
                                                                     <div className="text-left">
                                                                         <h3 className="font-serif text-2xl text-white mb-2 tracking-wide leading-tight group-hover:text-white/80 transition-colors">{product.title}</h3>

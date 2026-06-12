@@ -8,6 +8,7 @@ export const Footer: React.FC = () => {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [subscribed, setSubscribed] = useState(false);
+    const [subscribeError, setSubscribeError] = useState('');
 
     const handleNav = (e: React.MouseEvent, path: string) => {
         e.preventDefault();
@@ -31,23 +32,31 @@ export const Footer: React.FC = () => {
         }
     };
 
-    const handleSubscribe = () => {
-        if (email && email.includes('@')) {
-            // Push to HubSpot CRM via tracking code
-            const _hsq = (window as any)._hsq = (window as any)._hsq || [];
-            _hsq.push(["identify", { email }]);
-            _hsq.push(["trackPageView"]);
+    const handleSubscribe = async () => {
+        // An invalid email used to silently no-op; say so instead.
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            setSubscribeError('Please enter a valid email address.');
+            return;
+        }
+        setSubscribeError('');
 
-            // Capture UTM params for attribution
-            const urlParams = new URLSearchParams(window.location.search);
-            const utmData: Record<string, string> = {};
-            ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'].forEach(key => {
-                const val = urlParams.get(key) || sessionStorage.getItem(key);
-                if (val) utmData[key] = val;
-            });
+        // Push to HubSpot CRM via tracking code
+        const _hsq = (window as any)._hsq = (window as any)._hsq || [];
+        _hsq.push(["identify", { email }]);
+        _hsq.push(["trackPageView"]);
 
-            // Also send via serverless API for reliable capture
-            fetch('/api/private-client', {
+        // Capture UTM params for attribution
+        const urlParams = new URLSearchParams(window.location.search);
+        const utmData: Record<string, string> = {};
+        ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'].forEach(key => {
+            const val = urlParams.get(key) || sessionStorage.getItem(key);
+            if (val) utmData[key] = val;
+        });
+
+        // Send via serverless API for reliable capture — only celebrate
+        // once the subscription actually landed.
+        try {
+            const res = await fetch('/api/private-client', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -57,9 +66,12 @@ export const Footer: React.FC = () => {
                     referrer: document.referrer || '',
                     landingPage: sessionStorage.getItem('landing_page') || window.location.href,
                 }),
-            }).catch(() => {});
+            });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
             setSubscribed(true);
             setEmail('');
+        } catch {
+            setSubscribeError('We could not subscribe you just now. Please try again, or write to concierge@matteoperin.com.');
         }
     };
 
@@ -114,8 +126,9 @@ export const Footer: React.FC = () => {
                                     <input
                                         type="email"
                                         placeholder="Your Email Address"
+                                        aria-label="Email address for private updates"
                                         value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
+                                        onChange={(e) => { setEmail(e.target.value); if (subscribeError) setSubscribeError(''); }}
                                         onKeyDown={(e) => e.key === 'Enter' && handleSubscribe()}
                                         className="bg-transparent w-full outline-none text-white font-serif placeholder-white/30 focus:placeholder-white/50"
                                     />
@@ -137,6 +150,9 @@ export const Footer: React.FC = () => {
                                 )}
                             </div>
                         </div>
+                        {subscribeError && (
+                            <p role="alert" className="font-serif text-sm text-white/70 mt-3">{subscribeError}</p>
+                        )}
                     </div>
                 </div>
 

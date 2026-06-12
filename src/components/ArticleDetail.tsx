@@ -226,11 +226,11 @@ export const ArticleDetail: React.FC = () => {
                         {/* Editorial Image Grid - Breakout */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-24 w-full">
                             <RevealOnScroll className="md:mt-12">
-                                <img src={IMAGES.atelier} alt="Process 1" className="w-full aspect-[3/4] object-cover grayscale hover:grayscale-0 transition-all duration-1000" />
+                                <img src={IMAGES.atelier} alt="Process 1" loading="lazy" decoding="async" className="w-full aspect-[3/4] object-cover grayscale hover:grayscale-0 transition-all duration-1000" />
                                 <span className="block mt-2 font-sans text-[10px] uppercase tracking-widest text-matteo-stone">Fig 1. Pattern Cutting</span>
                             </RevealOnScroll>
                             <RevealOnScroll delay={0.2}>
-                                <img src={IMAGES.jacket_detail} alt="Process 2" className="w-full aspect-[3/4] object-cover grayscale hover:grayscale-0 transition-all duration-1000" />
+                                <img src={IMAGES.jacket_detail} alt="Process 2" loading="lazy" decoding="async" className="w-full aspect-[3/4] object-cover grayscale hover:grayscale-0 transition-all duration-1000" />
                                 <span className="block mt-2 font-sans text-[10px] uppercase tracking-widest text-matteo-stone">Fig 2. Fabric Selection</span>
                             </RevealOnScroll>
                         </div>
@@ -246,7 +246,7 @@ export const ArticleDetail: React.FC = () => {
                             <RevealOnScroll className="my-24 border-y border-matteo-charcoal/10 dark:border-white/10 py-12 bg-white/50 dark:bg-white/5 -mx-6 md:-mx-12 px-6 md:px-12">
                                 <div className="flex flex-col md:flex-row items-center gap-8 md:gap-16">
                                     <div className="w-full md:w-1/3 aspect-[3/4] bg-[#F0F0F0] dark:bg-[#1a1a1a]">
-                                        <img src={relatedProduct.image} alt={relatedProduct.title} className="w-full h-full object-cover mix-blend-multiply dark:mix-blend-normal dark:brightness-90" />
+                                        <img src={relatedProduct.image} alt={relatedProduct.title} loading="lazy" decoding="async" className="w-full h-full object-cover mix-blend-multiply dark:mix-blend-normal dark:brightness-90" />
                                     </div>
                                     <div className="w-full md:w-2/3">
                                         <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-matteo-orange mb-4 block">Shop The Story</span>
@@ -304,6 +304,8 @@ export const ArticleDetail: React.FC = () => {
                                     <img
                                         src={nextArticle.image}
                                         alt={nextArticle.title}
+                                        loading="lazy"
+                                        decoding="async"
                                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-[1.5s]"
                                     />
                                 </Link>

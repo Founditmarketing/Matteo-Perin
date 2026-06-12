@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
 import { supabase } from '../lib/supabaseClient';
 import { useNavigate } from 'react-router-dom';
@@ -56,10 +57,14 @@ export const DossierLogin: React.FC = () => {
         }
     };
 
-    return (
-        <div className="min-h-screen bg-matteo-black text-matteo-cream flex flex-col items-center justify-center font-serif relative overflow-hidden selection:bg-white selection:text-black">
-            
-            {/* Cinematic Ambience */}
+        return (
+            <div className="min-h-screen bg-matteo-black text-matteo-cream flex flex-col items-center justify-center font-serif relative overflow-hidden selection:bg-white selection:text-black">
+                <Helmet>
+                    <title>The Dossier | Matteo Perin</title>
+                    <meta name="robots" content="noindex, nofollow" />
+                </Helmet>
+
+                {/* Cinematic Ambience */}
             <div className="absolute inset-0 pointer-events-none z-0">
                 <div className="absolute top-[-50%] left-[-50%] w-[200%] h-[200%] bg-[radial-gradient(circle_at_center,_rgba(255,255,255,0.02),_transparent_40%)] animate-spin-slow"></div>
             </div>

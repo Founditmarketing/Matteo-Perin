@@ -1,9 +1,17 @@
 
 import React, { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useCart } from '../context/CartContext';
 import { Logo } from './Logo';
 import { Link } from 'react-router-dom';
 import { trackBeginCheckout } from '../lib/analytics';
+
+const CheckoutHelmet = (
+    <Helmet>
+        <title>Checkout | Matteo Perin</title>
+        <meta name="robots" content="noindex, nofollow" />
+    </Helmet>
+);
 
 // Read the GA4 client id from the `_ga` cookie (format: GA1.1.<id>.<ts>).
 // Returns the "<id>.<ts>" portion GA4 uses as client_id, or '' if absent.
@@ -73,6 +81,7 @@ export const Checkout: React.FC = () => {
     if (cartItems.length === 0) {
         return (
             <div className="min-h-screen bg-matteo-cream dark:bg-matteo-black flex flex-col items-center justify-center">
+                {CheckoutHelmet}
                 <p className="font-serif text-2xl mb-6 text-matteo-charcoal dark:text-white">Your bag is empty.</p>
                 <Link to="/shop" className="font-sans text-xs uppercase tracking-widest border-b border-current pb-1 text-matteo-charcoal dark:text-white hover:text-matteo-orange transition-colors">
                     Shop Available Pieces
@@ -85,6 +94,7 @@ export const Checkout: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-matteo-cream dark:bg-matteo-black transition-colors duration-700 pt-28 pb-24 px-6">
+            {CheckoutHelmet}
             <div className="max-w-2xl mx-auto">
 
                 {/* Header */}
@@ -110,7 +120,7 @@ export const Checkout: React.FC = () => {
                     {cartItems.map((item) => (
                         <div key={item.cartItemId} className="flex gap-6 group border-b border-matteo-charcoal/10 dark:border-white/10 pb-8">
                             <div className="w-24 h-28 bg-white dark:bg-white/5 overflow-hidden shrink-0">
-                                <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
+                                <img src={item.image} alt={item.title} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                             </div>
                             <div className="flex-1">
                                 <div className="flex justify-between items-start gap-4">

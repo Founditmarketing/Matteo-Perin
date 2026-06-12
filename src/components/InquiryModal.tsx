@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useInquiry } from '../context/InquiryContext';
 import { reportInquiryConversion } from '@/lib/gtagConversion';
+import { useModalA11y } from '../lib/useModalA11y';
 
 const FloatingInput: React.FC<{
     label: string;
@@ -61,6 +62,10 @@ export const InquiryModal: React.FC = () => {
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
+    const [submitError, setSubmitError] = useState(false);
+    const dialogRef = useRef<HTMLDivElement>(null);
+
+    useModalA11y(isInquiryOpen, () => setIsInquiryOpen(false), dialogRef);
 
     if (!isInquiryOpen) return null;
 
@@ -85,23 +90,25 @@ export const InquiryModal: React.FC = () => {
         };
         
         try {
-            await fetch('/api/private-client', {
+            const res = await fetch('/api/private-client', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(inquiryPayload)
             });
-        } catch (err) {
-            console.error("HubSpot submission failed:", err);
-        } finally {
-            // Fire Google Ads conversion
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            // Conversion + success only for inquiries that actually reached us
             reportInquiryConversion();
-            setIsSubmitting(false);
             setIsSuccess(true);
             setTimeout(() => {
                 setIsInquiryOpen(false);
                 setIsSuccess(false);
                 setFormData({ name: '', email: '', phone: '', contactTime: '', message: '' });
             }, 3000);
+        } catch (err) {
+            console.error("HubSpot submission failed:", err);
+            setSubmitError(true);
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -111,7 +118,7 @@ export const InquiryModal: React.FC = () => {
 
     return (
         <div className="fixed inset-0 z-[99999] bg-matteo-charcoal/95 dark:bg-[#050505]/95 backdrop-blur-md flex items-center justify-center p-6 transition-all duration-500">
-            <div className="bg-matteo-cream dark:bg-matteo-black w-full max-w-5xl relative overflow-hidden shadow-2xl flex flex-col md:flex-row h-full max-h-[90vh] animate-fade-in-up">
+            <div ref={dialogRef} role="dialog" aria-modal="true" aria-label={selectedProduct ? `Inquire about ${selectedProduct.title}` : 'Private inquiry'} tabIndex={-1} className="bg-matteo-cream dark:bg-matteo-black w-full max-w-5xl relative overflow-hidden shadow-2xl flex flex-col md:flex-row h-full max-h-[90vh] animate-fade-in-up outline-none">
                 
                 {/* Left Side: Product Image (Hidden on very small screens) */}
                 {selectedProduct && (
@@ -169,7 +176,7 @@ export const InquiryModal: React.FC = () => {
                                 </p>
                                 {selectedProduct?.title === 'Bespoke Crocodile Jacket' && (
                                     <p className="font-sans text-[10px] uppercase tracking-widest text-matteo-orange mb-6 -mt-4">
-                                        * Note: Serious Inquiries Only
+                                        Three commissions accepted per year
                                     </p>
                                 )}
 
@@ -181,7 +188,13 @@ export const InquiryModal: React.FC = () => {
                                         <FloatingInput id="contactTime" label="Preferred Contact Time" value={formData.contactTime} onChange={handleChange} />
                                     </div>
                                     <FloatingInput id="message" label="Additional Requirements or Vision" value={formData.message} onChange={handleChange} multiline />
-                                    
+
+                                    {submitError && (
+                                        <p role="alert" className="font-serif text-sm text-matteo-charcoal dark:text-white leading-relaxed pt-4">
+                                            Your request could not be sent. Please try again, or write directly to <a href="mailto:concierge@matteoperin.com" className="text-matteo-orange border-b border-matteo-orange/40">concierge@matteoperin.com</a>.
+                                        </p>
+                                    )}
+
                                     <button 
                                         type="submit"
                                         disabled={isSubmitting}

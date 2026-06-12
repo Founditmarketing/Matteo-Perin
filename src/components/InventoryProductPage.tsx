@@ -5,15 +5,15 @@ import { slugify } from '../lib/slug';
 import { useCart } from '../context/CartContext';
 import { Product } from '../types';
 import { trackViewItem } from '../lib/analytics';
-
-interface GroupedProduct {
-    parentName: string;
-    parentImage?: string;
-    parentAdditionalImages?: string;
-    description?: string;
-    gender?: string;
-    variations: any[];
-}
+import { useModalA11y } from '../lib/useModalA11y';
+import {
+    GroupedProduct,
+    fetchInventoryRows,
+    groupInventoryRows,
+    getImageUrl as getInventoryImageUrl,
+    getPriceRange,
+    isVariationSoldOut,
+} from '../lib/inventory';
 
 export const InventoryProductPage: React.FC = () => {
     const { productName } = useParams();
@@ -28,85 +28,14 @@ export const InventoryProductPage: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+    const lightboxRef = React.useRef<HTMLDivElement>(null);
+
+    useModalA11y(isLightboxOpen, () => setIsLightboxOpen(false), lightboxRef);
 
     useEffect(() => {
         const fetchInventory = async () => {
             try {
-                const response = await fetch('/api/inventory');
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const result = await response.json();
-                
-                const grouped: GroupedProduct[] = [];
-                let currentParent: GroupedProduct | null = null;
-
-                (result.data || []).forEach((row: any) => {
-                    const isRowEmpty = !row.Title && !row.Category && !row.Price && !row.Stock && !row['Main Image Link'];
-                    if (isRowEmpty) return;
-
-                    const hasTitle = row.Title && String(row.Title).trim() !== '';
-                    const hasCategory = row.Category && String(row.Category).trim() !== '';
-                    const hasPrice = row.Price && String(row.Price).trim() !== '';
-
-                    if (hasTitle && !hasCategory && !hasPrice) {
-                        currentParent = {
-                            parentName: String(row.Title).trim(),
-                            parentImage: row['Main Image Link'],
-                            parentAdditionalImages: row['Additional Image Links'],
-                            description: row.Description,
-                            gender: row.Gender,
-                            variations: []
-                        };
-                        grouped.push(currentParent);
-                    } else if (hasCategory || hasPrice || row.Stock) {
-                        if (currentParent) {
-                            const angleWords = ['back', 'front', 'side', 'top', 'bottom', 'internal', 'inside', 'handle', 'zippers', 'pockets', 'logo', 'detail'];
-                            let words = (row.Title || '').trim().split(/\s+/);
-                            while (words.length > 1 && angleWords.includes(words[words.length - 1].toLowerCase().replace(/[^a-z]/g, ''))) {
-                                words.pop();
-                            }
-                            const styleName = words.join(' ');
-
-                            let styleGroup = currentParent.variations.find((v: any) => v.StyleName === styleName);
-                            if (!styleGroup) {
-                                styleGroup = {
-                                    StyleName: styleName,
-                                    Title: styleName,
-                                    Category: row.Category,
-                                    Price: row.Price,
-                                    Stock: row.Stock,
-                                    images: []
-                                };
-                                currentParent.variations.push(styleGroup);
-                            }
-                            
-                            if (row['Main Image Link']) {
-                                styleGroup.images.push({
-                                    Title: row.Title,
-                                    Url: row['Main Image Link']
-                                });
-                            }
-                            if (styleGroup.images.length === 1) {
-                                styleGroup['Main Image Link'] = row['Main Image Link'];
-                            }
-                        } else {
-                            currentParent = {
-                                parentName: 'Other Items',
-                                variations: [{
-                                    StyleName: row.Title,
-                                    Title: row.Title,
-                                    Category: row.Category,
-                                    Price: row.Price,
-                                    Stock: row.Stock,
-                                    images: row['Main Image Link'] ? [{ Title: row.Title, Url: row['Main Image Link'] }] : [],
-                                    'Main Image Link': row['Main Image Link']
-                                }]
-                            };
-                            grouped.push(currentParent);
-                        }
-                    }
-                });
+                const grouped = groupInventoryRows(await fetchInventoryRows());
 
                 // Find the product matching the URL. Compare by slug so both
                 // the new /shop/ostrich-bucket-bag URLs and legacy
@@ -151,44 +80,8 @@ export const InventoryProductPage: React.FC = () => {
         });
     }, [selectedGroup, activeVariation]);
 
-    const getImageUrl = (url: string) => {
-        if (!url) return '';
-        const trimmed = url.trim();
-        // Handle standard /d/ID format (both /view and /file paths)
-        let match = trimmed.match(/\/d\/([a-zA-Z0-9_-]+)/);
-        // Handle id=ID format
-        if (!match) {
-            match = trimmed.match(/id=([a-zA-Z0-9_-]+)/);
-        }
-        if (match && match[1]) {
-            // Serve through our CDN-cached proxy in production; direct Drive
-            // link in local dev where /api isn't running.
-            return (import.meta as any).env.DEV
-                ? `https://lh3.googleusercontent.com/d/${match[1]}=w1200`
-                : `/api/image?id=${match[1]}&w=1600`;
-        }
-        return trimmed;
-    };
-
-    const getPriceRange = (variations: any[]) => {
-        if (!variations || variations.length === 0) return 'Price upon request';
-        const prices = variations
-            .map(v => String(v.Price).replace(/[^0-9.]/g, ''))
-            .filter(v => v !== '')
-            .map(Number);
-        
-        if (prices.length === 0) return 'Price upon request';
-        const min = Math.min(...prices);
-        const max = Math.max(...prices);
-        if (min === max) return `$${min.toLocaleString()}`;
-        return `$${min.toLocaleString()} - $${max.toLocaleString()}`;
-    };
-
-    // Check if a specific variation is out of stock
-    const isVariationSoldOut = (variation: any) => {
-        const stock = String(variation?.Stock || '').trim().toLowerCase();
-        return stock === '0' || stock === 'out of stock' || stock === 'sold out' || stock === 'unavailable';
-    };
+    // Product page serves the larger 1600px rendition through the proxy.
+    const getImageUrl = (url: string) => getInventoryImageUrl(url, 1600);
 
     // Get all images for the current variation for arrow navigation
     const getCurrentImages = () => {
@@ -337,7 +230,12 @@ export const InventoryProductPage: React.FC = () => {
             {/* Lightbox Overlay (Must be outside overflow-hidden containers) */}
             {isLightboxOpen && (
                 <div 
-                    className="fixed inset-0 z-[9999999] w-screen h-[100dvh] bg-white dark:bg-black/95 backdrop-blur-md flex items-center justify-center p-4 md:p-12 cursor-zoom-out animate-fade-in-up overflow-hidden"
+                    ref={lightboxRef}
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label={`${selectedGroup.parentName} — enlarged view`}
+                    tabIndex={-1}
+                    className="fixed inset-0 z-[9999999] w-screen h-[100dvh] bg-white dark:bg-black/95 backdrop-blur-md flex items-center justify-center p-4 md:p-12 cursor-zoom-out animate-fade-in-up overflow-hidden outline-none"
                     onClick={() => setIsLightboxOpen(false)}
                 >
                     <button 
@@ -353,14 +251,14 @@ export const InventoryProductPage: React.FC = () => {
                         <>
                             <button
                                 onClick={(e) => { e.stopPropagation(); handlePrevImage(); }}
-                                className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 dark:bg-black/60 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white dark:hover:bg-black/80 shadow-md z-[99999999] transition-all"
+                                className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 w-11 h-11 bg-white/80 dark:bg-black/60 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white dark:hover:bg-black/80 shadow-md z-[99999999] transition-all"
                                 aria-label="Previous image"
                             >
                                 <svg className="w-5 h-5 text-matteo-charcoal dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"/></svg>
                             </button>
                             <button
                                 onClick={(e) => { e.stopPropagation(); handleNextImage(); }}
-                                className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 dark:bg-black/60 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white dark:hover:bg-black/80 shadow-md z-[99999999] transition-all"
+                                className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 w-11 h-11 bg-white/80 dark:bg-black/60 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white dark:hover:bg-black/80 shadow-md z-[99999999] transition-all"
                                 aria-label="Next image"
                             >
                                 <svg className="w-5 h-5 text-matteo-charcoal dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"/></svg>
@@ -377,14 +275,13 @@ export const InventoryProductPage: React.FC = () => {
                         />
                     </div>
 
-                    {/* Lightbox dot indicators */}
+                    {/* Lightbox position indicators (navigation lives on the 44px arrows) */}
                     {currentImages.length > 1 && (
-                        <div className="absolute bottom-6 left-0 right-0 flex justify-center gap-2 z-[99999999]">
+                        <div className="absolute bottom-6 left-0 right-0 flex justify-center gap-2 z-[99999999] pointer-events-none" aria-hidden="true">
                             {currentImages.map((_: any, i: number) => (
-                                <button
+                                <div
                                     key={i}
-                                    onClick={(e) => { e.stopPropagation(); setActiveImageIndex(i); }}
-                                    className={`w-2 h-2 rounded-full transition-all duration-200 ${i === activeImageIndex ? 'bg-matteo-orange w-4' : 'bg-matteo-charcoal/30 dark:bg-white/30 hover:bg-matteo-charcoal/50 dark:hover:bg-white/50'}`}
+                                    className={`w-2 h-2 rounded-full transition-all duration-200 ${i === activeImageIndex ? 'bg-matteo-orange w-4' : 'bg-matteo-charcoal/30 dark:bg-white/30'}`}
                                 />
                             ))}
                         </div>
@@ -446,14 +343,14 @@ export const InventoryProductPage: React.FC = () => {
                                         <>
                                             <button
                                                 onClick={(e) => { e.stopPropagation(); handlePrevImage(); }}
-                                                className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/80 dark:bg-black/60 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover/imgbox:opacity-100 transition-opacity duration-200 hover:bg-white dark:hover:bg-black/80 shadow-md z-10"
+                                                className="absolute left-3 top-1/2 -translate-y-1/2 w-11 h-11 bg-white/80 dark:bg-black/60 backdrop-blur-sm rounded-full flex items-center justify-center opacity-100 md:opacity-0 md:group-hover/imgbox:opacity-100 transition-opacity duration-200 hover:bg-white dark:hover:bg-black/80 shadow-md z-10"
                                                 aria-label="Previous image"
                                             >
                                                 <svg className="w-4 h-4 text-matteo-charcoal dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"/></svg>
                                             </button>
                                             <button
                                                 onClick={(e) => { e.stopPropagation(); handleNextImage(); }}
-                                                className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/80 dark:bg-black/60 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover/imgbox:opacity-100 transition-opacity duration-200 hover:bg-white dark:hover:bg-black/80 shadow-md z-10"
+                                                className="absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 bg-white/80 dark:bg-black/60 backdrop-blur-sm rounded-full flex items-center justify-center opacity-100 md:opacity-0 md:group-hover/imgbox:opacity-100 transition-opacity duration-200 hover:bg-white dark:hover:bg-black/80 shadow-md z-10"
                                                 aria-label="Next image"
                                             >
                                                 <svg className="w-4 h-4 text-matteo-charcoal dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"/></svg>
@@ -467,12 +364,11 @@ export const InventoryProductPage: React.FC = () => {
                                             <span className="font-sans text-[10px] uppercase tracking-widest text-matteo-charcoal/50 dark:text-white/50">
                                                 {activeImageIndex + 1} / {currentImages.length}
                                             </span>
-                                            <div className="flex justify-center gap-1.5">
+                                            <div className="flex justify-center gap-1.5 pointer-events-none" aria-hidden="true">
                                                 {currentImages.map((_: any, i: number) => (
-                                                    <button
+                                                    <div
                                                         key={i}
-                                                        onClick={(e) => { e.stopPropagation(); setActiveImageIndex(i); }}
-                                                        className={`w-1.5 h-1.5 rounded-full transition-all duration-200 ${i === activeImageIndex ? 'bg-matteo-orange w-3' : 'bg-matteo-charcoal/20 dark:bg-white/20 hover:bg-matteo-charcoal/40 dark:hover:bg-white/40'}`}
+                                                        className={`w-1.5 h-1.5 rounded-full transition-all duration-200 ${i === activeImageIndex ? 'bg-matteo-orange w-3' : 'bg-matteo-charcoal/20 dark:bg-white/20'}`}
                                                     />
                                                 ))}
                                             </div>
@@ -552,6 +448,8 @@ export const InventoryProductPage: React.FC = () => {
                                                         <img
                                                             src={thumbUrl}
                                                             alt={v.StyleName || v.Title || `Style ${idx + 1}`}
+                                                            loading="lazy"
+                                                            decoding="async"
                                                             className="w-full h-full object-cover mix-blend-multiply dark:mix-blend-normal"
                                                             onError={(e) => {
                                                                 (e.target as HTMLImageElement).style.display = 'none';

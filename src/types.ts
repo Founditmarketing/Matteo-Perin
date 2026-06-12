@@ -56,15 +56,6 @@ export interface CartItem extends Product {
   customizations?: CustomizationOptions;
 }
 
-export interface LookbookItem {
-  id: number;
-  title: string; // e.g., "Look 01"
-  season: string;
-  image: string;
-  description: string;
-  wearing: string[]; // List of items in the photo
-}
-
 export interface Material {
   name: string;
   origin: string;

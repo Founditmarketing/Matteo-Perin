@@ -1,22 +1,14 @@
 
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
-// import { SolomeiHero } from './SolomeiHero';
-// import { NarrativeStream } from './NarrativeStream';
-import { Hero } from './Hero';
 import { DualHero } from './DualHero';
 import { Collection } from './Collection';
-// import { GenderSplit } from './GenderSplit';
 import { Contact } from './Contact';
 import { Interlude } from './Interlude';
 import { CrocJacketHero } from './CrocJacketHero';
 import { HiddenInventoryTest } from './HiddenInventoryTest';
 
-interface HomeProps {
-  startAnimation?: boolean;
-}
-
-export const Home: React.FC<HomeProps> = ({ startAnimation = true }) => {
+export const Home: React.FC = () => {
   return (
     <>
       <Helmet>
@@ -28,9 +20,6 @@ export const Home: React.FC<HomeProps> = ({ startAnimation = true }) => {
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://www.matteoperin.com/" />
       </Helmet>
-      {/* <SolomeiHero /> */}
-      {/* <NarrativeStream /> */}
-      {/* <Hero startAnimation={startAnimation} /> */}
       <DualHero />
       <HiddenInventoryTest />
       <Collection />

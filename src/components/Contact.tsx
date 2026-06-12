@@ -71,6 +71,8 @@ const ContactVisuals = memo(() => {
                 <img
                     src={AMBIANCE_IMAGE.image}
                     alt={AMBIANCE_IMAGE.label}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover grayscale contrast-125 brightness-90"
                 />
                 <div className="absolute inset-0 bg-matteo-charcoal/20 mix-blend-multiply"></div>
@@ -101,6 +103,7 @@ const ContactForm = memo(() => {
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
+    const [submitError, setSubmitError] = useState(false);
 
     const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -110,9 +113,12 @@ const ContactForm = memo(() => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
+        setSubmitError(false);
         try {
-            // Send to HubSpot via serverless endpoint
-            await fetch('/api/private-client', {
+            // Send to HubSpot via serverless endpoint. Success copy is only
+            // shown when the inquiry actually reached us — never promise a
+            // 24-hour callback for a lead that was lost.
+            const res = await fetch('/api/private-client', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -123,14 +129,15 @@ const ContactForm = memo(() => {
                     subject: formData.subject,
                     message: formData.message,
                 }),
-            }).catch(() => {});
+            });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            reportInquiryConversion();
+            setIsSuccess(true);
         } catch (e) {
-            // Don't block UX
+            setSubmitError(true);
+        } finally {
+            setIsSubmitting(false);
         }
-        // Fire Google Ads conversion
-        reportInquiryConversion();
-        setIsSubmitting(false);
-        setIsSuccess(true);
     };
 
     return (
@@ -153,6 +160,12 @@ const ContactForm = memo(() => {
                             <FloatingInput label="Subject" name="subject" value={formData.subject} onChange={handleChange} />
                             <FloatingInput label="Message" name="message" type="textarea" value={formData.message} onChange={handleChange} required={false} />
 
+                            {submitError && (
+                                <p role="alert" className="font-serif text-sm text-matteo-charcoal dark:text-white leading-relaxed">
+                                    Your message could not be sent. Please try again, or write directly to <a href="mailto:concierge@matteoperin.com" className="text-matteo-orange border-b border-matteo-orange/40">concierge@matteoperin.com</a>.
+                                </p>
+                            )}
+
                             <div className="pt-8">
                                 <button
                                     type="submit"
@@ -160,7 +173,7 @@ const ContactForm = memo(() => {
                                     className="w-full bg-matteo-charcoal dark:bg-white text-white dark:text-matteo-black py-5 font-sans text-xs uppercase tracking-[0.2em] hover:bg-matteo-orange dark:hover:bg-matteo-orange hover:text-white dark:hover:text-white transition-colors duration-500 disabled:opacity-70 flex items-center justify-center gap-3"
                                 >
                                     {isSubmitting ? (
-                                        <span>Transmitting...</span>
+                                        <span>Sending to the Atelier…</span>
                                     ) : (
                                         <>
                                             <span>Send Request</span>

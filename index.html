@@ -84,17 +84,9 @@
   }
   </script>
 
-  <!-- DNS Prefetch + Preconnect for speed -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <!-- DNS Prefetch + Preconnect for speed (fonts are now self-hosted via
+       @fontsource imports in src/index.tsx — no Google Fonts connection) -->
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
-
-  <!-- Google Fonts. Loaded normally (preconnect above + display=swap in the URL):
-       the old media="print" onload hack deferred ALL font CSS until after load,
-       guaranteeing a long flash of Times/Arial on a typography-led site. -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap"
-    rel="stylesheet" />
 
   <!-- Without JS the IntersectionObserver never reveals scroll content -->
   <noscript>
@@ -138,27 +130,21 @@
     });
   </script>
 
-  <!-- CRITICAL DEBUGGING: Global Error Handler -->
+  <!-- Dev-only startup error overlay; production errors stay in the console
+       (the React ErrorBoundary in src/index.tsx handles render crashes). -->
   <script>
-    window.onerror = function (message, source, lineno, colno, error) {
-      const errorContainer = document.createElement('div');
-      errorContainer.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:99999; padding:20px; color:red; font-family:monospace; white-space:pre-wrap; overflow:auto;';
-      errorContainer.innerHTML = '<h1>CRITICAL STARTUP ERROR</h1>' +
-        '<strong>Message:</strong> ' + message + '\n' +
-        '<strong>Source:</strong> ' + source + ':' + lineno + '\n' +
-        '<strong>Stack:</strong> ' + (error ? error.stack : 'N/A');
-      document.body.appendChild(errorContainer);
-    };
+    if (['localhost', '127.0.0.1'].includes(location.hostname)) {
+      window.onerror = function (message, source, lineno, colno, error) {
+        const errorContainer = document.createElement('div');
+        errorContainer.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:99999; padding:20px; color:red; font-family:monospace; white-space:pre-wrap; overflow:auto;';
+        errorContainer.innerHTML = '<h1>CRITICAL STARTUP ERROR</h1>' +
+          '<strong>Message:</strong> ' + message + '\n' +
+          '<strong>Source:</strong> ' + source + ':' + lineno + '\n' +
+          '<strong>Stack:</strong> ' + (error ? error.stack : 'N/A');
+        document.body.appendChild(errorContainer);
+      };
+    }
   </script>
-
-  <script>
-    window.onload = function() {
-      document.body.classList.remove('invisible');
-    };
-  </script>
-
-
-
 </head>
 
 <body

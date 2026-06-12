@@ -1,4 +1,5 @@
 import React from 'react';
+import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
 import { PRODUCTS } from '../constants';
 import { useNavigate } from 'react-router-dom';
@@ -14,6 +15,10 @@ export const ClientPortal: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-[#050505] text-white pt-32 pb-20 px-6 md:px-12">
+            <Helmet>
+                <title>Client Portal | Matteo Perin</title>
+                <meta name="robots" content="noindex, nofollow" />
+            </Helmet>
 
             <div className="max-w-7xl mx-auto space-y-24">
 
@@ -150,6 +155,8 @@ export const ClientPortal: React.FC = () => {
                                     <img
                                         src={item.image}
                                         alt={item.title}
+                                        loading="lazy"
+                                        decoding="async"
                                         className="w-full h-full object-cover opacity-60 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 grayscale group-hover:grayscale-0"
                                     />
                                 </div>

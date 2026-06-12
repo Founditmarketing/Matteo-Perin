@@ -92,9 +92,11 @@ export const CrocJacketLanding: React.FC = () => {
     const [zoomPos, setZoomPos] = useState({ x: 50, y: 50 });
     const [isConciergeOpen, setIsConciergeOpen] = useState(false);
     const [isCheckingOut, setIsCheckingOut] = useState(false);
+    const [checkoutError, setCheckoutError] = useState('');
     const [conciergeData, setConciergeData] = useState({ name: '', email: '', phone: '', city: '' });
     const [conciergeSubmitting, setConciergeSubmitting] = useState(false);
     const [conciergeSuccess, setConciergeSuccess] = useState(false);
+    const [conciergeError, setConciergeError] = useState(false);
     const mainImageRef = useRef<HTMLDivElement>(null);
     const editorialRef = useRef<HTMLDivElement>(null);
 
@@ -146,6 +148,7 @@ export const CrocJacketLanding: React.FC = () => {
         if (!crocJacket) return;
         fireEvent('deposit_initiated', { currency: 'USD', value: 25000, item_name: 'Bespoke Crocodile Jacket Deposit' });
         fireConversion();
+        setCheckoutError('');
         try {
             setIsCheckingOut(true);
             const response = await fetch('/api/create-checkout-session', {
@@ -165,16 +168,18 @@ export const CrocJacketLanding: React.FC = () => {
                 }),
             });
 
-            const data = await response.json();
-            
-            if (data.url) {
+            const data = await response.json().catch(() => ({}));
+
+            if (response.ok && data.url) {
                 window.location.href = data.url;
             } else {
                 console.error("Checkout failed:", data.error);
+                setCheckoutError('We could not open the secure payment page. Please try again in a moment — or write to concierge@matteoperin.com and a senior advisor will reserve your commission personally.');
                 setIsCheckingOut(false);
             }
         } catch (error) {
             console.error("Checkout error:", error);
+            setCheckoutError('We could not reach the payment service. Please check your connection and try again — or write to concierge@matteoperin.com and a senior advisor will reserve your commission personally.');
             setIsCheckingOut(false);
         }
     };
@@ -188,7 +193,7 @@ export const CrocJacketLanding: React.FC = () => {
     };
 
     return (
-        <div className="bg-white dark:bg-matteo-black min-h-screen text-matteo-charcoal dark:text-white transition-colors duration-700">
+        <div className="bg-matteo-cream dark:bg-matteo-black min-h-screen text-matteo-charcoal dark:text-white transition-colors duration-700">
 
             <Helmet>
                 <title>Bespoke Crocodile Jacket | Handcrafted in Italy | Matteo Perin</title>
@@ -212,18 +217,18 @@ export const CrocJacketLanding: React.FC = () => {
                 <meta property="product:brand" content="Matteo Perin" />
                 <meta property="product:category" content="Clothing > Outerwear > Leather Jackets" />
 
-                {/* Product structured data — limited-availability commission */}
+                {/* Product structured data — the ONE truthful Product entity for this
+                    page. No aggregateRating / reviews (none are verifiable), one
+                    availability value, operational shipping + return facts only. */}
                 <script type="application/ld+json">{JSON.stringify({
                     '@context': 'https://schema.org',
                     '@type': 'Product',
                     name: 'Bespoke Crocodile Jacket',
-                    image: [
-                        'https://www.matteoperin.com/assets/croc-jacket/matteo_croc_new_1.jpg',
-                        'https://www.matteoperin.com/assets/croc-jacket/matteo_croc_new_2.jpg',
-                        'https://www.matteoperin.com/assets/croc-jacket/matteo_croc.jpg',
-                    ],
+                    image: GALLERY_IMAGES.map(img => `https://www.matteoperin.com${img.replace(/ /g, '%20')}`),
                     description: 'One-of-one bespoke crocodile jacket. Hand-selected Nile or Porosus crocodile, hand-painted patina, over 100 hours of artisanal labor in Verona, Italy. CITES-certified hides. Limited to 3 commissions per year.',
+                    sku: 'MP-CROC-JACKET-001',
                     brand: { '@type': 'Brand', name: 'Matteo Perin' },
+                    manufacturer: { '@type': 'Organization', name: 'Matteo Perin Atelier', url: 'https://www.matteoperin.com' },
                     url: 'https://www.matteoperin.com/bespoke-crocodile-jacket',
                     material: 'CITES-certified Nile (Niloticus) or Porosus crocodile, hand-painted patina, Italian silk lining',
                     countryOfOrigin: { '@type': 'Country', name: 'Italy' },
@@ -234,6 +239,17 @@ export const CrocJacketLanding: React.FC = () => {
                         availability: 'https://schema.org/LimitedAvailability',
                         url: 'https://www.matteoperin.com/bespoke-crocodile-jacket',
                         itemCondition: 'https://schema.org/NewCondition',
+                        seller: { '@type': 'Organization', name: 'Matteo Perin', url: 'https://www.matteoperin.com' },
+                        shippingDetails: {
+                            '@type': 'OfferShippingDetails',
+                            shippingRate: { '@type': 'MonetaryAmount', value: '0', currency: 'USD' },
+                            shippingDestination: { '@type': 'DefinedRegion', addressCountry: ['US', 'GB', 'CH', 'FR', 'IT', 'DE', 'AE'] },
+                        },
+                        hasMerchantReturnPolicy: {
+                            '@type': 'MerchantReturnPolicy',
+                            applicableCountry: 'US',
+                            returnPolicyCategory: 'https://schema.org/MerchantReturnNotPermitted',
+                        },
                     },
                 })}</script>
 
@@ -267,16 +283,16 @@ export const CrocJacketLanding: React.FC = () => {
                             name: 'Is authenticity documented?',
                             acceptedAnswer: { '@type': 'Answer', text: 'Each jacket ships with a signed certificate of authenticity, an individual serial number, and full provenance documentation tracing the skin from conservation center to finished garment. Lifetime maintenance and reconditioning is included.' },
                         },
-                    ],
-                })}</script>
-
-                {/* Breadcrumb structured data */}
-                <script type="application/ld+json">{JSON.stringify({
-                    '@context': 'https://schema.org',
-                    '@type': 'BreadcrumbList',
-                    itemListElement: [
-                        { '@type': 'ListItem', position: 1, name: 'Matteo Perin', item: 'https://www.matteoperin.com/' },
-                        { '@type': 'ListItem', position: 2, name: 'Bespoke Crocodile Jacket', item: 'https://www.matteoperin.com/bespoke-crocodile-jacket' },
+                        {
+                            '@type': 'Question',
+                            name: 'Where is the Matteo Perin crocodile jacket made?',
+                            acceptedAnswer: { '@type': 'Answer', text: 'Every jacket is handcrafted in our atelier in Verona, Italy by master artisans. Matteo Perin also maintains a showroom in Jackson, Wyoming for private consultations and fittings.' },
+                        },
+                        {
+                            '@type': 'Question',
+                            name: 'Can I customize my bespoke crocodile jacket?',
+                            acceptedAnswer: { '@type': 'Answer', text: 'Absolutely. Every commission begins with a private consultation where you select the crocodile skin, patina color, lining, hardware finish, and fit. Each jacket is truly one-of-one — no two are alike.' },
+                        },
                     ],
                 })}</script>
 
@@ -285,108 +301,6 @@ export const CrocJacketLanding: React.FC = () => {
                 <meta name="twitter:title" content="Bespoke Crocodile Jacket — $25,000 Deposit | Matteo Perin" />
                 <meta name="twitter:description" content="One-of-one hand-selected crocodile. Handcrafted in Verona, Italy. 100+ hours of artisanal work." />
                 <meta name="twitter:image" content="https://www.matteoperin.com/assets/croc-jacket/matteo_croc_new_1.jpg" />
-
-                {/* Product Structured Data — Google Shopping + AdWords */}
-                <script type="application/ld+json">
-                    {JSON.stringify({
-                        "@context": "https://schema.org/",
-                        "@type": "Product",
-                        "name": "Bespoke Crocodile Jacket",
-                        "image": GALLERY_IMAGES.map(img => `https://www.matteoperin.com${img.replace(/ /g, '%20')}`),
-                        "description": "A 1-of-1 bespoke crocodile field jacket. Crafted from hand-selected, certified CITES-regulated Nile (Niloticus) or Porosus crocodile hides, each piece features a hand-developed patina, pure silk lining, and custom cast palladium hardware. Over 100 hours of artisanal hand-stitching in Verona, Italy justify the $185,000 commission price. Offered exclusively by private commission.",
-                        "sku": "MP-CROC-JACKET-001",
-                        "mpn": "MP-CROC-2026",
-                        "gtin14": "",
-                        "brand": {
-                            "@type": "Brand",
-                            "name": "Matteo Perin",
-                            "url": "https://www.matteoperin.com"
-                        },
-                        "manufacturer": {
-                            "@type": "Organization",
-                            "name": "Matteo Perin Atelier",
-                            "url": "https://www.matteoperin.com"
-                        },
-                        "material": ["Nile Crocodile Leather", "Porosus Crocodile Leather", "Silk Lining", "Palladium Hardware"],
-                        "color": "Hand-Developed Patina",
-                        "category": "Clothing > Outerwear > Leather Jackets",
-                        "audience": {
-                            "@type": "PeopleAudience",
-                            "suggestedGender": "unisex"
-                        },
-                        "countryOfOrigin": {
-                            "@type": "Country",
-                            "name": "Italy"
-                        },
-                        "offers": {
-                            "@type": "Offer",
-                            "url": "https://www.matteoperin.com/bespoke-crocodile-jacket",
-                            "priceCurrency": "USD",
-                            "price": "185000",
-                            "priceValidUntil": "2027-12-31",
-                            "availability": "https://schema.org/InStock",
-                            "itemCondition": "https://schema.org/NewCondition",
-                            "seller": {
-                                "@type": "Organization",
-                                "name": "Matteo Perin",
-                                "url": "https://www.matteoperin.com"
-                            },
-                            "shippingDetails": {
-                                "@type": "OfferShippingDetails",
-                                "shippingRate": {
-                                    "@type": "MonetaryAmount",
-                                    "value": "0",
-                                    "currency": "USD"
-                                },
-                                "shippingDestination": {
-                                    "@type": "DefinedRegion",
-                                    "addressCountry": ["US", "GB", "CH", "FR", "IT", "DE", "AE"]
-                                },
-                                "deliveryTime": {
-                                    "@type": "ShippingDeliveryTime",
-                                    "handlingTime": {
-                                        "@type": "QuantitativeValue",
-                                        "minValue": 30,
-                                        "maxValue": 90,
-                                        "unitCode": "DAY"
-                                    }
-                                }
-                            },
-                            "hasMerchantReturnPolicy": {
-                                "@type": "MerchantReturnPolicy",
-                                "applicableCountry": "US",
-                                "returnPolicyCategory": "https://schema.org/MerchantReturnNotPermitted",
-                                "merchantReturnDays": 0
-                            }
-                        },
-                        "aggregateRating": {
-                            "@type": "AggregateRating",
-                            "ratingValue": "5",
-                            "reviewCount": "3",
-                            "bestRating": "5"
-                        },
-                        "review": [
-                            {
-                                "@type": "Review",
-                                "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
-                                "author": { "@type": "Person", "name": "Private Client, Geneva" },
-                                "reviewBody": "The craftsmanship is beyond anything I've experienced. Truly one of one."
-                            },
-                            {
-                                "@type": "Review",
-                                "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
-                                "author": { "@type": "Person", "name": "Private Client, Jackson Hole" },
-                                "reviewBody": "Matteo's attention to detail on the crocodile jacket exceeded every expectation. A masterwork."
-                            },
-                            {
-                                "@type": "Review",
-                                "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
-                                "author": { "@type": "Person", "name": "Private Client, Dubai" },
-                                "reviewBody": "Nothing else compares. The patina, the hand, the weight — it's architecture you wear."
-                            }
-                        ]
-                    })}
-                </script>
 
                 {/* Breadcrumb Structured Data */}
                 <script type="application/ld+json">
@@ -401,55 +315,6 @@ export const CrocJacketLanding: React.FC = () => {
                     })}
                 </script>
 
-                {/* FAQ Structured Data — Powers Google Ads FAQ Extensions */}
-                <script type="application/ld+json">
-                    {JSON.stringify({
-                        "@context": "https://schema.org",
-                        "@type": "FAQPage",
-                        "mainEntity": [
-                            {
-                                "@type": "Question",
-                                "name": "What type of crocodile is used in the Matteo Perin bespoke jacket?",
-                                "acceptedAnswer": {
-                                    "@type": "Answer",
-                                    "text": "Each jacket is crafted from hand-selected Nile (Niloticus) or Porosus crocodile, sourced from certified, CITES-regulated farms. The skins are chosen for their symmetry, scale pattern, and suppleness before being hand-finished with a proprietary hand-painted patina."
-                                }
-                            },
-                            {
-                                "@type": "Question",
-                                "name": "How much does the bespoke crocodile jacket cost?",
-                                "acceptedAnswer": {
-                                    "@type": "Answer",
-                                    "text": "The full commission price is $185,000 USD. You can secure your commission slot with a $25,000 deposit, with the remaining balance due before production begins. Complimentary global shipping is included."
-                                }
-                            },
-                            {
-                                "@type": "Question",
-                                "name": "How long does it take to make a bespoke crocodile jacket?",
-                                "acceptedAnswer": {
-                                    "@type": "Answer",
-                                    "text": "Each jacket requires over 100 hours of artisanal work in our Verona, Italy atelier. From consultation to delivery, the process typically takes 30 to 90 days depending on customization requirements."
-                                }
-                            },
-                            {
-                                "@type": "Question",
-                                "name": "Where is the Matteo Perin crocodile jacket made?",
-                                "acceptedAnswer": {
-                                    "@type": "Answer",
-                                    "text": "Every jacket is handcrafted in our atelier in Verona, Italy by master artisans. Matteo Perin also maintains a showroom in Jackson, Wyoming for private consultations and fittings."
-                                }
-                            },
-                            {
-                                "@type": "Question",
-                                "name": "Can I customize my bespoke crocodile jacket?",
-                                "acceptedAnswer": {
-                                    "@type": "Answer",
-                                    "text": "Absolutely. Every commission begins with a private consultation where you select the crocodile skin, patina color, lining, hardware finish, and fit. Each jacket is truly one-of-one — no two are alike."
-                                }
-                            }
-                        ]
-                    })}
-                </script>
             </Helmet>
 
             {/* ============================================================
@@ -462,7 +327,7 @@ export const CrocJacketLanding: React.FC = () => {
                     <ol className="flex items-center gap-2 font-sans text-[10px] uppercase tracking-[0.2em] text-matteo-stone">
                         <li><Link to="/" className="hover:text-matteo-orange transition-colors">Home</Link></li>
                         <li className="text-matteo-charcoal/20 dark:text-white/20">/</li>
-                        <li><Link to="/collection" className="hover:text-matteo-orange transition-colors">Collection</Link></li>
+                        <li><Link to="/bespoke" className="hover:text-matteo-orange transition-colors">Bespoke</Link></li>
                         <li className="text-matteo-charcoal/20 dark:text-white/20">/</li>
                         <li className="text-matteo-charcoal dark:text-white">Bespoke Crocodile Jacket</li>
                     </ol>
@@ -475,7 +340,7 @@ export const CrocJacketLanding: React.FC = () => {
                         {/* Main Image */}
                         <div
                             ref={mainImageRef}
-                            className="relative aspect-[3/4] md:aspect-[4/5] overflow-hidden bg-[#F5F3F0] dark:bg-white/5 cursor-crosshair group mb-4"
+                            className="relative aspect-[3/4] md:aspect-[4/5] overflow-hidden bg-matteo-sand dark:bg-white/5 cursor-crosshair group mb-4"
                             onMouseEnter={() => setIsZoomed(true)}
                             onMouseLeave={() => setIsZoomed(false)}
                             onMouseMove={handleZoomMove}
@@ -525,7 +390,7 @@ export const CrocJacketLanding: React.FC = () => {
                                     onClick={() => handleImageSelect(i)}
                                     className={`shrink-0 w-16 h-20 md:w-20 md:h-24 overflow-hidden transition-all duration-300 ${
                                         selectedImage === i
-                                            ? 'ring-2 ring-matteo-orange ring-offset-2 ring-offset-white dark:ring-offset-matteo-black opacity-100'
+                                            ? 'ring-2 ring-matteo-orange ring-offset-2 ring-offset-matteo-cream dark:ring-offset-matteo-black opacity-100'
                                             : 'opacity-50 hover:opacity-80'
                                     }`}
                                 >
@@ -565,7 +430,7 @@ export const CrocJacketLanding: React.FC = () => {
                                 <span className="font-serif text-3xl md:text-4xl text-matteo-charcoal dark:text-white">$185,000</span>
                                 <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-matteo-stone">USD — Full Commission</span>
                             </div>
-                            <div className="mt-4 p-4 bg-matteo-orange/5 dark:bg-matteo-orange/10 border border-matteo-orange/20 rounded-sm">
+                            <div className="mt-4 p-4 bg-matteo-orange/5 dark:bg-matteo-orange/10 border border-matteo-orange/20">
                                 <div className="flex items-baseline gap-2 mb-1">
                                     <span className="font-serif text-2xl text-matteo-orange">$25,000</span>
                                     <span className="font-sans text-[10px] uppercase tracking-[0.15em] text-matteo-orange/70">Deposit to Reserve</span>
@@ -604,6 +469,12 @@ export const CrocJacketLanding: React.FC = () => {
                                 {!isCheckingOut && <div className="absolute inset-0 bg-matteo-orange translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500 ease-out"></div>}
                             </button>
 
+                            {checkoutError && (
+                                <div role="alert" className="border border-matteo-orange/40 bg-matteo-orange/5 dark:bg-matteo-orange/10 p-4">
+                                    <p className="font-serif text-sm text-matteo-charcoal dark:text-white leading-relaxed">{checkoutError}</p>
+                                </div>
+                            )}
+
                             {/* Secondary: Request Commission */}
                             <button
                                 onClick={() => {
@@ -613,15 +484,22 @@ export const CrocJacketLanding: React.FC = () => {
                                 }}
                                 className={`w-full py-4 border font-sans text-xs uppercase tracking-[0.2em] transition-all duration-500 border-matteo-charcoal/30 dark:border-white/30 text-matteo-charcoal dark:text-white hover:border-matteo-orange hover:text-matteo-orange`}
                             >
-                                SERIOUS INQUIRIES ONLY
+                                Request a Commission Conversation
                             </button>
 
-                            {/* Deposit Info */}
-                            <div className="flex items-start gap-3 py-3">
-                                <svg className="w-4 h-4 text-matteo-orange shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
-                                <p className="font-sans text-[10px] uppercase tracking-[0.12em] text-matteo-stone leading-relaxed">
-                                    Your $25,000 deposit secures your commission slot. The remaining balance of $160,000 is invoiced before production begins. A senior advisor will contact you within 24 hours.
-                                </p>
+                            {/* What happens after the deposit — answers the anxiety at the
+                                moment it spikes, using only operational facts. */}
+                            <div className="py-3 space-y-2.5">
+                                {[
+                                    'Within 24 hours, a senior advisor calls to begin your consultation.',
+                                    'Nothing is cut before you approve — hide, patina, and fit are confirmed with you first.',
+                                    'The deposit applies in full to the $185,000 commission; the balance is invoiced only before production begins.',
+                                ].map((line) => (
+                                    <div key={line} className="flex items-start gap-3">
+                                        <span className="w-1 h-1 rounded-full bg-matteo-orange mt-[7px] shrink-0"></span>
+                                        <p className="font-sans text-[10px] uppercase tracking-[0.12em] text-matteo-charcoal/60 dark:text-white/50 leading-relaxed">{line}</p>
+                                    </div>
+                                ))}
                             </div>
 
                             {/* Tertiary: Private Inquiry */}
@@ -772,30 +650,8 @@ export const CrocJacketLanding: React.FC = () => {
             </section>
 
 
-            {/* Client Testimonial */}
-            <section className="py-24 md:py-32 px-6 md:px-12 lg:px-24 bg-white dark:bg-matteo-black border-t border-matteo-charcoal/5 dark:border-white/5">
-                <div className="max-w-3xl mx-auto text-center">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                    >
-                        <svg className="w-8 h-8 text-matteo-orange mx-auto mb-8 opacity-40" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                        </svg>
-                        <blockquote className="font-serif text-2xl md:text-3xl text-matteo-charcoal dark:text-white leading-relaxed mb-8 italic">
-                            "The craftsmanship is beyond anything I've experienced in luxury fashion. This jacket doesn't just fit — it was built for me. There is nothing else like it in the world."
-                        </blockquote>
-                        <div className="w-8 h-[1px] bg-matteo-orange mx-auto mb-4"></div>
-                        <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-matteo-stone">
-                            Private Client — Geneva, Switzerland
-                        </span>
-                    </motion.div>
-                </div>
-            </section>
-
             {/* Final CTA Band */}
-            <section className="py-16 md:py-24 px-6 text-center bg-[#F9F7F2] dark:bg-[#111] border-t border-matteo-charcoal/5 dark:border-white/5">
+            <section className="py-16 md:py-24 px-6 text-center bg-matteo-sand/60 dark:bg-[#111] border-t border-matteo-charcoal/5 dark:border-white/5">
                 <motion.div
                     initial="hidden"
                     whileInView="visible"
@@ -828,6 +684,11 @@ export const CrocJacketLanding: React.FC = () => {
                                 Private Inquiry
                             </button>
                     </motion.div>
+                    {checkoutError && (
+                        <motion.p variants={fadeUpVariant} role="alert" className="font-serif text-sm text-matteo-charcoal dark:text-white mt-8 max-w-lg mx-auto leading-relaxed">
+                            {checkoutError}
+                        </motion.p>
+                    )}
                 </motion.div>
             </section>
 
@@ -835,20 +696,28 @@ export const CrocJacketLanding: React.FC = () => {
             {/* ============================================================
                 MOBILE STICKY BUY BAR
                ============================================================ */}
-            <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-white dark:bg-matteo-black border-t border-matteo-charcoal/10 dark:border-white/10 px-4 py-3 flex items-center justify-between gap-3 shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
-                <div className="flex-shrink-0">
-                    <div className="flex items-baseline gap-1.5">
-                        <span className="font-serif text-lg text-matteo-orange">$25,000</span>
-                        <span className="font-sans text-[10px] uppercase tracking-[0.1em] text-matteo-stone">Deposit</span>
+            <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-matteo-cream dark:bg-matteo-black border-t border-matteo-charcoal/10 dark:border-white/10 shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
+                {checkoutError && (
+                    <p role="alert" className="px-4 pt-3 font-serif text-xs text-matteo-charcoal dark:text-white leading-relaxed">
+                        {checkoutError}
+                    </p>
+                )}
+                <div className="px-4 py-3 flex items-center justify-between gap-3">
+                    <div className="flex-shrink-0">
+                        <div className="flex items-baseline gap-1.5">
+                            <span className="font-serif text-lg text-matteo-orange">$25,000</span>
+                            <span className="font-sans text-[10px] uppercase tracking-[0.1em] text-matteo-stone">Deposit</span>
+                        </div>
+                        <div className="font-sans text-[10px] uppercase tracking-[0.1em] text-matteo-stone">Full price: $185,000</div>
                     </div>
-                    <div className="font-sans text-[10px] uppercase tracking-[0.1em] text-matteo-stone">Full price: $185,000</div>
+                    <button
+                        onClick={handleBuyNow}
+                        disabled={isCheckingOut}
+                        className="flex-1 max-w-[220px] py-3.5 bg-matteo-charcoal dark:bg-white text-white dark:text-matteo-black font-sans text-[10px] uppercase tracking-[0.15em] hover:bg-matteo-orange dark:hover:bg-matteo-orange hover:text-white transition-all duration-300 disabled:opacity-70 disabled:cursor-wait"
+                    >
+                        {isCheckingOut ? 'Opening…' : 'Secure Deposit'}
+                    </button>
                 </div>
-                <button
-                    onClick={handleBuyNow}
-                    className="flex-1 max-w-[220px] py-3.5 bg-matteo-charcoal dark:bg-white text-white dark:text-matteo-black font-sans text-[10px] uppercase tracking-[0.15em] hover:bg-matteo-orange dark:hover:bg-matteo-orange hover:text-white transition-all duration-300"
-                >
-                    Secure Deposit
-                </button>
             </div>
 
             {/* Bottom padding for mobile sticky bar */}
@@ -870,7 +739,7 @@ export const CrocJacketLanding: React.FC = () => {
                         <div className="bg-white dark:bg-[#111] w-full max-w-5xl relative overflow-hidden shadow-2xl flex flex-col md:flex-row max-h-[90vh] md:max-h-[80vh]">
                             {/* Left: Image */}
                             <div className="hidden md:block md:w-1/2 relative h-full">
-                                <img src="/assets/croc-jacket/matteo_croc.jpg" className="absolute inset-0 w-full h-full object-cover object-top" alt="Matteo Perin in Bespoke Crocodile Jacket" />
+                                <img src="/assets/croc-jacket/matteo_croc.jpg" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover object-top" alt="Matteo Perin in Bespoke Crocodile Jacket" />
                             </div>
                             {/* Right: Form */}
                             <div className="w-full md:w-1/2 p-8 md:p-16 lg:p-24 flex flex-col justify-center relative overflow-y-auto">
@@ -903,8 +772,9 @@ export const CrocJacketLanding: React.FC = () => {
                                     <form className="space-y-10" onSubmit={async (e) => {
                                         e.preventDefault();
                                         setConciergeSubmitting(true);
+                                        setConciergeError(false);
                                         try {
-                                            await fetch('/api/private-client', {
+                                            const res = await fetch('/api/private-client', {
                                                 method: 'POST',
                                                 headers: { 'Content-Type': 'application/json' },
                                                 body: JSON.stringify({
@@ -917,18 +787,27 @@ export const CrocJacketLanding: React.FC = () => {
                                                     referrer: document.referrer || '',
                                                     landingPage: window.location.href,
                                                 }),
-                                            }).catch(() => {});
-                                        } catch (_) {}
-                                        // Fire GA4 + Ads conversion
-                                        fireEvent('generate_lead', { lead_type: 'private_viewing', page: 'croc_jacket' });
-                                        fireConversion();
-                                        setConciergeSubmitting(false);
-                                        setConciergeSuccess(true);
+                                            });
+                                            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                                            // Conversion only fires for inquiries that actually reached us
+                                            fireEvent('generate_lead', { lead_type: 'private_viewing', page: 'croc_jacket' });
+                                            fireConversion();
+                                            setConciergeSuccess(true);
+                                        } catch (_) {
+                                            setConciergeError(true);
+                                        } finally {
+                                            setConciergeSubmitting(false);
+                                        }
                                     }}>
                                         <input type="text" placeholder="Full Name" value={conciergeData.name} onChange={e => setConciergeData(d => ({...d, name: e.target.value}))} className="w-full bg-transparent border-b border-matteo-charcoal/20 dark:border-white/20 py-3 font-serif text-matteo-charcoal dark:text-white placeholder-matteo-charcoal/40 dark:placeholder-white/30 outline-none focus:border-matteo-orange transition-colors" required />
                                         <input type="email" placeholder="Email Address" value={conciergeData.email} onChange={e => setConciergeData(d => ({...d, email: e.target.value}))} className="w-full bg-transparent border-b border-matteo-charcoal/20 dark:border-white/20 py-3 font-serif text-matteo-charcoal dark:text-white placeholder-matteo-charcoal/40 dark:placeholder-white/30 outline-none focus:border-matteo-orange transition-colors" required />
                                         <input type="tel" placeholder="Phone Number" value={conciergeData.phone} onChange={e => setConciergeData(d => ({...d, phone: e.target.value}))} className="w-full bg-transparent border-b border-matteo-charcoal/20 dark:border-white/20 py-3 font-serif text-matteo-charcoal dark:text-white placeholder-matteo-charcoal/40 dark:placeholder-white/30 outline-none focus:border-matteo-orange transition-colors" />
                                         <input type="text" placeholder="City / Location" value={conciergeData.city} onChange={e => setConciergeData(d => ({...d, city: e.target.value}))} className="w-full bg-transparent border-b border-matteo-charcoal/20 dark:border-white/20 py-3 font-serif text-matteo-charcoal dark:text-white placeholder-matteo-charcoal/40 dark:placeholder-white/30 outline-none focus:border-matteo-orange transition-colors" required />
+                                        {conciergeError && (
+                                            <p role="alert" className="font-serif text-sm text-matteo-charcoal dark:text-white leading-relaxed !mt-6">
+                                                Your inquiry could not be sent. Please try again, or write directly to <a href="mailto:concierge@matteoperin.com" className="text-matteo-orange border-b border-matteo-orange/40">concierge@matteoperin.com</a>.
+                                            </p>
+                                        )}
                                         <button
                                             type="submit"
                                             disabled={conciergeSubmitting}

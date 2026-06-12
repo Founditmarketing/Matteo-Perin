@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, Suspense } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { BrowserRouter as Router, Routes, Route, useLocation, Link } from 'react-router-dom';
 import { Navigation } from './components/Navigation';
 import { Footer } from './components/Footer';
@@ -9,8 +10,38 @@ import { CartSidebar } from './components/CartSidebar';
 import { ThemeProvider } from './context/ThemeContext';
 import { InquiryModal } from './components/InquiryModal';
 import { Cursor } from './components/Cursor';
-import { DigitalConcierge } from './components/DigitalConcierge';
 import { StitchTransition, STITCH_COVER_MS } from './components/StitchTransition';
+
+// The concierge drags supabase-js + react-markdown with it (~90KB gzip), so it
+// stays out of the initial bundle: the shell renders an identical launcher
+// button and the real component loads on first click.
+const DigitalConcierge = React.lazy(() => import('./components/DigitalConcierge').then(m => ({ default: m.DigitalConcierge })));
+
+const ConciergeLauncherButton: React.FC<{ onClick?: () => void }> = ({ onClick }) => (
+    <button
+        onClick={onClick}
+        aria-label="Open the Digital Concierge"
+        className="fixed bottom-6 lg:bottom-8 right-6 lg:right-8 z-[90000] mix-blend-difference opacity-70 hover:opacity-100 transition-opacity duration-700 flex flex-col items-end"
+    >
+        <div className="w-12 h-12 rounded-full border border-white flex items-center justify-center mb-2">
+            <span className="font-serif italic text-white text-xl">M</span>
+        </div>
+        <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-white">Concierge</span>
+    </button>
+);
+
+const ConciergeGate: React.FC = () => {
+    const [requested, setRequested] = useState(false);
+
+    if (!requested) {
+        return <ConciergeLauncherButton onClick={() => setRequested(true)} />;
+    }
+    return (
+        <Suspense fallback={<ConciergeLauncherButton />}>
+            <DigitalConcierge initialOpen />
+        </Suspense>
+    );
+};
 
 // Code-split all page-level routes for smaller initial bundle
 const Home = React.lazy(() => import('./components/Home').then(m => ({ default: m.Home })));
@@ -115,6 +146,10 @@ const ThankYouPage: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-matteo-cream dark:bg-matteo-black flex items-center justify-center text-center px-6 py-32">
+            <Helmet>
+                <title>Thank You | Matteo Perin</title>
+                <meta name="robots" content="noindex, nofollow" />
+            </Helmet>
             <div className="max-w-lg w-full">
                 <div className="w-16 h-16 rounded-full border border-matteo-orange flex items-center justify-center mx-auto mb-8">
                     <svg className="w-6 h-6 text-matteo-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M5 13l4 4L19 7" /></svg>
@@ -255,7 +290,7 @@ const AnimatedRoutes = () => {
         <AnimatePresence mode="wait">
             {/* @ts-ignore */}
             <Routes location={location} key={location.pathname}>
-                <Route path="/" element={<PageTransition><Home startAnimation={true} /></PageTransition>} />
+                <Route path="/" element={<PageTransition><Home /></PageTransition>} />
                 <Route path="/lookbook/men" element={<PageTransition><MensLookbook /></PageTransition>} />
                 <Route path="/lookbook/women" element={<PageTransition><WomensLookbook /></PageTransition>} />
                 <Route path="/journal" element={<PageTransition><Journal /></PageTransition>} />
@@ -302,7 +337,7 @@ function App() {
                     <div className="relative w-full min-h-screen flex flex-col justify-between transition-colors duration-700 bg-matteo-cream dark:bg-matteo-black text-matteo-charcoal dark:text-matteo-cream">
                         {/* Global Cursor Override Options */}
                         <Cursor />
-                        <DigitalConcierge />
+                        <ConciergeGate />
                         <CartSidebar />
 
                         <Navigation />

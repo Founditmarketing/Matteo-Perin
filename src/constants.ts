@@ -1,5 +1,5 @@
 
-import { Product, Article, LookbookItem } from './types';
+import { Product, Article } from './types';
 
 // In a real scenario, these would be the actual uploaded URLs. 
 // Using high-quality placeholders that match the description for the prototype.
@@ -404,51 +404,6 @@ export const ARTICLES: Article[] = [
     slug: "urban-armor"
   }
 ];
-
-export const LOOKBOOK_ITEMS: LookbookItem[] = [
-  {
-    id: 1,
-    title: "Look 01",
-    season: "The Permanent Collection",
-    image: MENS_LOOKBOOK_IMAGES[0],
-    description: "The Boardroom.",
-    wearing: ["Double-Breasted Cashmere Overcoat", "Pleated Flannel Trousers", "Chelsea Boots"]
-  },
-  {
-    id: 2,
-    title: "Look 02",
-    season: "The Permanent Collection",
-    image: MENS_LOOKBOOK_IMAGES[1],
-    description: "The Weekend.",
-    wearing: ["Vicuña Rollneck", "Technical Field Vest", "Selvedge Denim"]
-  },
-  {
-    id: 3,
-    title: "Look 03",
-    season: "The Permanent Collection",
-    image: WOMENS_LOOKBOOK_IMAGES[0],
-    description: "The Evening.",
-    wearing: ["Midnight Velvet Dinner Jacket", "Silk Grosgrain Bowtie", "Patent Leather Slippers"]
-  },
-  {
-    id: 4,
-    title: "Look 04",
-    season: "The Permanent Collection",
-    image: MENS_LOOKBOOK_IMAGES[3] || MENS_LOOKBOOK_IMAGES[0],
-    description: "The Departure.",
-    wearing: ["Unstructured Linen Blazer", "Gurkha Trousers", "The Weekender Bag"]
-  },
-  {
-    id: 5,
-    title: "Look 05",
-    season: "The Permanent Collection",
-    image: WOMENS_LOOKBOOK_IMAGES[4] || WOMENS_LOOKBOOK_IMAGES[0],
-    description: "The Alpine.",
-    wearing: ["Shearling Bomber", "Heavy Gauge Knit", "Corduroy Trousers"]
-  },
-];
-
-
 
 export const PRESS_ARTICLES = [
   {

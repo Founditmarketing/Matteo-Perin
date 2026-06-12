@@ -1,4 +1,11 @@
 import Stripe from 'stripe';
+import { fetchInventoryRows, groupInventory, matchCartItem, isVariationSoldOut } from './_lib/inventory.js';
+
+// Commission deposits are fixed server-side amounts, keyed by the exact line
+// title the storefront sends. Never derived from the request body.
+const DEPOSIT_PRICES = {
+  'Deposit: Bespoke Crocodile Jacket': 25000,
+};
 
 // Countries we ship to. Stripe requires an explicit list for
 // shipping_address_collection (no "worldwide" option).
@@ -52,24 +59,78 @@ export default async function handler(req, res) {
     // it skips shipping collection and keeps its dedicated thank-you messaging.
     const isDeposit = items.every(item => String(item.title || '').startsWith('Deposit:'));
 
-    const lineItems = items.map(item => ({
-      price_data: {
-        currency: 'usd',
-        product_data: {
-          name: item.title,
-          description: item.category || 'Matteo Perin',
-          // Store the variation/style name in metadata so the webhook
-          // can match it against the Google Sheet inventory
-          metadata: {
-            variation_title: item.variationTitle || item.title,
-            style_name: item.styleName || item.title,
-            product_parent: item.parentName || '',
+    // ── Server-side price resolution ──
+    // The request body only identifies WHAT is being bought (parent product +
+    // style). Every unit_amount comes from the live inventory sheet or the
+    // fixed deposit table — client-supplied prices are never charged.
+    let inventoryGroups = null;
+    const lineItems = [];
+
+    for (const item of items) {
+      const title = String(item.title || '').trim();
+      const quantity = Math.min(Math.max(parseInt(item.quantity, 10) || 1, 1), 10);
+
+      if (title.startsWith('Deposit:')) {
+        const depositPrice = DEPOSIT_PRICES[title];
+        if (!depositPrice) {
+          return res.status(400).json({ error: `Unknown commission deposit: ${title}` });
+        }
+        lineItems.push({
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: title,
+              description: 'Commission Slot Reservation',
+              metadata: { variation_title: title, style_name: title, product_parent: '' },
+            },
+            unit_amount: depositPrice * 100,
           },
+          quantity: 1,
+        });
+        continue;
+      }
+
+      // Lazy-load the sheet once per request, only when physical goods are present.
+      if (!inventoryGroups) {
+        inventoryGroups = groupInventory(await fetchInventoryRows());
+      }
+
+      const match = matchCartItem(inventoryGroups, item);
+      if (!match) {
+        console.error('Checkout rejected — item not found in inventory:', { title, parentName: item.parentName, styleName: item.styleName });
+        return res.status(400).json({ error: `"${title}" is no longer available. Please refresh your bag.` });
+      }
+      if (isVariationSoldOut(match.variation)) {
+        return res.status(400).json({ error: `"${title}" has just sold out.` });
+      }
+
+      // Cap quantity at the available stock when the sheet tracks a count.
+      const stockNum = parseInt(String(match.variation.Stock || '').trim(), 10);
+      const finalQuantity = Number.isFinite(stockNum) && stockNum > 0 ? Math.min(quantity, stockNum) : quantity;
+
+      const displayName = match.variation.Title && match.variation.Title !== match.parent.parentName
+        ? `${match.parent.parentName} — ${match.variation.Title}`
+        : match.parent.parentName;
+
+      lineItems.push({
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: displayName,
+            description: match.variation.Category || 'Matteo Perin',
+            // Store the variation/style name in metadata so the webhook
+            // can match it against the Google Sheet inventory
+            metadata: {
+              variation_title: match.variation.Title,
+              style_name: match.variation.StyleName,
+              product_parent: match.parent.parentName,
+            },
+          },
+          unit_amount: Math.round(match.price * 100), // Stripe expects cents
         },
-        unit_amount: Math.round(item.price * 100), // Stripe expects cents
-      },
-      quantity: item.quantity,
-    }));
+        quantity: finalQuantity,
+      });
+    }
 
     const origin = resolveOrigin(req);
 

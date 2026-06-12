@@ -197,6 +197,8 @@ export const Bespoke: React.FC = () => {
                                         <img
                                             src={step.image}
                                             alt={step.title}
+                                            loading="lazy"
+                                            decoding="async"
                                             className="w-full h-full object-cover grayscale contrast-125 transition-transform duration-[1.5s] group-hover:scale-105 dark:brightness-75"
                                         />
                                     </RevealOnScroll>
@@ -228,7 +230,7 @@ export const Bespoke: React.FC = () => {
             <section className="py-32 bg-matteo-charcoal text-white relative overflow-hidden">
                 <div className="absolute inset-0 opacity-20">
                     {activeMaterial && (
-                        <img src={activeMaterial.image} className="w-full h-full object-cover  scale-125 transition-all duration-1000" />
+                        <img src={activeMaterial.image} alt="" loading="lazy" decoding="async" className="w-full h-full object-cover  scale-125 transition-all duration-1000" />
                     )}
                 </div>
 
@@ -265,6 +267,8 @@ export const Bespoke: React.FC = () => {
                                     src={activeMaterial.image}
                                     alt={activeMaterial.name}
                                     key={activeMaterial.name}
+                                    loading="lazy"
+                                    decoding="async"
                                     className="w-full h-full object-cover animate-fade-in-up"
                                 />
                             </div>

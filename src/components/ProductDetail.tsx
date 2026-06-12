@@ -128,7 +128,7 @@ export const ProductDetail: React.FC = () => {
                         <div className="grid grid-cols-2 gap-4">
                             <RevealOnScroll delay={0.2}>
                                 <div className="aspect-square bg-[#EAE8E4] dark:bg-[#111] overflow-hidden">
-                                    <img src={product.image} className="w-full h-full object-cover scale-150" />
+                                    <img src={product.image} alt="" loading="lazy" decoding="async" className="w-full h-full object-cover scale-150" />
                                 </div>
                             </RevealOnScroll>
                             <div className="aspect-square bg-[#EAE8E4] dark:bg-[#111] overflow-hidden flex items-center justify-center bg-matteo-charcoal/5 dark:bg-white/5">
