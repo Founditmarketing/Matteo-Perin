@@ -181,8 +181,8 @@ export const TheHouse: React.FC = () => {
                             <RevealOnScroll>
                                 <div className="relative aspect-[4/5] overflow-hidden">
                                     <ResponsiveImage
-                                        baseSrc="/assets/bespoke/600341967_1477403550634637_5526575741896032656_n.webp"
-                                        alt="Measurements taken by hand during a private fitting"
+                                        baseSrc="/assets/bespoke/travolta-handover.webp"
+                                        alt="Matteo Perin adjusting John Travolta's bow tie at a private fitting"
                                         className="w-full h-full object-cover"
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent pointer-events-none" />

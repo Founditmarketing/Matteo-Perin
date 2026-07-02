@@ -41,7 +41,9 @@ export const IMAGES = {
   // Journal
   journal_1: "/assets/journal/journal_1_patina.webp",
   journal_2: "/assets/journal/journal_2_dolomites.webp",
-  journal_3: "/assets/bespoke/handover.avif",
+  // The Handover step — Matteo with a client, final adjustments by hand.
+  // (The Travolta photo formerly here now lives on The House, Chapter II.)
+  journal_3: "/assets/bespoke/600341967_1477403550634637_5526575741896032656_n.webp",
   journal_4: "/assets/bespoke/fitting.avif",
   journal_5: "/assets/journal/journal_5_urban.webp",
 
