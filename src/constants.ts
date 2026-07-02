@@ -43,7 +43,9 @@ export const IMAGES = {
   journal_2: "/assets/journal/journal_2_dolomites.webp",
   // The Handover step — Matteo with a client, final adjustments by hand.
   // (The bow-tie Travolta photograph lives on The House, Chapter II.)
-  journal_3: "/assets/bespoke/600341967_1477403550634637_5526575741896032656_n.webp",
+  // NOTE: -md variant referenced directly — no base .webp exists for this
+  // asset (only .jpg + -sm/-md/-lg), and Bespoke renders it via a plain <img>.
+  journal_3: "/assets/bespoke/600341967_1477403550634637_5526575741896032656_n-md.webp",
   journal_4: "/assets/bespoke/fitting.avif",
   journal_5: "/assets/journal/journal_5_urban.webp",
 
