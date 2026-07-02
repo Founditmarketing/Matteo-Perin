@@ -54,13 +54,9 @@ const ROUTES = [
   '/furniture',
   '/collection',
   '/shipping-returns',
-  // Journal articles (keep in sync with ARTICLES slugs in src/constants.ts)
-  '/journal/art-of-patina',
-  '/journal/dolomites-notes',
-  '/journal/private-air-essentials',
-  '/journal/vicuna-commission',
-  '/journal/silent-stitch',
-  '/journal/urban-armor',
+  // Journal articles are intentionally NOT prerendered or emitted to the
+  // sitemap: /journal/:slug is unpublished (noindex + redirect to /journal)
+  // until real essays exist. Restore the slugs here when they do.
 ];
 
 // Live inventory API used to render real products (names, prices, schema)
@@ -227,6 +223,16 @@ async function run() {
         dedupe('meta[name="description"]');
         dedupe('meta[property="og:image"]');
         dedupe('meta[name="twitter:image"]');
+        // The static og:image:width/height describe the static og:image —
+        // once a Helmet og:image wins, they lie about the wrong file. Drop
+        // the static pair unless the route supplies its own (data-rh) pair.
+        if (document.querySelector('meta[property="og:image"][data-rh="true"]')) {
+          dedupe('meta[property="og:image:width"]');
+          dedupe('meta[property="og:image:height"]');
+          document
+            .querySelectorAll('meta[property="og:image:width"]:not([data-rh="true"]), meta[property="og:image:height"]:not([data-rh="true"])')
+            .forEach((el) => el.remove());
+        }
       });
 
       return '<!DOCTYPE html>\n' + (await page.content()).replace(/^<!DOCTYPE html>/i, '');

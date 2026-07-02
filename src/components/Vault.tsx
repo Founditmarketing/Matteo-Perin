@@ -255,7 +255,7 @@ export const Vault: React.FC = () => {
                                         </div>
                                         <div>
                                             <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-white/30 block mb-3">Location</span>
-                                            <span className="font-serif text-2xl text-white/90 italic">Milan Vault</span>
+                                            <span className="font-serif text-2xl text-white/90 italic">Verona Vault</span>
                                         </div>
                                     </div>
 

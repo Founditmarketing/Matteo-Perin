@@ -8,7 +8,7 @@ export const Press: React.FC = () => {
         <div className="bg-matteo-cream dark:bg-matteo-black min-h-screen pt-32 pb-32 transition-colors duration-700">
             <Helmet>
                 <title>Press & Media Coverage | Matteo Perin</title>
-                <meta name="description" content="Matteo Perin in the press — featured in Robb Report, Private Air Magazine, JH Style, and more. Coverage of the Italian bespoke luxury designer based in Jackson Hole, Wyoming." />
+                <meta name="description" content="Matteo Perin in the press — coverage from JH Style Magazine, Private Air Magazine, and Hollywood in Toto. The Italian bespoke luxury designer based in Jackson Hole, Wyoming." />
                 <link rel="canonical" href="https://www.matteoperin.com/press" />
                 <meta property="og:title" content="Press & Media Coverage | Matteo Perin" />
                 <meta property="og:description" content="Featured coverage of Matteo Perin, the Italian bespoke luxury designer based in Jackson Hole, Wyoming." />
@@ -20,8 +20,8 @@ export const Press: React.FC = () => {
                 {/* --- Header --- */}
                 <div className="text-center mb-24 md:mb-32">
                     <RevealOnScroll>
-                        <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-matteo-orange mb-6 block">
-                            Global Coverage
+                        <span className="font-sans text-[10px] uppercase tracking-[0.4em] font-medium text-matteo-orange-ink dark:text-matteo-orange mb-6 block">
+                            Selected Coverage
                         </span>
                         <h1 className="font-serif text-5xl md:text-8xl text-matteo-charcoal dark:text-white font-light tracking-tight">
                             In The Press
@@ -44,7 +44,7 @@ export const Press: React.FC = () => {
                                     <a href={article.link} target="_blank" rel="noopener noreferrer" className="block relative">
 
                                         {/* Image wrapper */}
-                                        <div className={`overflow-hidden bg-gray-100 dark:bg-gray-900 mb-8 relative ${isFeatured ? 'aspect-[21/9]' : 'aspect-[4/3]'}`}>
+                                        <div className={`overflow-hidden bg-matteo-sand dark:bg-matteo-charcoal mb-8 relative ${isFeatured ? 'aspect-[21/9]' : 'aspect-[4/3]'}`}>
                                             <img
                                                 src={article.image}
                                                 alt={article.title}
@@ -67,7 +67,7 @@ export const Press: React.FC = () => {
                                         {/* Content */}
                                         <div className={`${isFeatured ? 'max-w-4xl mx-auto text-center' : 'max-w-xl'}`}>
                                             <div className="flex items-center gap-4 mb-4 opacity-60">
-                                                <span className="font-mono text-[10px] uppercase tracking-widest text-matteo-charcoal dark:text-white">
+                                                <span className="font-sans text-[10px] uppercase tracking-[0.25em] font-medium text-matteo-charcoal dark:text-white">
                                                     {article.date}
                                                 </span>
                                                 <span className="w-8 h-[1px] bg-current"></span>
@@ -95,7 +95,7 @@ export const Press: React.FC = () => {
 
                 {/* --- Footer Note --- */}
                 <div className="mt-32 pt-16 border-t border-matteo-charcoal/10 dark:border-white/10 text-center">
-                    <p className="font-serif text-matteo-stone italic">
+                    <p className="font-serif text-matteo-stone-ink dark:text-matteo-stone italic">
                         For press inquiries, please contact <a href="mailto:concierge@matteoperin.com" className="underline hover:text-matteo-orange">concierge@matteoperin.com</a>
                     </p>
                 </div>

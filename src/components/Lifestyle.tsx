@@ -94,7 +94,7 @@ export const Lifestyle: React.FC = () => {
                                     <h2 className="font-serif text-4xl md:text-9xl mb-8 leading-[0.85] tracking-tight">
                                         {section.title}
                                     </h2>
-                                    <p className={`font-serif text-xl md:text-2xl text-gray-300 leading-relaxed mb-12 font-light ${section.align === 'center' ? 'mx-auto' : ''}`}>
+                                    <p className={`font-serif text-xl md:text-2xl text-white/80 leading-relaxed mb-12 font-light ${section.align === 'center' ? 'mx-auto' : ''}`}>
                                         {section.description}
                                     </p>
                                     <Link

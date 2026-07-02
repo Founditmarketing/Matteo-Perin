@@ -11,12 +11,19 @@ export default {
   theme: {
     extend: {
       colors: {
-        'matteo-orange': '#CB5C38', 
-        'matteo-cream': '#F2EFE9', 
-        'matteo-black': '#0A0A0A', 
-        'matteo-charcoal': '#1C1C1C', 
-        'matteo-stone': '#8C8C8C', 
-        'matteo-sand': '#E5E2DC', 
+        'matteo-orange': '#CB5C38',
+        // Text-grade accent for light surfaces — #CB5C38 reads 3.57:1 on cream
+        // (AA failure); #A0421F reads 5.56:1. Keep matteo-orange for rules,
+        // focus rings, and dark surfaces only.
+        'matteo-orange-ink': '#A0421F',
+        'matteo-cream': '#F2EFE9',
+        'matteo-black': '#0A0A0A',
+        'matteo-charcoal': '#1C1C1C',
+        'matteo-stone': '#8C8C8C',
+        // Text-grade stone for light surfaces — #8C8C8C is 2.93:1 on cream;
+        // #6B665F is 4.96:1. Keep matteo-stone for hairlines and dark surfaces.
+        'matteo-stone-ink': '#6B665F',
+        'matteo-sand': '#E5E2DC',
       },
       fontFamily: {
         serif: ['"Playfair Display"', 'serif'],

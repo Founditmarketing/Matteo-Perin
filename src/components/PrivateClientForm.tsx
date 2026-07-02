@@ -49,7 +49,7 @@ const TextInput: React.FC<{
     onChange={e => onChange(e.target.value)}
     placeholder={placeholder}
     autoFocus={autoFocus}
-    className="w-full bg-transparent border-b border-[#c8c0b4] dark:border-white/20 py-4 font-serif text-2xl md:text-3xl text-[#2a2520] dark:text-white placeholder-[#c8c0b4] dark:placeholder-white/25 outline-none focus:border-[#c49a6c] transition-colors tracking-wide"
+    className="w-full bg-transparent border-b border-matteo-stone/50 dark:border-white/20 py-4 font-serif text-2xl md:text-3xl text-matteo-charcoal dark:text-white placeholder-matteo-stone-ink dark:placeholder-white/60 outline-none focus:border-matteo-orange transition-colors tracking-wide"
   />
 );
 
@@ -60,8 +60,8 @@ const OptionButton: React.FC<{
     onClick={onClick}
     className={`w-full text-left px-6 py-5 border transition-all duration-500 font-serif text-lg md:text-xl tracking-wide ${
       selected
-        ? 'border-[#c49a6c] bg-[#c49a6c]/8 text-[#2a2520] dark:text-white dark:bg-[#c49a6c]/15'
-        : 'border-[#e8e2da] dark:border-white/10 text-[#8a8078] dark:text-white/50 hover:border-[#c49a6c]/50 hover:text-[#2a2520] dark:hover:text-white'
+        ? 'border-matteo-orange bg-matteo-orange/10 text-matteo-charcoal dark:text-white dark:bg-matteo-orange/15'
+        : 'border-matteo-sand dark:border-white/10 text-matteo-stone-ink dark:text-white/60 hover:border-matteo-orange/50 hover:text-matteo-charcoal dark:hover:text-white'
     }`}
   >
     {label}
@@ -71,7 +71,7 @@ const OptionButton: React.FC<{
 const ContinueButton: React.FC<{ onClick: () => void; label?: string }> = ({ onClick, label = 'Continue' }) => (
   <button
     onClick={onClick}
-    className="group mt-12 inline-flex items-center gap-4 font-sans text-[11px] uppercase tracking-[0.3em] text-[#2a2520] dark:text-white hover:text-[#c49a6c] transition-colors duration-500"
+    className="group mt-12 inline-flex items-center gap-4 font-sans text-[11px] uppercase tracking-[0.3em] text-matteo-charcoal dark:text-white hover:text-matteo-orange-ink dark:hover:text-matteo-orange transition-colors duration-500"
   >
     <span>{label}</span>
     <span className="block w-8 h-[1px] bg-current group-hover:w-14 transition-all duration-500" />
@@ -79,15 +79,15 @@ const ContinueButton: React.FC<{ onClick: () => void; label?: string }> = ({ onC
 );
 
 const StepLabel: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <p className="font-sans text-[10px] uppercase tracking-[0.4em] text-[#c49a6c] mb-6">{children}</p>
+  <p className="font-sans text-[10px] uppercase tracking-[0.4em] text-matteo-orange-ink dark:text-matteo-orange mb-6">{children}</p>
 );
 
 const StepQuestion: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl text-[#2a2520] dark:text-white leading-[1.2] tracking-tight mb-10 font-light">{children}</h2>
+  <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl text-matteo-charcoal dark:text-white leading-[1.2] tracking-tight mb-10 font-light">{children}</h2>
 );
 
 const StepHint: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <p className="font-serif text-sm text-[#a09890] dark:text-white/40 italic mt-3 tracking-wide">{children}</p>
+  <p className="font-serif text-sm text-matteo-stone-ink dark:text-white/60 italic mt-3 tracking-wide">{children}</p>
 );
 
 // ─── Total steps ─────────────────────────────────────────────
@@ -120,12 +120,16 @@ export const PrivateClientForm: React.FC = () => {
     }, 400);
   }, [next]);
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(false);
 
   // Submit full profile to HubSpot + serverless endpoint
   const submitProfile = async () => {
     setSubmitting(true);
+    setSubmitError(false);
+
+    // 1. Push to HubSpot via tracking code (standard contact properties).
+    //    Best-effort — the serverless capture below is the record of truth.
     try {
-      // 1. Push to HubSpot via tracking code (standard contact properties)
       const _hsq = (window as any)._hsq = (window as any)._hsq || [];
       _hsq.push(["identify", {
         email: data.email,
@@ -135,7 +139,11 @@ export const PrivateClientForm: React.FC = () => {
         address: data.primaryResidence,
       }]);
       _hsq.push(["trackPageView"]);
+    } catch {
+      // HubSpot tracking must never block the submission itself
+    }
 
+    try {
       // Capture UTM params for attribution
       const urlParams = new URLSearchParams(window.location.search);
       const utmData: Record<string, string> = {};
@@ -144,8 +152,10 @@ export const PrivateClientForm: React.FC = () => {
         if (val) utmData[key] = val;
       });
 
-      // 2. Send full data to serverless endpoint for complete capture
-      await fetch('/api/private-client', {
+      // 2. Send full data to the serverless endpoint for complete capture.
+      //    Success is gated on the response — a profile the house never
+      //    received must not read as received.
+      const res = await fetch('/api/private-client', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -159,20 +169,26 @@ export const PrivateClientForm: React.FC = () => {
           referrer: document.referrer || '',
           landingPage: sessionStorage.getItem('landing_page') || window.location.href,
         }),
-      }).catch(() => {}); // Non-blocking — HubSpot tracking is the primary
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      // Fire the Google Ads conversion only once the capture is confirmed
+      reportInquiryConversion();
+      setSubmitting(false);
+      next();
     } catch (e) {
-      // Silent — don't block the UX
+      console.error('Private client profile submission failed:', e);
+      setSubmitError(true);
+      setSubmitting(false);
     }
-    // Fire Google Ads conversion
-    reportInquiryConversion();
-    setSubmitting(false);
-    next();
   };
 
   // Keyboard nav
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Enter' && step > 0 && step < TOTAL_STEPS) next();
+      // Enter advances through the questions but never past the final step —
+      // the thank-you screen is only reachable through a confirmed submitProfile.
+      if (e.key === 'Enter' && step > 0 && step < TOTAL_STEPS - 1) next();
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
@@ -191,7 +207,7 @@ export const PrivateClientForm: React.FC = () => {
   const progress = step === 0 ? 0 : Math.min(((step) / (TOTAL_STEPS - 1)) * 100, 100);
 
   return (
-    <div ref={containerRef} className="min-h-screen bg-[#FAF8F5] dark:bg-[#0e0d0c] transition-colors duration-700 relative overflow-hidden">
+    <div ref={containerRef} className="min-h-screen bg-matteo-cream dark:bg-matteo-black transition-colors duration-700 relative overflow-hidden">
       <Helmet>
         <title>Private Client Experience | Matteo Perin</title>
         <meta name="description" content="Begin your private client profile with Matteo Perin. A discreet, personalized experience curated exclusively for you." />
@@ -199,9 +215,9 @@ export const PrivateClientForm: React.FC = () => {
 
       {/* ── Soft Progress Bar ── */}
       {step > 0 && step < TOTAL_STEPS && (
-        <div className="fixed top-0 left-0 right-0 z-50 h-[2px] bg-[#e8e2da] dark:bg-white/5">
+        <div className="fixed top-0 left-0 right-0 z-50 h-[2px] bg-matteo-sand dark:bg-white/5">
           <motion.div
-            className="h-full bg-[#c49a6c]"
+            className="h-full bg-matteo-orange"
             animate={{ width: `${progress}%` }}
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           />
@@ -212,7 +228,7 @@ export const PrivateClientForm: React.FC = () => {
       {step > 0 && step < TOTAL_STEPS && (
         <button
           onClick={prev}
-          className="fixed top-8 left-8 z-50 font-sans text-[10px] uppercase tracking-[0.3em] text-[#a09890] dark:text-white/40 hover:text-[#2a2520] dark:hover:text-white transition-colors"
+          className="fixed top-8 left-8 z-50 font-sans text-[10px] uppercase tracking-[0.3em] text-matteo-stone-ink dark:text-white/60 hover:text-matteo-charcoal dark:hover:text-white transition-colors"
         >
           ← Back
         </button>
@@ -220,7 +236,7 @@ export const PrivateClientForm: React.FC = () => {
 
       {/* ── Step counter ── */}
       {step > 0 && step < TOTAL_STEPS && (
-        <div className="fixed top-8 right-8 z-50 font-sans text-[10px] uppercase tracking-[0.3em] text-[#c8c0b4] dark:text-white/20">
+        <div className="fixed top-8 right-8 z-50 font-sans text-[10px] uppercase tracking-[0.3em] text-matteo-stone-ink dark:text-white/60">
           {step} of {TOTAL_STEPS - 2}
         </div>
       )}
@@ -241,20 +257,20 @@ export const PrivateClientForm: React.FC = () => {
             {step === 0 && (
               <div className="text-center">
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.8 }}>
-                  <div className="w-[1px] h-16 bg-[#c49a6c] mx-auto mb-12" />
-                  <p className="font-sans text-[10px] uppercase tracking-[0.5em] text-[#c49a6c] mb-8">Matteo Perin</p>
-                  <h1 className="font-serif text-4xl md:text-6xl lg:text-7xl text-[#2a2520] dark:text-white tracking-tight leading-[1.05] mb-8 font-light">
+                  <div className="w-[1px] h-16 bg-matteo-orange mx-auto mb-12" />
+                  <p className="font-sans text-[10px] uppercase tracking-[0.5em] text-matteo-orange-ink dark:text-matteo-orange mb-8">Matteo Perin</p>
+                  <h1 className="font-serif text-4xl md:text-6xl lg:text-7xl text-matteo-charcoal dark:text-white tracking-tight leading-[1.05] mb-8 font-light">
                     Private Client<br />Experience
                   </h1>
-                  <p className="font-serif text-lg md:text-xl text-[#8a8078] dark:text-white/50 leading-relaxed max-w-lg mx-auto mb-6">
+                  <p className="font-serif text-lg md:text-xl text-matteo-stone-ink dark:text-white/60 leading-relaxed max-w-lg mx-auto mb-6">
                     To better curate future pieces, experiences, and private offerings tailored to you.
                   </p>
-                  <p className="font-serif text-sm text-[#a09890] dark:text-white/30 italic max-w-md mx-auto mb-16 leading-relaxed">
+                  <p className="font-serif text-sm text-matteo-stone-ink dark:text-white/60 italic max-w-md mx-auto mb-16 leading-relaxed">
                     Matteo Perin maintains a discreet client registry to ensure each client receives only relevant, personal, and timely communication. Your information is never shared.
                   </p>
                   <button
                     onClick={next}
-                    className="group inline-flex items-center gap-4 px-10 py-5 border border-[#2a2520] dark:border-white text-[#2a2520] dark:text-white font-sans text-[11px] uppercase tracking-[0.3em] hover:bg-[#2a2520] hover:text-white dark:hover:bg-white dark:hover:text-[#0e0d0c] transition-all duration-500"
+                    className="group inline-flex items-center gap-4 px-10 py-5 border border-matteo-charcoal dark:border-white text-matteo-charcoal dark:text-white font-sans text-[11px] uppercase tracking-[0.3em] hover:bg-matteo-charcoal hover:text-white dark:hover:bg-white dark:hover:text-matteo-black transition-all duration-500"
                   >
                     <span>Begin Private Profile</span>
                   </button>
@@ -330,18 +346,18 @@ export const PrivateClientForm: React.FC = () => {
                   <select
                     value={data.firstAcquisition}
                     onChange={e => upd('firstAcquisition', e.target.value)}
-                    className="w-full bg-transparent border-b border-[#c8c0b4] dark:border-white/20 py-4 font-serif text-2xl md:text-3xl text-[#2a2520] dark:text-white outline-none focus:border-[#c49a6c] transition-colors tracking-wide appearance-none cursor-pointer"
+                    className="w-full bg-transparent border-b border-matteo-stone/50 dark:border-white/20 py-4 font-serif text-2xl md:text-3xl text-matteo-charcoal dark:text-white outline-none focus:border-matteo-orange transition-colors tracking-wide appearance-none cursor-pointer"
                   >
-                    <option value="" disabled className="bg-[#FAF8F5] dark:bg-[#0e0d0c]">Select a category</option>
-                    <option value="Outerwear" className="bg-[#FAF8F5] dark:bg-[#0e0d0c]">Outerwear</option>
-                    <option value="Tailoring" className="bg-[#FAF8F5] dark:bg-[#0e0d0c]">Tailoring</option>
-                    <option value="Leather Goods" className="bg-[#FAF8F5] dark:bg-[#0e0d0c]">Leather Goods</option>
-                    <option value="Footwear" className="bg-[#FAF8F5] dark:bg-[#0e0d0c]">Footwear</option>
-                    <option value="Accessories" className="bg-[#FAF8F5] dark:bg-[#0e0d0c]">Accessories</option>
-                    <option value="Exotic Skins" className="bg-[#FAF8F5] dark:bg-[#0e0d0c]">Exotic Skins</option>
-                    <option value="Knitwear" className="bg-[#FAF8F5] dark:bg-[#0e0d0c]">Knitwear</option>
-                    <option value="Interiors / Casa" className="bg-[#FAF8F5] dark:bg-[#0e0d0c]">Interiors / Casa</option>
-                    <option value="Other" className="bg-[#FAF8F5] dark:bg-[#0e0d0c]">Other</option>
+                    <option value="" disabled className="bg-matteo-cream dark:bg-matteo-black">Select a category</option>
+                    <option value="Outerwear" className="bg-matteo-cream dark:bg-matteo-black">Outerwear</option>
+                    <option value="Tailoring" className="bg-matteo-cream dark:bg-matteo-black">Tailoring</option>
+                    <option value="Leather Goods" className="bg-matteo-cream dark:bg-matteo-black">Leather Goods</option>
+                    <option value="Footwear" className="bg-matteo-cream dark:bg-matteo-black">Footwear</option>
+                    <option value="Accessories" className="bg-matteo-cream dark:bg-matteo-black">Accessories</option>
+                    <option value="Exotic Skins" className="bg-matteo-cream dark:bg-matteo-black">Exotic Skins</option>
+                    <option value="Knitwear" className="bg-matteo-cream dark:bg-matteo-black">Knitwear</option>
+                    <option value="Interiors / Casa" className="bg-matteo-cream dark:bg-matteo-black">Interiors / Casa</option>
+                    <option value="Other" className="bg-matteo-cream dark:bg-matteo-black">Other</option>
                   </select>
                 </div>
                 <ContinueButton onClick={next} />
@@ -369,19 +385,19 @@ export const PrivateClientForm: React.FC = () => {
                 <StepHint>For bespoke gifts and private acknowledgments</StepHint>
                 <div className="space-y-8 mt-8">
                   <div>
-                    <label className="block font-sans text-[10px] uppercase tracking-[0.2em] text-[#a09890] dark:text-white/30 mb-2">Your Birthday</label>
+                    <label className="block font-sans text-[10px] uppercase tracking-[0.2em] text-matteo-stone-ink dark:text-white/60 mb-2">Your Birthday</label>
                     <input type="date" value={data.birthday} onChange={e => upd('birthday', e.target.value)}
-                      className="w-full bg-transparent border-b border-[#c8c0b4] dark:border-white/20 py-3 font-serif text-xl text-[#2a2520] dark:text-white outline-none focus:border-[#c49a6c] transition-colors" />
+                      className="w-full bg-transparent border-b border-matteo-stone/50 dark:border-white/20 py-3 font-serif text-xl text-matteo-charcoal dark:text-white outline-none focus:border-matteo-orange transition-colors" />
                   </div>
                   <div>
-                    <label className="block font-sans text-[10px] uppercase tracking-[0.2em] text-[#a09890] dark:text-white/30 mb-2">Partner / Spouse Birthday (optional)</label>
+                    <label className="block font-sans text-[10px] uppercase tracking-[0.2em] text-matteo-stone-ink dark:text-white/60 mb-2">Partner / Spouse Birthday (optional)</label>
                     <input type="date" value={data.partnerBirthday} onChange={e => upd('partnerBirthday', e.target.value)}
-                      className="w-full bg-transparent border-b border-[#c8c0b4] dark:border-white/20 py-3 font-serif text-xl text-[#2a2520] dark:text-white outline-none focus:border-[#c49a6c] transition-colors" />
+                      className="w-full bg-transparent border-b border-matteo-stone/50 dark:border-white/20 py-3 font-serif text-xl text-matteo-charcoal dark:text-white outline-none focus:border-matteo-orange transition-colors" />
                   </div>
                   <div>
-                    <label className="block font-sans text-[10px] uppercase tracking-[0.2em] text-[#a09890] dark:text-white/30 mb-2">Anniversary (if applicable)</label>
+                    <label className="block font-sans text-[10px] uppercase tracking-[0.2em] text-matteo-stone-ink dark:text-white/60 mb-2">Anniversary (if applicable)</label>
                     <input type="date" value={data.anniversary} onChange={e => upd('anniversary', e.target.value)}
-                      className="w-full bg-transparent border-b border-[#c8c0b4] dark:border-white/20 py-3 font-serif text-xl text-[#2a2520] dark:text-white outline-none focus:border-[#c49a6c] transition-colors" />
+                      className="w-full bg-transparent border-b border-matteo-stone/50 dark:border-white/20 py-3 font-serif text-xl text-matteo-charcoal dark:text-white outline-none focus:border-matteo-orange transition-colors" />
                   </div>
                 </div>
                 <ContinueButton onClick={next} />
@@ -398,7 +414,7 @@ export const PrivateClientForm: React.FC = () => {
                   onChange={e => upd('milestones', e.target.value)}
                   placeholder="Share anything meaningful to you..."
                   rows={4}
-                  className="w-full bg-transparent border-b border-[#c8c0b4] dark:border-white/20 py-4 font-serif text-xl text-[#2a2520] dark:text-white placeholder-[#c8c0b4] dark:placeholder-white/25 outline-none focus:border-[#c49a6c] transition-colors resize-none tracking-wide"
+                  className="w-full bg-transparent border-b border-matteo-stone/50 dark:border-white/20 py-4 font-serif text-xl text-matteo-charcoal dark:text-white placeholder-matteo-stone-ink dark:placeholder-white/60 outline-none focus:border-matteo-orange transition-colors resize-none tracking-wide"
                   autoFocus
                 />
                 <ContinueButton onClick={next} />
@@ -458,19 +474,19 @@ export const PrivateClientForm: React.FC = () => {
                         }}
                         className={`group relative p-8 border text-left transition-all duration-500 ${
                           isSelected
-                            ? 'border-[#c49a6c] bg-[#c49a6c]/8 dark:bg-[#c49a6c]/15'
-                            : 'border-[#e8e2da] dark:border-white/10 hover:border-[#c49a6c]/50'
+                            ? 'border-matteo-orange bg-matteo-orange/10 dark:bg-matteo-orange/15'
+                            : 'border-matteo-sand dark:border-white/10 hover:border-matteo-orange/50'
                         }`}
                       >
                         <span className="text-3xl block mb-4">{tile.icon}</span>
                         <span className={`font-serif text-base md:text-lg tracking-wide leading-snug transition-colors duration-500 ${
-                          isSelected ? 'text-[#2a2520] dark:text-white' : 'text-[#8a8078] dark:text-white/50 group-hover:text-[#2a2520] dark:group-hover:text-white'
+                          isSelected ? 'text-matteo-charcoal dark:text-white' : 'text-matteo-stone-ink dark:text-white/60 group-hover:text-matteo-charcoal dark:group-hover:text-white'
                         }`}>
                           {tile.label}
                         </span>
                         {isSelected && (
                           <div
-                            className="absolute top-4 right-4 w-5 h-5 bg-[#c49a6c] rounded-full flex items-center justify-center"
+                            className="absolute top-4 right-4 w-5 h-5 bg-matteo-orange rounded-full flex items-center justify-center"
                           >
                             <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
                           </div>
@@ -480,10 +496,15 @@ export const PrivateClientForm: React.FC = () => {
                   })}
                 </div>
                 <div className="mt-12 text-center">
+                  {submitError && (
+                    <p role="alert" className="font-serif text-sm text-matteo-charcoal dark:text-white leading-relaxed max-w-md mx-auto mb-8">
+                      Your profile could not be sent. Please try again, or write directly to <a href="mailto:concierge@matteoperin.com" className="text-matteo-orange-ink dark:text-matteo-orange border-b border-matteo-orange/40">concierge@matteoperin.com</a>.
+                    </p>
+                  )}
                   <button
                     onClick={submitProfile}
                     disabled={submitting}
-                    className="group inline-flex items-center gap-4 px-10 py-5 bg-[#2a2520] dark:bg-white text-white dark:text-[#0e0d0c] font-sans text-[11px] uppercase tracking-[0.3em] hover:bg-[#c49a6c] dark:hover:bg-[#c49a6c] hover:text-white dark:hover:text-white transition-all duration-500 disabled:opacity-50"
+                    className="group inline-flex items-center gap-4 px-10 py-5 bg-matteo-charcoal dark:bg-white text-white dark:text-matteo-black font-sans text-[11px] uppercase tracking-[0.3em] hover:bg-matteo-orange dark:hover:bg-matteo-orange hover:text-white dark:hover:text-white transition-all duration-500 disabled:opacity-50"
                   >
                     <span>{submitting ? 'Updating...' : 'Update Profile'}</span>
                   </button>
@@ -495,20 +516,20 @@ export const PrivateClientForm: React.FC = () => {
             {step === TOTAL_STEPS && (
               <div className="text-center">
                 <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}>
-                  <div className="w-[1px] h-16 bg-[#c49a6c] mx-auto mb-12" />
-                  <p className="font-sans text-[10px] uppercase tracking-[0.5em] text-[#c49a6c] mb-8">Profile Received</p>
-                  <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-[#2a2520] dark:text-white tracking-tight leading-[1.1] mb-8 font-light">
+                  <div className="w-[1px] h-16 bg-matteo-orange mx-auto mb-12" />
+                  <p className="font-sans text-[10px] uppercase tracking-[0.5em] text-matteo-orange-ink dark:text-matteo-orange mb-8">Profile Received</p>
+                  <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-matteo-charcoal dark:text-white tracking-tight leading-[1.1] mb-8 font-light">
                     Thank you{data.firstName ? `, ${data.firstName}` : ''}
                   </h2>
-                  <p className="font-serif text-lg text-[#8a8078] dark:text-white/50 leading-relaxed max-w-md mx-auto mb-4">
+                  <p className="font-serif text-lg text-matteo-stone-ink dark:text-white/60 leading-relaxed max-w-md mx-auto mb-4">
                     Your private profile has been received. A member of our team will be in touch with curated recommendations and exclusive invitations.
                   </p>
-                  <p className="font-serif text-sm text-[#a09890] dark:text-white/30 italic max-w-sm mx-auto mb-16">
+                  <p className="font-serif text-sm text-matteo-stone-ink dark:text-white/60 italic max-w-sm mx-auto mb-16">
                     All information is held in the strictest confidence.
                   </p>
                   <a
                     href="/shop"
-                    className="group inline-flex items-center gap-4 px-12 py-5 bg-[#c49a6c] text-white font-sans text-[12px] uppercase tracking-[0.3em] hover:bg-[#2a2520] dark:hover:bg-white dark:hover:text-[#0e0d0c] transition-all duration-500 shadow-lg hover:shadow-xl"
+                    className="group inline-flex items-center gap-4 px-12 py-5 bg-matteo-charcoal dark:bg-white text-white dark:text-matteo-black font-sans text-[11px] uppercase tracking-[0.3em] hover:bg-matteo-orange dark:hover:bg-matteo-orange hover:text-white dark:hover:text-white transition-all duration-500"
                   >
                     <span>View Available Creations</span>
                     <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>

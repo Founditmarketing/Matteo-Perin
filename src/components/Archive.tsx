@@ -34,7 +34,7 @@ const EditorialCard: React.FC<{ product: Product; featured?: boolean }> = ({ pro
                     {product.title}
                 </h3>
                 <div className="flex justify-between items-baseline border-t border-matteo-charcoal/10 dark:border-white/10 pt-2 mt-2">
-                    <p className="font-sans text-[10px] uppercase tracking-luxury text-matteo-stone">
+                    <p className="font-sans text-[10px] uppercase tracking-luxury text-matteo-stone-ink dark:text-matteo-stone">
                         {product.category}
                     </p>
                     {/* Price hidden for Silent Luxury */}
@@ -71,7 +71,7 @@ const GridCard: React.FC<{ product: Product }> = ({ product }) => {
                     <h3 className="font-serif text-lg text-matteo-charcoal dark:text-white leading-tight mb-1 group-hover:text-matteo-orange transition-colors">
                         {product.title}
                     </h3>
-                    <p className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone">
+                    <p className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone-ink dark:text-matteo-stone">
                         {product.category}
                     </p>
                 </div>
@@ -167,7 +167,7 @@ export const Archive: React.FC<ArchiveProps> = ({ initialGender }) => {
             <div className="max-w-[1920px] mx-auto px-6 md:px-12 mb-16">
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 pb-8 border-b border-matteo-charcoal/10 dark:border-white/10">
                     <RevealOnScroll>
-                        <span className="font-sans text-[10px] uppercase tracking-luxury text-matteo-stone block mb-4">
+                        <span className="font-sans text-[10px] uppercase tracking-luxury text-matteo-stone-ink dark:text-matteo-stone block mb-4">
                             The Reference Archive
                         </span>
                         <h1 className="font-serif text-6xl md:text-8xl text-matteo-charcoal dark:text-white font-light leading-none">
@@ -186,7 +186,7 @@ export const Archive: React.FC<ArchiveProps> = ({ initialGender }) => {
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                     className="bg-transparent border-b border-transparent group-hover:border-matteo-charcoal dark:group-hover:border-white py-1 font-sans text-xs uppercase tracking-widest text-matteo-charcoal dark:text-white placeholder-matteo-stone focus:outline-none focus:border-matteo-orange transition-all w-32 focus:w-48 text-right"
                                 />
-                                <span className="absolute right-full mr-2 top-1 text-matteo-stone">
+                                <span className="absolute right-full mr-2 top-1 text-matteo-stone-ink dark:text-matteo-stone">
                                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                                 </span>
                             </div>
@@ -195,14 +195,14 @@ export const Archive: React.FC<ArchiveProps> = ({ initialGender }) => {
                             <div className="flex items-center gap-4">
                                 <button
                                     onClick={() => setActiveView('editorial')}
-                                    className={`w-11 h-11 flex items-center justify-center border transition-colors ${activeView === 'editorial' ? 'border-matteo-charcoal dark:border-white bg-matteo-charcoal dark:bg-white text-white dark:text-black' : 'border-matteo-charcoal/20 dark:border-white/20 text-matteo-stone hover:border-matteo-orange'}`}
+                                    className={`w-11 h-11 flex items-center justify-center border transition-colors ${activeView === 'editorial' ? 'border-matteo-charcoal dark:border-white bg-matteo-charcoal dark:bg-white text-white dark:text-black' : 'border-matteo-charcoal/20 dark:border-white/20 text-matteo-stone-ink dark:text-matteo-stone hover:border-matteo-orange'}`}
                                     title="Editorial View"
                                 >
                                     <span className="font-serif italic text-lg">E</span>
                                 </button>
                                 <button
                                     onClick={() => setActiveView('grid')}
-                                    className={`w-11 h-11 flex items-center justify-center border transition-colors ${activeView === 'grid' ? 'border-matteo-charcoal dark:border-white bg-matteo-charcoal dark:bg-white text-white dark:text-black' : 'border-matteo-charcoal/20 dark:border-white/20 text-matteo-stone hover:border-matteo-orange'}`}
+                                    className={`w-11 h-11 flex items-center justify-center border transition-colors ${activeView === 'grid' ? 'border-matteo-charcoal dark:border-white bg-matteo-charcoal dark:bg-white text-white dark:text-black' : 'border-matteo-charcoal/20 dark:border-white/20 text-matteo-stone-ink dark:text-matteo-stone hover:border-matteo-orange'}`}
                                     title="Grid View"
                                 >
                                     <div className="grid grid-cols-2 gap-0.5">
@@ -224,14 +224,14 @@ export const Archive: React.FC<ArchiveProps> = ({ initialGender }) => {
                             Filter +
                         </button>
                         <div className="w-[1px] h-3 bg-matteo-charcoal/10 dark:bg-white/10"></div>
-                        <span className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone whitespace-nowrap">
+                        <span className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone-ink dark:text-matteo-stone whitespace-nowrap">
                             {filteredProducts.length} Results
                         </span>
                         {/* Placeholder Filter Chips for aesthetic */}
                         {isFilterOpen && (
                             <div className="flex gap-4 animate-fade-in-up">
                                 {['Outerwear', 'Tailoring', 'Leather Goods', 'Accessories'].map(f => (
-                                    <button key={f} className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone hover:text-matteo-charcoal dark:hover:text-white transition-colors whitespace-nowrap p-2">
+                                    <button key={f} className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone-ink dark:text-matteo-stone hover:text-matteo-charcoal dark:hover:text-white transition-colors whitespace-nowrap p-2">
                                         {f}
                                     </button>
                                 ))}
@@ -299,7 +299,7 @@ export const Archive: React.FC<ArchiveProps> = ({ initialGender }) => {
                         </div>
                     ) : (
                         <div className="py-32 text-center">
-                            <p className="font-serif text-xl text-matteo-stone">No items found.</p>
+                            <p className="font-serif text-xl text-matteo-stone-ink dark:text-matteo-stone">No items found.</p>
                             <button onClick={() => setSearchQuery('')} className="mt-4 text-matteo-orange font-sans text-xs uppercase tracking-widest border-b border-current">Clear Search</button>
                         </div>
                     )}

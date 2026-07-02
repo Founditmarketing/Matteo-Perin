@@ -20,10 +20,13 @@ export const Home: React.FC = () => {
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://www.matteoperin.com/" />
       </Helmet>
+      {/* Act order: hero → what's buyable now → the flagship commission →
+          a short collection promenade → the dark quote → the inquiry.
+          The $185k flagship must land within the first three screens. */}
       <DualHero />
       <HiddenInventoryTest />
-      <Collection />
       <CrocJacketHero />
+      <Collection />
       <Interlude />
       <Contact />
     </>

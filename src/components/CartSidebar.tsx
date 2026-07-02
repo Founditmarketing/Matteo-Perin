@@ -33,7 +33,7 @@ export const CartSidebar: React.FC = () => {
               <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-matteo-orange block mb-1">Your Selection</span>
               <h2 className="font-serif text-2xl text-matteo-charcoal dark:text-white">The Bag</h2>
           </div>
-          <button onClick={() => setIsCartOpen(false)} aria-label="Close bag" className="text-matteo-stone hover:text-matteo-charcoal dark:hover:text-white transition-colors">
+          <button onClick={() => setIsCartOpen(false)} aria-label="Close bag" className="text-matteo-stone-ink dark:text-matteo-stone hover:text-matteo-charcoal dark:hover:text-white transition-colors">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -43,8 +43,8 @@ export const CartSidebar: React.FC = () => {
         <div className="flex-1 overflow-y-auto p-8">
             {cartItems.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-center">
-                    <p className="font-serif italic text-gray-400 mb-4 text-lg">Your bag is empty.</p>
-                    <p className="font-sans text-[10px] text-matteo-stone max-w-[200px] mb-8 leading-relaxed">
+                    <p className="font-serif italic text-matteo-stone-ink dark:text-white/60 mb-4 text-lg">Your bag is empty.</p>
+                    <p className="font-sans text-[10px] text-matteo-stone-ink dark:text-matteo-stone max-w-[200px] mb-8 leading-relaxed">
                         One-of-a-kind pieces, in stock and ready to ship.
                     </p>
                     <button 
@@ -74,30 +74,30 @@ export const CartSidebar: React.FC = () => {
                                     <div className="flex justify-between items-start mb-2">
                                         <h3 className="font-serif text-xl text-matteo-charcoal dark:text-white leading-none">{item.title}</h3>
                                     </div>
-                                    <p className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone mb-2">{item.category}</p>
+                                    <p className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone-ink dark:text-matteo-stone mb-2">{item.category}</p>
                                     
                                     {/* Customization Details */}
                                     {item.customizations && (
                                         <div className="mb-2 space-y-1">
                                             {item.customizations.material && (
-                                                <p className="font-sans text-[10px] text-matteo-charcoal/80 dark:text-gray-400">
-                                                    Material: <span className="text-matteo-stone">{item.customizations.material}</span>
+                                                <p className="font-sans text-[10px] text-matteo-charcoal/80 dark:text-white/60">
+                                                    Material: <span className="text-matteo-stone-ink dark:text-matteo-stone">{item.customizations.material}</span>
                                                 </p>
                                             )}
                                             {item.customizations.monogram && (
-                                                <p className="font-sans text-[10px] text-matteo-charcoal/80 dark:text-gray-400">
-                                                    Monogram: <span className="text-matteo-stone">{item.customizations.monogram}</span>
+                                                <p className="font-sans text-[10px] text-matteo-charcoal/80 dark:text-white/60">
+                                                    Monogram: <span className="text-matteo-stone-ink dark:text-matteo-stone">{item.customizations.monogram}</span>
                                                 </p>
                                             )}
                                         </div>
                                     )}
 
-                                    <span className="font-sans text-xs text-matteo-charcoal/60 dark:text-gray-400 font-medium">
+                                    <span className="font-sans text-xs text-matteo-charcoal/60 dark:text-white/60 font-medium">
                                         ${item.price.toLocaleString()}
                                         {item.id === 14 && <span className="text-matteo-orange ml-1">(Deposit)</span>}
                                     </span>
                                     {item.id === 14 && (
-                                        <span className="block font-sans text-[10px] uppercase tracking-[0.1em] text-matteo-stone mt-1">
+                                        <span className="block font-sans text-[10px] uppercase tracking-[0.1em] text-matteo-stone-ink dark:text-matteo-stone mt-1">
                                             Full commission: $185,000 · Pay the rest later
                                         </span>
                                     )}
@@ -132,7 +132,7 @@ export const CartSidebar: React.FC = () => {
                                     )}
                                     <button 
                                         onClick={() => removeFromCart(item.cartItemId)}
-                                        className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone hover:text-matteo-orange transition-colors"
+                                        className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone-ink dark:text-matteo-stone hover:text-matteo-orange transition-colors"
                                     >
                                         Remove
                                     </button>
@@ -150,7 +150,7 @@ export const CartSidebar: React.FC = () => {
                     <span className="font-sans text-xs uppercase tracking-widest text-matteo-charcoal dark:text-white">Subtotal</span>
                     <span className="font-serif text-xl text-matteo-charcoal dark:text-white">${cartTotal.toLocaleString()}</span>
                 </div>
-                <p className="font-serif text-[10px] text-gray-400 italic mb-4">
+                <p className="font-serif text-[11px] text-matteo-stone-ink dark:text-white/60 italic mb-4">
                     Shipping & taxes calculated at checkout.
                 </p>
                 {cartItems.some(item => item.id === 14) && (

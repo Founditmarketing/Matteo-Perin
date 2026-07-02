@@ -11,7 +11,7 @@ export const NotFound: React.FC = () => {
       </Helmet>
       <span className="font-serif text-9xl text-matteo-charcoal/10 font-bold mb-8">404</span>
       <h1 className="font-serif text-4xl text-matteo-charcoal mb-4">Page Not Found</h1>
-      <p className="font-sans text-matteo-stone mb-12 max-w-md">
+      <p className="font-sans text-matteo-stone-ink dark:text-matteo-stone mb-12 max-w-md">
         The page you are looking for does not exist or has been moved.
       </p>
       <Link 

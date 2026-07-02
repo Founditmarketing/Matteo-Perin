@@ -58,6 +58,30 @@ html.dark body {
   color: #F2EFE9;
 }
 
+/* ————— Paper Grain —————
+   A faint linen/paper grain laid over the whole viewport so the cream
+   canvas reads as stock, not a flat digital fill, on large monitors.
+   Inline feTurbulence noise (desaturated), tiled, fixed, and inert:
+   pointer-events none, ~2.5% opacity — far below any measurable effect
+   on text contrast. Sits above all surfaces so section fills and
+   photography share one continuous sheet of paper.
+   Excluded from dark mode (html.dark): gray speckle at any opacity
+   muddies the Atelier Black world (tested; The Warm Dark Rule). */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 200000;
+  pointer-events: none;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23p)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+}
+
+html.dark body::after {
+  content: none;
+}
+
 
 /* Hide Scrollbar for Luxury Feel */
 ::-webkit-scrollbar {
@@ -151,4 +175,88 @@ html.dark body {
 
 .delay-300 {
   transition-delay: 0.2s;
+}
+
+/* ————— Section Hairline —————
+   The printed-catalog rule that separates homepage acts: 1px, ink at 8%
+   (white at 10% under html.dark). Apply to an <hr> or an empty <div>:
+
+     <hr class="rule-hairline" />
+
+   Inside an always-dark act on a light page (e.g. a bg-matteo-black
+   section), use `border-t border-white/10` directly instead — this
+   class only tracks the global theme. */
+.rule-hairline {
+  border: 0;
+  border-top: 1px solid rgba(28, 28, 28, 0.08);
+  height: 0;
+}
+
+html.dark .rule-hairline {
+  border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+/* ————— Focus Underline Draw —————
+   For underline-only inputs (borderless field + 1px bottom rule).
+   Put .underline-draw on the field's WRAPPER — the element that carries
+   the resting hairline — and the terracotta rule draws in from the left
+   on :focus-within (600ms ease-out). Keyboard users additionally keep
+   the global terracotta :focus-visible ring on the input itself.
+
+     <div class="underline-draw border-b border-matteo-charcoal/20 dark:border-white/20">
+       <input class="w-full bg-transparent outline-none ..." />
+     </div> */
+.underline-draw {
+  position: relative;
+}
+
+.underline-draw::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px; /* sits exactly over the wrapper's 1px border-b */
+  height: 1px;
+  background-color: #CB5C38;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+.underline-draw:focus-within::after {
+  transform: scaleX(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .underline-draw::after {
+    transition: none;
+  }
+}
+
+/* ————— The View Cursor ————— (Cursor.tsx)
+   State styles for the ring that blooms over [data-cursor="view"]
+   imagery. The outer .view-cursor is positioned by rAF in Cursor.tsx
+   (transform only — never animated here); the inner ring carries the
+   grow/fade. Slight overshoot on scale reads as a spring; reduced
+   motion drops the scale entirely and fades in place. */
+.view-cursor-ring {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.4);
+  transition: opacity 0.4s ease-out, transform 0.55s cubic-bezier(0.34, 1.45, 0.64, 1);
+  will-change: transform, opacity;
+}
+
+.view-cursor.is-active .view-cursor-ring {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .view-cursor-ring,
+  .view-cursor.is-active .view-cursor-ring {
+    transform: translate(-50%, -50%);
+    transition: opacity 0.3s ease-out;
+  }
 }

@@ -65,7 +65,7 @@ export default defineConfig(({ mode }) => {
   
   return {
     server: {
-      port: 3000,
+      port: Number(process.env.PORT) || 3000,
       host: '0.0.0.0',
       proxy: {
         '/api/lightspeed': {
@@ -111,4 +111,4 @@ export default defineConfig(({ mode }) => {
   };
 });
 
-// Force restart: 
+// Force restart: 2026-07-01 pick up new tailwind ink tokens

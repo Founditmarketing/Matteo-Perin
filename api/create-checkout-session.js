@@ -65,6 +65,13 @@ export default async function handler(req, res) {
     // fixed deposit table — client-supplied prices are never charged.
     let inventoryGroups = null;
     const lineItems = [];
+    // A commission is reserved once: identical deposit lines collapse to one.
+    const seenDepositTitles = new Set();
+    // Physical goods aggregate per matched variation BEFORE the stock cap is
+    // applied, so a duplicated cart line for the same piece (e.g. Add to Bag
+    // followed by Buy Now) collapses into one line item and can never slip
+    // through as two units of a stock-1 one-of-one.
+    const physicalByVariation = new Map();
 
     for (const item of items) {
       const title = String(item.title || '').trim();
@@ -75,6 +82,8 @@ export default async function handler(req, res) {
         if (!depositPrice) {
           return res.status(400).json({ error: `Unknown commission deposit: ${title}` });
         }
+        if (seenDepositTitles.has(title)) continue;
+        seenDepositTitles.add(title);
         lineItems.push({
           price_data: {
             currency: 'usd',
@@ -104,7 +113,18 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: `"${title}" has just sold out.` });
       }
 
-      // Cap quantity at the available stock when the sheet tracks a count.
+      const variationKey = `${match.parent.parentName}::${match.variation.StyleName}`;
+      const existing = physicalByVariation.get(variationKey);
+      if (existing) {
+        existing.quantity = Math.min(existing.quantity + quantity, 10);
+      } else {
+        physicalByVariation.set(variationKey, { match, quantity });
+      }
+    }
+
+    for (const { match, quantity } of physicalByVariation.values()) {
+      // Cap the AGGREGATED quantity at the available stock when the sheet
+      // tracks a count — a one-of-one can only ever be charged once.
       const stockNum = parseInt(String(match.variation.Stock || '').trim(), 10);
       const finalQuantity = Number.isFinite(stockNum) && stockNum > 0 ? Math.min(quantity, stockNum) : quantity;
 

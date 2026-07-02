@@ -15,12 +15,28 @@ import {
     isVariationSoldOut,
 } from '../lib/inventory';
 
+// Stable numeric id for an inventory variation, derived from its identity
+// (slugified parent name + style name). The cart's duplicate check compares
+// product ids, so the same piece must map to the same id on every add —
+// previously this was Date.now(), which made every add unique and let a
+// one-of-one be added (and charged) twice via Add to Bag then Buy Now.
+const stableVariationId = (parentName: string, styleName: string): number => {
+    const key = slugify(`${parentName} ${styleName}`);
+    let hash = 0;
+    for (let i = 0; i < key.length; i++) {
+        hash = (hash * 31 + key.charCodeAt(i)) >>> 0;
+    }
+    // Offset keeps inventory ids clear of the hand-numbered ids in
+    // constants.ts (e.g. the commission deposit is id 14).
+    return 100000 + (hash % 2000000000);
+};
+
 export const InventoryProductPage: React.FC = () => {
     const { productName } = useParams();
     const navigate = useNavigate();
     const location = useLocation();
     const basePath = location.pathname.startsWith('/shop') ? '/shop' : '/inventory-test-hidden';
-    const { addToCart, setIsCartOpen } = useCart();
+    const { addToCart, setIsCartOpen, cartItems } = useCart();
     
     const [selectedGroup, setSelectedGroup] = useState<GroupedProduct | null>(null);
     const [activeVariation, setActiveVariation] = useState<any | null>(null);
@@ -108,7 +124,8 @@ export const InventoryProductPage: React.FC = () => {
         const price = parseFloat(priceStr) || 0;
         const imgUrl = currentImages[0]?.url || '';
         return {
-            id: Date.now(), // Unique ID for inventory items
+            // Stable across adds so the cart can recognise the same piece
+            id: stableVariationId(selectedGroup.parentName, activeVariation.StyleName || activeVariation.Title || ''),
             title: `${selectedGroup.parentName}${activeVariation.Title !== selectedGroup.parentName ? ' — ' + activeVariation.Title : ''}`,
             category: activeVariation.Category || 'Collection',
             image: imgUrl,
@@ -136,7 +153,12 @@ export const InventoryProductPage: React.FC = () => {
     const handleBuyNow = () => {
         const product = variationToProduct();
         if (product) {
-            addToCart(product);
+            // If the piece is already in the bag (e.g. Add to Bag was clicked
+            // first), don't add a second line — just proceed to checkout.
+            const alreadyInBag = cartItems.some(item => item.id === product.id && !item.customizations);
+            if (!alreadyInBag) {
+                addToCart(product);
+            }
             setIsCartOpen(false);
             navigate('/checkout');
         }
@@ -160,7 +182,7 @@ export const InventoryProductPage: React.FC = () => {
         return (
             <div className="min-h-screen bg-matteo-cream dark:bg-matteo-black py-32 px-6 flex flex-col items-center justify-center">
                 <div className="w-8 h-8 border-2 border-matteo-orange border-t-transparent rounded-full animate-spin mb-4"></div>
-                <p className="font-sans text-xs uppercase tracking-widest text-matteo-charcoal/60 dark:text-white/60">Loading product details...</p>
+                <p className="font-sans text-xs uppercase tracking-widest text-matteo-stone-ink dark:text-white/60">Loading product details...</p>
             </div>
         );
     }
@@ -295,7 +317,7 @@ export const InventoryProductPage: React.FC = () => {
                 <div className="mb-12 flex items-center justify-between">
                     <button 
                         onClick={() => navigate(basePath)}
-                        className="font-sans text-[10px] uppercase tracking-widest text-matteo-charcoal/60 dark:text-white/60 hover:text-matteo-orange dark:hover:text-matteo-orange transition-colors flex items-center gap-2 group"
+                        className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone-ink dark:text-white/60 hover:text-matteo-orange dark:hover:text-matteo-orange transition-colors flex items-center gap-2 group"
                     >
                         <span className="group-hover:-translate-x-1 transition-transform">←</span>
                         <span>Back to Collection</span>
@@ -318,7 +340,7 @@ export const InventoryProductPage: React.FC = () => {
                                         className="w-full h-full object-contain object-center mix-blend-multiply dark:mix-blend-normal animate-fade-in-up cursor-zoom-in p-8"
                                         onError={(e) => {
                                             // Fallback to a placeholder instead of hiding completely so user knows it loaded but failed
-                                            (e.target as HTMLImageElement).src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-300"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>';
+                                            (e.target as HTMLImageElement).src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>';
                                             (e.target as HTMLImageElement).className = "w-1/2 h-1/2 mx-auto object-contain opacity-20";
                                         }}
                                         onClick={() => setIsLightboxOpen(true)}
@@ -361,7 +383,7 @@ export const InventoryProductPage: React.FC = () => {
                                     {/* Image counter & dot indicators */}
                                     {currentImages.length > 1 && (
                                         <div className="absolute bottom-4 left-0 right-0 flex flex-col items-center gap-2 z-10">
-                                            <span className="font-sans text-[10px] uppercase tracking-widest text-matteo-charcoal/50 dark:text-white/50">
+                                            <span className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone-ink dark:text-white/60">
                                                 {activeImageIndex + 1} / {currentImages.length}
                                             </span>
                                             <div className="flex justify-center gap-1.5 pointer-events-none" aria-hidden="true">
@@ -385,7 +407,7 @@ export const InventoryProductPage: React.FC = () => {
                     
                     {/* Right Side: Info and Variation Selection */}
                     <div className="w-full lg:w-7/12 flex flex-col py-4">
-                        <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-matteo-orange mb-4 block">
+                        <span className="font-sans text-[10px] uppercase tracking-[0.4em] font-medium text-matteo-orange-ink dark:text-matteo-orange mb-4 block">
                             {activeVariation?.Category || 'Collection'}
                         </span>
                         
@@ -400,7 +422,7 @@ export const InventoryProductPage: React.FC = () => {
                         )}
                         
                         <div className="flex items-center justify-between mb-8 pb-8 border-b border-matteo-charcoal/10 dark:border-white/10">
-                            <span className="font-sans text-lg tracking-widest text-matteo-charcoal/80 dark:text-gray-300">
+                            <span className="font-sans text-lg tracking-widest text-matteo-charcoal/80 dark:text-white/80">
                                 {activeVariation?.Price || getPriceRange(selectedGroup.variations)}
                             </span>
                             {activeVariation?.Stock && (
@@ -417,7 +439,7 @@ export const InventoryProductPage: React.FC = () => {
                         {/* ── COLOR/VARIATION SELECTION — ¼ SIZE SWATCHES ── */}
                         {selectedGroup.variations.length > 0 && (
                             <div className="mb-10 pb-10 border-b border-matteo-charcoal/10 dark:border-white/10">
-                                <h4 className="font-sans text-[10px] uppercase tracking-[0.2em] text-matteo-charcoal/60 dark:text-gray-400 mb-4">
+                                <h4 className="font-sans text-[10px] uppercase tracking-[0.2em] font-medium text-matteo-stone-ink dark:text-white/60 mb-4">
                                     Select Color — {selectedGroup.variations.length} {selectedGroup.variations.length === 1 ? 'option' : 'options'}
                                 </h4>
                                 <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 gap-2">
@@ -476,8 +498,8 @@ export const InventoryProductPage: React.FC = () => {
 
                         {selectedGroup.description && (
                             <div className="mb-8">
-                                <h4 className="font-sans text-[10px] uppercase tracking-[0.2em] text-matteo-charcoal/60 dark:text-gray-400 mb-3">Description</h4>
-                                <p className="font-serif text-base leading-relaxed text-matteo-charcoal dark:text-gray-300 whitespace-pre-wrap">
+                                <h4 className="font-sans text-[10px] uppercase tracking-[0.2em] font-medium text-matteo-stone-ink dark:text-white/60 mb-3">Description</h4>
+                                <p className="font-serif text-base leading-relaxed text-matteo-charcoal dark:text-white/80 whitespace-pre-wrap">
                                     {selectedGroup.description}
                                 </p>
                             </div>
@@ -485,8 +507,8 @@ export const InventoryProductPage: React.FC = () => {
                         
                         {selectedGroup.gender && (
                             <div className="mb-8">
-                                <h4 className="font-sans text-[10px] uppercase tracking-[0.2em] text-matteo-charcoal/60 dark:text-gray-400 mb-3">Specification</h4>
-                                <p className="font-serif text-base text-matteo-charcoal dark:text-gray-300">
+                                <h4 className="font-sans text-[10px] uppercase tracking-[0.2em] font-medium text-matteo-stone-ink dark:text-white/60 mb-3">Specification</h4>
+                                <p className="font-serif text-base text-matteo-charcoal dark:text-white/80">
                                     {selectedGroup.gender}
                                 </p>
                             </div>
@@ -523,13 +545,13 @@ export const InventoryProductPage: React.FC = () => {
                                 </>
                             )}
                             <div className="pt-4 space-y-2 text-center">
-                                <p className="font-sans text-[10px] uppercase tracking-widest text-matteo-charcoal/50 dark:text-white/40">
+                                <p className="font-sans text-[10px] uppercase tracking-widest font-medium text-matteo-stone-ink dark:text-white/60">
                                     Complimentary insured delivery, worldwide · 14-day returns
                                 </p>
-                                <p className="font-sans text-[10px] uppercase tracking-widest text-matteo-charcoal/50 dark:text-white/40">
+                                <p className="font-sans text-[10px] uppercase tracking-widest font-medium text-matteo-stone-ink dark:text-white/60">
                                     Authenticity guaranteed · Secure checkout · Apple Pay &amp; Google Pay
                                 </p>
-                                <Link to="/shipping-returns" className="inline-block font-sans text-[10px] uppercase tracking-widest text-matteo-orange border-b border-matteo-orange/40 pb-0.5 hover:opacity-70 transition-opacity">
+                                <Link to="/shipping-returns" className="inline-block font-sans text-[10px] uppercase tracking-widest text-matteo-orange-ink dark:text-matteo-orange border-b border-matteo-orange/40 pb-0.5 hover:opacity-70 transition-opacity">
                                     Shipping, Returns &amp; Authenticity
                                 </Link>
                             </div>

@@ -8,59 +8,171 @@
         "role": "primary",
         "displayName": "Tuscan Terracotta",
         "canonical": "#CB5C38",
-        "tonalRamp": ["#2E130A", "#552315", "#7C3320", "#A3442B", "#CB5C38", "#D98261", "#E6A98F", "#F3D4C5"]
+        "tonalRamp": [
+          "#2E130A",
+          "#552315",
+          "#7C3320",
+          "#A3442B",
+          "#CB5C38",
+          "#D98261",
+          "#E6A98F",
+          "#F3D4C5"
+        ]
       },
       "atelier-cream": {
         "role": "neutral",
         "displayName": "Atelier Cream",
         "canonical": "#F2EFE9",
-        "tonalRamp": ["#26241F", "#4D4A42", "#737065", "#999588", "#BFBBAC", "#D9D5C9", "#E8E4DB", "#F2EFE9"]
+        "tonalRamp": [
+          "#26241F",
+          "#4D4A42",
+          "#737065",
+          "#999588",
+          "#BFBBAC",
+          "#D9D5C9",
+          "#E8E4DB",
+          "#F2EFE9"
+        ]
       },
       "ink-charcoal": {
         "role": "neutral",
         "displayName": "Ink Charcoal",
         "canonical": "#1C1C1C",
-        "tonalRamp": ["#0A0A0A", "#1C1C1C", "#333333", "#4D4D4D", "#666666", "#8C8C8C", "#B3B3B3", "#E0E0E0"]
+        "tonalRamp": [
+          "#0A0A0A",
+          "#1C1C1C",
+          "#333333",
+          "#4D4D4D",
+          "#666666",
+          "#8C8C8C",
+          "#B3B3B3",
+          "#E0E0E0"
+        ]
       },
       "atelier-black": {
         "role": "neutral",
         "displayName": "Atelier Black",
         "canonical": "#0A0A0A",
-        "tonalRamp": ["#050505", "#0A0A0A", "#141414", "#1F1F1F", "#2E2E2E", "#454545", "#6B6B6B", "#A3A3A3"]
+        "tonalRamp": [
+          "#050505",
+          "#0A0A0A",
+          "#141414",
+          "#1F1F1F",
+          "#2E2E2E",
+          "#454545",
+          "#6B6B6B",
+          "#A3A3A3"
+        ]
       },
       "stone-gray": {
         "role": "neutral",
         "displayName": "Stone Gray",
         "canonical": "#8C8C8C",
-        "tonalRamp": ["#1F1F1F", "#383838", "#525252", "#6E6E6E", "#8C8C8C", "#A8A8A8", "#C4C4C4", "#E0E0E0"]
+        "tonalRamp": [
+          "#1F1F1F",
+          "#383838",
+          "#525252",
+          "#6E6E6E",
+          "#8C8C8C",
+          "#A8A8A8",
+          "#C4C4C4",
+          "#E0E0E0"
+        ],
+        "note": "AA note: fails contrast for text on cream (2.93:1) — use stone-ink #6B665F for text on light surfaces."
       },
       "raw-canvas": {
         "role": "neutral",
         "displayName": "Raw Canvas",
         "canonical": "#E5E2DC",
-        "tonalRamp": ["#242220", "#48453F", "#6C685F", "#908B7F", "#B4AE9F", "#CDC8BC", "#E5E2DC", "#F4F2EE"]
+        "tonalRamp": [
+          "#242220",
+          "#48453F",
+          "#6C685F",
+          "#908B7F",
+          "#B4AE9F",
+          "#CDC8BC",
+          "#E5E2DC",
+          "#F4F2EE"
+        ]
+      },
+      "terracotta-ink": {
+        "role": "primary-text",
+        "displayName": "Terracotta Ink",
+        "canonical": "#A0421F",
+        "note": "Text-grade terracotta for light surfaces. #CB5C38 reads 3.57:1 on Atelier Cream (AA failure); #A0421F reads 5.56:1. Use for eyebrows, labels, and text links on cream/sand; keep #CB5C38 for rules, focus rings, hovers, and dark surfaces."
+      },
+      "stone-ink": {
+        "role": "neutral-text",
+        "displayName": "Stone Ink",
+        "canonical": "#6B665F",
+        "note": "Text-grade stone for light surfaces. #8C8C8C reads 2.93:1 on Atelier Cream (AA failure); #6B665F reads 4.96:1. Use for content-bearing labels and captions on cream/sand; keep #8C8C8C for hairlines and dark surfaces (5.89:1 on Atelier Black)."
       }
     },
     "typographyMeta": {
-      "display": { "displayName": "Display", "purpose": "Page heroes and section openers. One per viewport. Carries -0.04em optical left margin." },
-      "headline": { "displayName": "Headline", "purpose": "Product names, article titles, modal headings." },
-      "body": { "displayName": "Body", "purpose": "Editorial copy in Playfair at 1.8 line-height, capped at 65-75ch." },
-      "label": { "displayName": "Label", "purpose": "The whisper: 10px Montserrat, 0.2-0.4em tracking, uppercase. Eyebrows, buttons, nav, metadata." }
+      "display": {
+        "displayName": "Display",
+        "purpose": "Page heroes and section openers. One per viewport. Carries -0.04em optical left margin."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Product names, article titles, modal headings."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Editorial copy in Playfair at 1.8 line-height, capped at 65-75ch."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "The whisper: 10px Montserrat, 0.2-0.4em tracking, uppercase. Eyebrows, buttons, nav, metadata."
+      }
     },
     "shadows": [
-      { "name": "print-lift", "value": "0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)", "purpose": "Lookbook and product imagery at rest. Never on chrome." },
-      { "name": "cinema-lift", "value": "0 25px 50px -12px rgba(0,0,0,0.25)", "purpose": "Lightboxes, modals, drawers." }
+      {
+        "name": "print-lift",
+        "value": "0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)",
+        "purpose": "Lookbook and product imagery at rest. Never on chrome."
+      },
+      {
+        "name": "cinema-lift",
+        "value": "0 25px 50px -12px rgba(0,0,0,0.25)",
+        "purpose": "Lightboxes, modals, drawers."
+      }
     ],
     "motion": [
-      { "name": "ease-cinematic", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Default reveal and transition easing (ease-out-expo family)." },
-      { "name": "ease-settle", "value": "cubic-bezier(0.32, 0.72, 0, 1)", "purpose": "Theme/background cross-fades." },
-      { "name": "duration-reveal", "value": "700ms", "purpose": "Scroll reveals and hover floods." },
-      { "name": "duration-cinematic", "value": "1400ms", "purpose": "Entrance choreography (cinematicReveal: blur + scale + rise)." }
+      {
+        "name": "ease-cinematic",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Default reveal and transition easing (ease-out-expo family)."
+      },
+      {
+        "name": "ease-settle",
+        "value": "cubic-bezier(0.32, 0.72, 0, 1)",
+        "purpose": "Theme/background cross-fades."
+      },
+      {
+        "name": "duration-reveal",
+        "value": "700ms",
+        "purpose": "Scroll reveals and hover floods."
+      },
+      {
+        "name": "duration-cinematic",
+        "value": "1400ms",
+        "purpose": "Entrance choreography (cinematicReveal: blur + scale + rise)."
+      }
     ],
     "breakpoints": [
-      { "name": "md", "value": "768px" },
-      { "name": "lg", "value": "1024px" },
-      { "name": "xl", "value": "1280px" }
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "xl",
+        "value": "1280px"
+      }
     ]
   },
   "components": [
@@ -85,8 +197,8 @@
       "kind": "custom",
       "refersTo": "eyebrow-label",
       "description": "The house voice that opens every act: terracotta tracked uppercase above a display headline.",
-      "html": "<div class=\"ds-eyebrow-block\"><span class=\"ds-eyebrow\">Available Now \u00b7 In Stock</span><h2 class=\"ds-eyebrow-display\">The Current Edit</h2></div>",
-      "css": ".ds-eyebrow-block { display: flex; flex-direction: column; gap: 16px; } .ds-eyebrow { font-family: 'Montserrat', sans-serif; font-size: 10px; font-weight: 500; letter-spacing: 0.4em; text-transform: uppercase; color: #CB5C38; } .ds-eyebrow-display { font-family: 'Playfair Display', serif; font-size: 44px; font-weight: 400; line-height: 1.1; color: #1C1C1C; margin: 0 0 0 -0.04em; }"
+      "html": "<div class=\"ds-eyebrow-block\"><span class=\"ds-eyebrow\">Available Now · In Stock</span><h2 class=\"ds-eyebrow-display\">The Current Edit</h2></div>",
+      "css": ".ds-eyebrow-block { display: flex; flex-direction: column; gap: 16px; } .ds-eyebrow { font-family: 'Montserrat', sans-serif; font-size: 10px; font-weight: 500; letter-spacing: 0.4em; text-transform: uppercase; color: #A0421F; /* Terracotta Ink — #CB5C38 fails AA on cream; keep #CB5C38 on dark surfaces */ } .ds-eyebrow-display { font-family: 'Playfair Display', serif; font-size: 44px; font-weight: 400; line-height: 1.1; color: #1C1C1C; margin: 0 0 0 -0.04em; }"
     },
     {
       "name": "Nav Link",
@@ -99,7 +211,7 @@
       "name": "Product Card",
       "kind": "card",
       "description": "Portrait imagery with print-lift shadow; serif title and tracked metadata below.",
-      "html": "<div class=\"ds-card\"><div class=\"ds-card-img\"></div><span class=\"ds-card-meta\">One of One \u00b7 Ships Now</span><div class=\"ds-card-row\"><h3 class=\"ds-card-title\">Ostrich Bucket Bag</h3><span class=\"ds-card-price\">$4,800</span></div></div>",
+      "html": "<div class=\"ds-card\"><div class=\"ds-card-img\"></div><span class=\"ds-card-meta\">One of One · Ships Now</span><div class=\"ds-card-row\"><h3 class=\"ds-card-title\">Ostrich Bucket Bag</h3><span class=\"ds-card-price\">$4,800</span></div></div>",
       "css": ".ds-card { display: flex; flex-direction: column; width: 280px; background: transparent; } .ds-card-img { aspect-ratio: 3/4; background: #E5E2DC; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1); margin-bottom: 24px; } .ds-card-meta { font-family: 'Montserrat', sans-serif; font-size: 10px; font-weight: 500; letter-spacing: 0.25em; text-transform: uppercase; color: #CB5C38; margin-bottom: 12px; } .ds-card-row { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; } .ds-card-title { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 400; color: #1C1C1C; margin: 0; } .ds-card-price { font-family: 'Playfair Display', serif; font-size: 18px; color: #1C1C1C; }"
     },
     {
@@ -121,11 +233,31 @@
       "Choreographed motion: slow ease-out reveals (700-1400ms), never bouncy"
     ],
     "rules": [
-      { "name": "The One Flame Rule", "body": "Terracotta appears on at most ~10% of any screen — an eyebrow, a rule line, a focus ring, one hover. Its rarity is its authority.", "section": "colors" },
-      { "name": "The Warm Dark Rule", "body": "Dark surfaces are Atelier Black (#0A0A0A) or Ink Charcoal — never pure black, never cool gray.", "section": "colors" },
-      { "name": "The Whisper-and-Shout Rule", "body": "Type is either enormous Playfair or tiny tracked Montserrat. The middle register (16-24px sans) is forbidden in brand surfaces.", "section": "typography" },
-      { "name": "The Italic Aside Rule", "body": "Playfair italic is reserved for human asides, never for emphasis inside running copy.", "section": "typography" },
-      { "name": "The Lifted Print Rule", "body": "If it isn't a photograph or a modal, it doesn't cast a shadow.", "section": "elevation" }
+      {
+        "name": "The One Flame Rule",
+        "body": "Terracotta appears on at most ~10% of any screen — an eyebrow, a rule line, a focus ring, one hover. Its rarity is its authority.",
+        "section": "colors"
+      },
+      {
+        "name": "The Warm Dark Rule",
+        "body": "Dark surfaces are Atelier Black (#0A0A0A) or Ink Charcoal — never pure black, never cool gray.",
+        "section": "colors"
+      },
+      {
+        "name": "The Whisper-and-Shout Rule",
+        "body": "Type is either enormous Playfair or tiny tracked Montserrat. The middle register (16-24px sans) is forbidden in brand surfaces.",
+        "section": "typography"
+      },
+      {
+        "name": "The Italic Aside Rule",
+        "body": "Playfair italic is reserved for human asides, never for emphasis inside running copy.",
+        "section": "typography"
+      },
+      {
+        "name": "The Lifted Print Rule",
+        "body": "If it isn't a photograph or a modal, it doesn't cast a shadow.",
+        "section": "elevation"
+      }
     ],
     "dos": [
       "Do open every page with the eyebrow → Playfair display → hairline sequence; one display headline per viewport.",

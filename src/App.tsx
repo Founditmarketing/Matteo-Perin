@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { BrowserRouter as Router, Routes, Route, useLocation, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, useNavigationType, Link } from 'react-router-dom';
 import { Navigation } from './components/Navigation';
 import { Footer } from './components/Footer';
 import { InquiryProvider } from './context/InquiryContext';
@@ -17,11 +17,11 @@ import { StitchTransition, STITCH_COVER_MS } from './components/StitchTransition
 // button and the real component loads on first click.
 const DigitalConcierge = React.lazy(() => import('./components/DigitalConcierge').then(m => ({ default: m.DigitalConcierge })));
 
-const ConciergeLauncherButton: React.FC<{ onClick?: () => void }> = ({ onClick }) => (
+const ConciergeLauncherButton: React.FC<{ onClick?: () => void; suppressedOnMobile?: boolean }> = ({ onClick, suppressedOnMobile }) => (
     <button
         onClick={onClick}
         aria-label="Open the Digital Concierge"
-        className="fixed bottom-6 lg:bottom-8 right-6 lg:right-8 z-[90000] mix-blend-difference opacity-70 hover:opacity-100 transition-opacity duration-700 flex flex-col items-end"
+        className={`fixed bottom-6 lg:bottom-8 right-6 lg:right-8 z-[90000] mix-blend-difference opacity-70 hover:opacity-100 transition-opacity duration-700 ${suppressedOnMobile ? 'hidden lg:flex' : 'flex'} flex-col items-end`}
     >
         <div className="w-12 h-12 rounded-full border border-white flex items-center justify-center mb-2">
             <span className="font-serif italic text-white text-xl">M</span>
@@ -32,13 +32,18 @@ const ConciergeLauncherButton: React.FC<{ onClick?: () => void }> = ({ onClick }
 
 const ConciergeGate: React.FC = () => {
     const [requested, setRequested] = useState(false);
+    const { pathname } = useLocation();
+    // The croc landing page has its own sticky buy bar on mobile (z-50,
+    // bottom-0); the launcher's z-[90000] would intercept taps on the
+    // Secure Deposit button, so the launcher yields on that route.
+    const suppressedOnMobile = pathname === '/bespoke-crocodile-jacket';
 
     if (!requested) {
-        return <ConciergeLauncherButton onClick={() => setRequested(true)} />;
+        return <ConciergeLauncherButton onClick={() => setRequested(true)} suppressedOnMobile={suppressedOnMobile} />;
     }
     return (
-        <Suspense fallback={<ConciergeLauncherButton />}>
-            <DigitalConcierge initialOpen />
+        <Suspense fallback={<ConciergeLauncherButton suppressedOnMobile={suppressedOnMobile} />}>
+            <DigitalConcierge initialOpen suppressLauncherOnMobile={suppressedOnMobile} />
         </Suspense>
     );
 };
@@ -192,6 +197,7 @@ const ThankYouPage: React.FC = () => {
 // Robust Scroll Handler to manage Route changes + Hash Anchors
 const ScrollToTop = () => {
     const { pathname, hash } = useLocation();
+    const navigationType = useNavigationType();
 
     useEffect(() => {
         // Capture UTM params on initial landing for attribution tracking
@@ -219,6 +225,11 @@ const ScrollToTop = () => {
                 window.scrollTo(0, 0);
                 return;
             }
+            // Back/forward navigation: let the browser restore the previous
+            // scroll position instead of yanking the visitor to the top.
+            if (navigationType === 'POP') {
+                return;
+            }
             // The Stitch panels cover the viewport at STITCH_COVER_MS — reset
             // scroll while hidden so neither page visibly jumps.
             const t = setTimeout(() => window.scrollTo(0, 0), STITCH_COVER_MS + 30);
@@ -237,12 +248,12 @@ const ScrollToTop = () => {
                 }
             }, 1200); // After the stitch transition completes
         }
-    }, [pathname, hash]);
+    }, [pathname, hash, navigationType]);
 
     return null;
 };
 
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'; // Add AnimatePresence
+import { AnimatePresence, MotionConfig, motion, useReducedMotion } from 'framer-motion'; // Add AnimatePresence
 
 // ... existing ScrollToTop ...
 
@@ -332,6 +343,10 @@ function App() {
             <CartProvider>
             <InquiryProvider>
                 <Router>
+                    {/* reducedMotion="user" neutralizes every framer-motion
+                        animation for prefers-reduced-motion visitors in one
+                        place (PRODUCT.md accessibility mandate). */}
+                    <MotionConfig reducedMotion="user">
                     <ScrollToTop />
                     <StitchTransition />
                     <div className="relative w-full min-h-screen flex flex-col justify-between transition-colors duration-700 bg-matteo-cream dark:bg-matteo-black text-matteo-charcoal dark:text-matteo-cream">
@@ -351,6 +366,7 @@ function App() {
 
                         <Footer />
                     </div>
+                    </MotionConfig>
                 </Router>
             </InquiryProvider>
             </CartProvider>

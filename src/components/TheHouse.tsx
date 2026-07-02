@@ -1,71 +1,38 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React from 'react';
 import { Helmet } from 'react-helmet-async';
-import { motion, useScroll, useTransform, useSpring, useMotionValue } from 'framer-motion';
-import { IMAGES, TEXTS } from '../constants';
+import { TEXTS } from '../constants';
 import { RevealOnScroll } from './RevealOnScroll';
+import { ResponsiveImage } from './ResponsiveImage';
 import { Link } from 'react-router-dom';
 
+/**
+ * TheHouse – /the-house — The Matteo Perin Story.
+ *
+ * An undated chapter arc (Verona → the world → Jackson Hole) told in the
+ * house's ledger aesthetic. Every fact on this page already exists elsewhere
+ * in the repo (press excerpts, the crocodile commission page, PRODUCT.md).
+ */
+
+const Ledger: React.FC<{ rows: [string, string][] }> = ({ rows }) => (
+    <div className="divide-y divide-matteo-charcoal/10 dark:divide-white/10 border-t border-b border-matteo-charcoal/10 dark:border-white/10">
+        {rows.map(([label, value]) => (
+            <div key={label} className="flex items-baseline justify-between gap-6 py-3">
+                <span className="font-sans text-[10px] uppercase tracking-[0.25em] font-medium text-matteo-stone-ink dark:text-white/60 shrink-0">{label}</span>
+                <span className="font-serif text-base md:text-lg text-matteo-charcoal dark:text-white text-right">{value}</span>
+            </div>
+        ))}
+    </div>
+);
+
 export const TheHouse: React.FC = () => {
-    const [scrollProgress, setScrollProgress] = useState(0);
-    const containerRef = useRef<HTMLDivElement>(null);
-
-    const [isMobile, setIsMobile] = useState(false);
-    useEffect(() => {
-        const checkMobile = () => setIsMobile(window.innerWidth < 768);
-        checkMobile();
-        window.addEventListener('resize', checkMobile);
-        return () => window.removeEventListener('resize', checkMobile);
-    }, []);
-
-    // --- Video Hero with full iPhone/mobile optimization ---
-    const videoRef = useRef<HTMLVideoElement>(null);
-    const handleVideoLoaded = useCallback(() => {
-        if (videoRef.current) {
-            videoRef.current.playbackRate = 0.75;
-            // iOS often needs an explicit play() nudge after load
-            const playPromise = videoRef.current.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(() => {
-                    // Autoplay blocked — will show poster frame as fallback
-                });
-            }
-        }
-    }, []);
-
-    // Scrollytelling Logic for Dual Worlds
-    useEffect(() => {
-        let ticking = false;
-        const handleScroll = () => {
-            if (ticking) return;
-            ticking = true;
-            requestAnimationFrame(() => {
-                if (!containerRef.current) { ticking = false; return; }
-
-                const rect = containerRef.current.getBoundingClientRect();
-                const height = rect.height;
-                const top = rect.top;
-                const windowHeight = window.innerHeight;
-
-                let progress = -top / (height - windowHeight);
-                progress = Math.max(0, Math.min(1, progress));
-
-                setScrollProgress(progress);
-                ticking = false;
-            });
-        };
-
-        window.addEventListener('scroll', handleScroll, { passive: true });
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
-
     return (
         <div className="bg-matteo-cream dark:bg-matteo-black min-h-screen transition-colors duration-700">
             <Helmet>
-                <title>The House — The Matteo Perin Story | Luxury Atelier in Jackson, WY</title>
-                <meta name="description" content="The story of Matteo Perin — an Italian bespoke luxury house rooted in Verona craftsmanship and based in Jackson, Wyoming. Discover the philosophy, the atelier, and the design code behind the brand." />
+                <title>The House — The Matteo Perin Story | Bespoke Italian Atelier in Jackson, WY</title>
+                <meta name="description" content="The story of Matteo Perin — an Italian bespoke house whose commissions are cut and finished by hand in the Verona atelier, and whose only showroom stands at 164 E Deloney Ave in Jackson, Wyoming. One-of-one pieces and private commissions." />
                 <link rel="canonical" href="https://www.matteoperin.com/the-house" />
                 <meta property="og:title" content="The House — The Matteo Perin Story" />
-                <meta property="og:description" content="An Italian bespoke luxury house rooted in Verona craftsmanship, based in Jackson, Wyoming." />
+                <meta property="og:description" content="From the Verona atelier to Deloney Avenue in Jackson, Wyoming — one-of-one pieces and private commissions, cut and finished by hand." />
                 <meta property="og:type" content="website" />
                 <meta property="og:url" content="https://www.matteoperin.com/the-house" />
             </Helmet>
@@ -83,11 +50,14 @@ export const TheHouse: React.FC = () => {
                 </div>
 
                 <div className="absolute bottom-12 left-6 md:left-12 z-20 text-white">
+                    <p className="font-sans text-[10px] md:text-[11px] uppercase tracking-[0.4em] font-medium text-white/70 mb-6 ml-1">
+                        The Matteo Perin Story
+                    </p>
                     <h1 className="font-serif text-5xl md:text-9xl font-light tracking-tight leading-none mb-4">
                         Matteo<br />Perin
                     </h1>
-                    <p className="font-sans text-[10px] md:text-xs uppercase tracking-[0.4em] text-white/70 ml-2">
-                        The Architect of Lifestyle
+                    <p className="font-sans text-[10px] md:text-xs uppercase tracking-[0.4em] font-medium text-white/70 ml-1">
+                        A Bespoke Italian House — Jackson Hole, Wyoming
                     </p>
                 </div>
             </div>
@@ -104,123 +74,174 @@ export const TheHouse: React.FC = () => {
                         <h2 className="font-serif text-3xl md:text-5xl lg:text-6xl text-matteo-charcoal dark:text-white leading-[1.3] font-light">
                             <span className="opacity-80">"{TEXTS.PHILOSOPHY_TEXT}"</span>
                         </h2>
+                        <p className="mt-10 font-sans text-[11px] uppercase tracking-[0.25em] font-medium text-matteo-stone-ink dark:text-white/60">
+                            Matteo Perin
+                        </p>
                     </RevealOnScroll>
                 </section>
 
-                {/* 2.2 THE DUAL SOUL (Sticky Scrollytelling) */}
-                <section ref={containerRef} className="relative h-[300vh]">
-                    <div className="sticky top-0 h-screen overflow-hidden flex items-center justify-center">
-
-                        {/* Layer 1: Verona (Base) */}
-                        <div
-                            className="absolute inset-0 transition-opacity duration-100 ease-linear bg-black"
-                            style={{ opacity: 1 }} // Always visible base
-                        >
-                            <img
-                                src="/assets/hero_grand_estate.jpg"
-                                loading="lazy"
-                                decoding="async"
-                                className="w-full h-full object-cover grayscale opacity-60"
-                                alt="Verona Atelier"
-                                style={{ transform: `scale(${1 + scrollProgress * 0.1})` }} // Subtle zoom out
-                            />
-                            <div className="absolute inset-0 bg-black/40"></div>
+                {/* 2.2 THE ARC — chapter ledger: Verona → the world → Jackson Hole */}
+                <section className="px-6 md:px-12 max-w-[1400px] mx-auto pb-8 md:pb-16">
+                    <RevealOnScroll>
+                        <div className="flex items-center gap-4 mb-8">
+                            <span className="w-12 h-[1px] bg-matteo-orange" />
+                            <span className="font-sans text-[10px] uppercase tracking-[0.25em] font-medium text-matteo-orange-ink dark:text-matteo-orange">
+                                The Story of the House
+                            </span>
                         </div>
+                        <h2 className="font-serif text-4xl md:text-6xl text-matteo-charcoal dark:text-white font-light leading-[1.1] max-w-3xl">
+                            From the Dolomites<br />to Deloney Avenue.
+                        </h2>
+                        <p className="font-serif italic text-[15px] text-matteo-charcoal/80 dark:text-white/70 mt-6 max-w-xl leading-relaxed">
+                            The title JH Style Magazine gave its profile of the house, Winter 2025.
+                            It remains the truest map of the story — three chapters, told here in order.
+                        </p>
+                    </RevealOnScroll>
+                </section>
 
-                        {/* Layer 2: Jackson Hole (Overlay) */}
-                        <div
-                            className="absolute inset-0 transition-opacity duration-100 ease-linear bg-black"
-                            style={{ opacity: scrollProgress }} // Fades in as we scroll
-                        >
-                            <img
-                                src="/assets/hero_teton_buffalo_v2.jpg"
-                                loading="lazy"
-                                decoding="async"
-                                className="w-full h-full object-cover opacity-70 grayscale"
-                                alt="Jackson Hole"
-                                style={{ transform: `scale(${1.1 - scrollProgress * 0.1})` }} // Subtle zoom in
-                            />
-                            <div className="absolute inset-0 bg-black/30"></div>
+                {/* CHAPTER I — VERONA */}
+                <section className="py-20 md:py-28 px-6 md:px-12 max-w-[1400px] mx-auto">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 xl:gap-16 items-center">
+                        <div className="lg:col-span-5">
+                            <RevealOnScroll>
+                                <div className="relative aspect-[4/5] overflow-hidden">
+                                    <ResponsiveImage
+                                        baseSrc="/assets/fabrics/croc.webp"
+                                        alt="A hand-selected crocodile hide in deep blue — the raw material of a one-of-one commission"
+                                        className="w-full h-full object-cover"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent pointer-events-none" />
+                                </div>
+                            </RevealOnScroll>
                         </div>
-
-                        {/* Text Layer: Verona */}
-                        <div
-                            style={{
-                                opacity: 1 - scrollProgress * 2.5, // Fades out quickly
-                                transform: `translateY(${scrollProgress * 100}px)`
-                            }}
-                            className="absolute left-6 md:left-24 bottom-24 text-white transition-all duration-500 transform max-w-[80%] md:max-w-none"
-                        >
-                            <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-matteo-orange block mb-4">The Origin</span>
-                            <h2 className="font-serif text-6xl md:text-8xl leading-none mb-6">Verona,<br />Italy</h2>
-                            <p className="font-serif text-xl opacity-80 max-w-md leading-relaxed">
-                                The Foundation. Centuries of Italian craftsmanship. The origin of every stitch.
-                            </p>
+                        <div className="lg:col-span-7">
+                            <RevealOnScroll delay={0.2}>
+                                <span className="font-sans text-[10px] uppercase tracking-[0.25em] font-medium text-matteo-orange-ink dark:text-matteo-orange block mb-5">
+                                    Chapter I — Verona
+                                </span>
+                                <h3 className="font-serif text-3xl md:text-5xl text-matteo-charcoal dark:text-white font-light mb-6">
+                                    The bench.
+                                </h3>
+                                {/* NOTE FOR THE HOUSE: confirm the founding year of the Verona atelier and where Matteo trained to complete this chapter. */}
+                                <p className="font-serif text-lg text-matteo-charcoal/80 dark:text-white/70 leading-relaxed mb-6 max-w-2xl">
+                                    Every commission begins at the bench in Verona, in the hands of master
+                                    tailors and leather artisans. Nothing is cut before the client approves
+                                    it — hide, patina, and fit are confirmed first. The house's most demanding
+                                    piece, a one-of-one crocodile jacket, holds that bench for more than one
+                                    hundred hours: a hand-selected Nile or Porosus hide — only one in a hundred
+                                    skins qualifies — a patina painted by a single artisan.
+                                </p>
+                                <p className="font-serif italic text-[15px] text-matteo-charcoal/80 dark:text-white/70 mb-8 max-w-xl leading-relaxed">
+                                    The chapter carries no dates. It is measured in hours at the bench.
+                                </p>
+                                <Ledger rows={[
+                                    ["Atelier", "Verona, Italy"],
+                                    ["Hide", "Nile or Porosus, hand-selected"],
+                                    ["Patina", "Hand-painted by one artisan"],
+                                    ["Bench", "One hundred hours, one jacket"],
+                                    ["Commissions", "Three per year, one of one"],
+                                ]} />
+                            </RevealOnScroll>
                         </div>
-
-                        {/* Text Layer: Jackson */}
-                        <div
-                            className="absolute right-6 md:right-24 bottom-24 text-right text-white transition-all duration-500 transform"
-                            style={{
-                                opacity: (scrollProgress - 0.5) * 2.5, // Fades in late
-                                transform: `translateY(${(1 - scrollProgress) * 100}px)`
-                            }}
-                        >
-                            <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-matteo-orange block mb-4">The Inspiration</span>
-                            <h2 className="font-serif text-6xl md:text-8xl leading-none mb-6">Jackson,<br />Wyoming</h2>
-                            <p className="font-serif text-xl opacity-80 max-w-md ml-auto leading-relaxed">
-                                The Frontier. Where technical performance meets nature. The proving ground.
-                            </p>
-                        </div>
-
-                        {/* Progress Indicator */}
-                        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex gap-4 items-center">
-                            <span className={`text-[10px] uppercase tracking-widest text-white transition-opacity ${scrollProgress < 0.5 ? 'opacity-100' : 'opacity-40'}`}>ITA</span>
-                            <div className="w-24 h-[1px] bg-white/20 relative">
-                                <div
-                                    className="absolute top-0 left-0 h-full bg-matteo-orange transition-all duration-100 ease-out"
-                                    style={{ width: `${scrollProgress * 100}%` }}
-                                ></div>
-                            </div>
-                            <span className={`text-[10px] uppercase tracking-widest text-white transition-opacity ${scrollProgress > 0.5 ? 'opacity-100' : 'opacity-40'}`}>USA</span>
-                        </div>
-
                     </div>
                 </section>
 
-                {/* 3. LOCATIONS DETAIL */}
-                <section className="py-32 px-6 md:px-12 max-w-[1920px] mx-auto">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-24">
-
-                        {/* Verona Detail */}
-                        <RevealOnScroll className="border-t border-matteo-charcoal/10 dark:border-white/10 pt-8">
-                            <span className="font-mono text-[10px] text-matteo-stone uppercase tracking-widest mb-2 block">HQ / Production</span>
-                            <h3 className="font-serif text-4xl text-matteo-charcoal dark:text-white mb-6">The Atelier</h3>
-                            <p className="font-serif text-matteo-charcoal/70 dark:text-matteo-stone leading-relaxed mb-8">
-                                Located in the heart of Verona, this is where the alchemy happens. Our master tailors and leather artisans work here to execute commissions with a level of detail that mass production cannot replicate.
-                            </p>
-                        </RevealOnScroll>
-
-                        {/* Jackson Detail */}
-                        <RevealOnScroll delay={0.2} className="border-t border-matteo-charcoal/10 dark:border-white/10 pt-8">
-                            <span className="font-mono text-[10px] text-matteo-stone uppercase tracking-widest mb-2 block">Flagship Store</span>
-                            <h3 className="font-serif text-4xl text-matteo-charcoal dark:text-white mb-6">The Showroom</h3>
-                            <p className="font-serif text-matteo-charcoal/70 dark:text-matteo-stone leading-relaxed mb-8">
-                                Our only physical retail outpost. A space designed to bridge the gap between Italian luxury and the rugged American West. Here, clients can experience our fabrics and fittings in person.
-                            </p>
-                            <div className="font-sans text-xs uppercase tracking-widest text-matteo-charcoal dark:text-white">
-                                164 E Deloney Ave<br />Jackson, Wyoming 83001
-                            </div>
-                        </RevealOnScroll>
-
+                {/* CHAPTER II — THE WORLD */}
+                <section className="py-20 md:py-28 px-6 md:px-12 max-w-[1400px] mx-auto">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 xl:gap-16 items-center">
+                        <div className="lg:col-span-7 order-2 lg:order-1">
+                            <RevealOnScroll delay={0.2}>
+                                <span className="font-sans text-[10px] uppercase tracking-[0.25em] font-medium text-matteo-orange-ink dark:text-matteo-orange block mb-5">
+                                    Chapter II — The World
+                                </span>
+                                <h3 className="font-serif text-3xl md:text-5xl text-matteo-charcoal dark:text-white font-light mb-6">
+                                    The fittings.
+                                </h3>
+                                <p className="font-serif text-lg text-matteo-charcoal/80 dark:text-white/70 leading-relaxed mb-8 max-w-2xl">
+                                    The work found its way onto film sets and into private wardrobes.
+                                    John Travolta put his fashion trust in the house — a collaboration
+                                    that ran on screen and off.
+                                </p>
+                                <blockquote className="border-l border-matteo-orange pl-6 mb-8 max-w-xl">
+                                    <p className="font-serif italic text-xl md:text-2xl text-matteo-charcoal/80 dark:text-white/80 leading-relaxed mb-4">
+                                        "Matteo Perin provides bespoke services for those who like enviable,
+                                        one-of-a-kind, individualized private service."
+                                    </p>
+                                    <cite className="not-italic font-sans text-[10px] uppercase tracking-[0.25em] font-medium text-matteo-stone-ink dark:text-white/60">
+                                        Private Air Magazine
+                                    </cite>
+                                </blockquote>
+                                <Ledger rows={[
+                                    ["Collaboration", "John Travolta — on screen and off"],
+                                    ["Noted in", "Hollywood in Toto · Private Air Magazine"],
+                                ]} />
+                            </RevealOnScroll>
+                        </div>
+                        <div className="lg:col-span-5 order-1 lg:order-2">
+                            <RevealOnScroll>
+                                <div className="relative aspect-[4/5] overflow-hidden">
+                                    <ResponsiveImage
+                                        baseSrc="/assets/bespoke/600341967_1477403550634637_5526575741896032656_n.webp"
+                                        alt="Measurements taken by hand during a private fitting"
+                                        className="w-full h-full object-cover"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent pointer-events-none" />
+                                </div>
+                            </RevealOnScroll>
+                        </div>
                     </div>
                 </section>
 
-                {/* 4. DESIGN PILLARS */}
-                <section className="bg-[#111] text-white py-32 md:py-48 px-6 md:px-12">
+                {/* CHAPTER III — JACKSON HOLE */}
+                <section className="bg-matteo-sand dark:bg-matteo-charcoal transition-colors duration-700">
+                    <div className="py-24 md:py-32 px-6 md:px-12 max-w-[1400px] mx-auto">
+                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 xl:gap-16">
+                            <div className="lg:col-span-7">
+                                <RevealOnScroll>
+                                    <span className="font-sans text-[10px] uppercase tracking-[0.25em] font-medium text-matteo-orange-ink dark:text-matteo-orange block mb-5">
+                                        Chapter III — Jackson Hole
+                                    </span>
+                                    <h3 className="font-serif text-3xl md:text-5xl text-matteo-charcoal dark:text-white font-light mb-6">
+                                        Deloney Avenue.
+                                    </h3>
+                                    <p className="font-serif text-lg text-matteo-charcoal/80 dark:text-white/70 leading-relaxed mb-8 max-w-2xl">
+                                        The newest chapter is written in Wyoming. At 164 E Deloney Ave in
+                                        Jackson, the house keeps its only physical retail outpost — a room
+                                        where the fabrics are handled, fittings are taken, and commissions
+                                        begin in person.
+                                    </p>
+                                    <blockquote className="border-l border-matteo-orange pl-6 max-w-xl">
+                                        <p className="font-serif italic text-xl md:text-2xl text-matteo-charcoal/80 dark:text-white/80 leading-relaxed mb-4">
+                                            "Superbly-creative lifestyle designer begins a beautiful new
+                                            chapter in Jackson Hole, WY."
+                                        </p>
+                                        <cite className="not-italic font-sans text-[10px] uppercase tracking-[0.25em] font-medium text-matteo-stone-ink dark:text-white/60">
+                                            JH Style Magazine, Winter 2025
+                                        </cite>
+                                    </blockquote>
+                                </RevealOnScroll>
+                            </div>
+                            <div className="lg:col-span-5 lg:pt-16">
+                                <RevealOnScroll delay={0.2}>
+                                    <Ledger rows={[
+                                        ["Showroom", "164 E Deloney Ave, Jackson, WY 83001"],
+                                        ["Doors", "The house's only retail outpost"],
+                                        ["In person", "Fabrics, fittings, consultations"],
+                                    ]} />
+                                    <p className="font-serif italic text-[15px] text-matteo-charcoal/80 dark:text-white/70 mt-8 leading-relaxed">
+                                        The atelier remains in Verona. The door is on Deloney.
+                                    </p>
+                                </RevealOnScroll>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* 3. DESIGN PILLARS */}
+                <section className="bg-matteo-black text-white py-32 md:py-48 px-6 md:px-12">
                     <div className="max-w-[1920px] mx-auto">
                         <div className="mb-24">
-                            <span className="font-sans text-[10px] uppercase tracking-[0.25em] text-matteo-orange mb-4 block">The Code</span>
+                            <span className="font-sans text-[10px] uppercase tracking-[0.25em] font-medium text-matteo-orange mb-4 block">The Code</span>
                             <h2 className="font-serif text-4xl md:text-6xl font-light">
                                 The Design Code.
                             </h2>
@@ -229,31 +250,31 @@ export const TheHouse: React.FC = () => {
                         <div className="space-y-16">
                             {[
                                 {
-                                    num: '01',
+                                    num: 'I',
                                     title: 'Context',
                                     desc: 'A garment must respect its environment. We design pieces that transition seamlessly from the tarmac to the boardroom, from the city street to the open range.'
                                 },
                                 {
-                                    num: '02',
+                                    num: 'II',
                                     title: 'Permanence',
                                     desc: 'We reject the seasonal cycle. We build heirlooms. Using materials like Vicuña and full-grain leather that develop a richer patina with time.'
                                 },
                                 {
-                                    num: '03',
+                                    num: 'III',
                                     title: 'Intimacy',
                                     desc: 'Luxury is personal. It is the silence of a perfect fit. The hidden pocket placed exactly where you reach. The monogram known only to you.'
                                 }
                             ].map((pillar, idx) => (
                                 <RevealOnScroll key={idx} className="group border-b border-white/10 pb-16 hover:border-matteo-orange/50 transition-colors duration-500">
                                     <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
-                                        <div className="md:col-span-2 font-mono text-lg text-matteo-orange/50 group-hover:text-matteo-orange transition-colors">
+                                        <div className="md:col-span-2 font-serif text-2xl text-matteo-orange/60 group-hover:text-matteo-orange transition-colors">
                                             {pillar.num}
                                         </div>
                                         <div className="md:col-span-4">
                                             <h3 className="font-serif text-3xl md:text-4xl">{pillar.title}</h3>
                                         </div>
                                         <div className="md:col-span-6">
-                                            <p className="font-serif text-lg text-matteo-stone leading-relaxed max-w-xl group-hover:text-white transition-colors">
+                                            <p className="font-serif text-lg text-white/60 leading-relaxed max-w-xl group-hover:text-white transition-colors">
                                                 {pillar.desc}
                                             </p>
                                         </div>
@@ -264,12 +285,12 @@ export const TheHouse: React.FC = () => {
                     </div>
                 </section>
 
-                {/* 5. CTA */}
+                {/* 4. CTA */}
                 <section className="py-32 text-center">
                     <RevealOnScroll>
-                        <p className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone mb-8">Begin The Process</p>
+                        <p className="font-sans text-[10px] uppercase tracking-[0.25em] font-medium text-matteo-stone-ink dark:text-white/60 mb-8">Begin The Process</p>
                         <h2 className="font-serif text-4xl md:text-6xl text-matteo-charcoal dark:text-white mb-12">
-                            "Style is biography.<br />Write it."
+                            Style is biography.<br />Write it.
                         </h2>
                         <Link
                             to="/bespoke"
@@ -280,7 +301,7 @@ export const TheHouse: React.FC = () => {
                     </RevealOnScroll>
                 </section>
 
-            </div >
-        </div >
+            </div>
+        </div>
     );
 };

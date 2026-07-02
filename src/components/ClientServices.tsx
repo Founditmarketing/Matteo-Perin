@@ -12,7 +12,7 @@ import { RevealOnScroll } from './RevealOnScroll';
 const Section: React.FC<{ kicker: string; title: string; children: React.ReactNode }> = ({ kicker, title, children }) => (
     <RevealOnScroll>
         <section className="mb-20">
-            <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-matteo-orange block mb-4">{kicker}</span>
+            <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-matteo-orange-ink dark:text-matteo-orange block mb-4">{kicker}</span>
             <h2 className="font-serif text-3xl md:text-4xl text-matteo-charcoal dark:text-white mb-8">{title}</h2>
             <div className="space-y-5 font-serif text-lg leading-relaxed text-matteo-charcoal/70 dark:text-white/60 max-w-2xl">
                 {children}
@@ -39,7 +39,7 @@ export const ClientServices: React.FC = () => {
 
             <div className="max-w-4xl mx-auto">
                 <header className="mb-24">
-                    <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-matteo-stone block mb-6">Client Services</span>
+                    <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-matteo-stone-ink dark:text-matteo-stone block mb-6">Client Services</span>
                     <h1 className="font-serif text-5xl md:text-7xl text-matteo-charcoal dark:text-white font-light leading-none">
                         Considered, <br />from atelier to door.
                     </h1>
@@ -52,7 +52,7 @@ export const ClientServices: React.FC = () => {
                         express (2 to 3 business days) is available at checkout for $120.
                     </p>
                     <p>
-                        Each piece is packed by hand at our Jackson Hole atelier and fully insured in
+                        Each piece is packed by hand at our Jackson Hole showroom and fully insured in
                         transit. You will receive tracking details by private correspondence as soon
                         as your order is dispatched.
                     </p>
@@ -85,8 +85,8 @@ export const ClientServices: React.FC = () => {
                     <p>
                         Questions before or after a purchase — sizing, materials, delivery, or care —
                         are answered personally. Write to{' '}
-                        <a href="mailto:concierge@matteoperin.com" className="text-matteo-orange hover:opacity-70 transition-opacity">concierge@matteoperin.com</a>{' '}
-                        or call <a href="tel:+13072649655" className="text-matteo-orange hover:opacity-70 transition-opacity">+1 (307) 264-9655</a>.
+                        <a href="mailto:concierge@matteoperin.com" className="text-matteo-orange-ink dark:text-matteo-orange hover:opacity-70 transition-opacity">concierge@matteoperin.com</a>{' '}
+                        or call <a href="tel:+13072649655" className="text-matteo-orange-ink dark:text-matteo-orange hover:opacity-70 transition-opacity">+1 (307) 264-9655</a>.
                         The showroom at 164 E Deloney Ave, Jackson, Wyoming welcomes you daily.
                     </p>
                 </Section>

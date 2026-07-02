@@ -2,6 +2,9 @@
 <html lang="en" class="light">
 
 <head>
+  <!-- Warm the tag-stack origin before the GTM/gtag snippets below fire -->
+  <link rel="preconnect" href="https://www.googletagmanager.com" />
+
   <!-- Google Tag Manager -->
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
   new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -87,6 +90,18 @@
   <!-- DNS Prefetch + Preconnect for speed (fonts are now self-hosted via
        @fontsource imports in src/index.tsx — no Google Fonts connection) -->
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link rel="dns-prefetch" href="https://www.google-analytics.com" />
+  <link rel="dns-prefetch" href="https://js.hs-scripts.com" />
+  <link rel="dns-prefetch" href="https://www.founditos.com" />
+
+  <!-- Brand-critical self-hosted fonts (400-weight latin subsets), preloaded so
+       Playfair Display and Montserrat render without a flash of fallback.
+       NOTE: these are Vite content-hashed filenames verified against the
+       production build in dist/assets — re-verify (and update) after any
+       @fontsource/playfair-display or @fontsource/montserrat upgrade.
+       In dev they 404 harmlessly; dev serves fonts from node_modules. -->
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/playfair-display-latin-400-normal-CFtfchNt.woff2" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/montserrat-latin-400-normal-BLhwKU8k.woff2" />
 
   <!-- Without JS the IntersectionObserver never reveals scroll content -->
   <noscript>

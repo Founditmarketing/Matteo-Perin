@@ -4,7 +4,7 @@ import { createPortal } from 'react-dom';
 import { RevealOnScroll } from './RevealOnScroll';
 import { useNavigate } from 'react-router-dom';
 import { ResponsiveImage } from './ResponsiveImage';
-import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform, useSpring, useReducedMotion } from 'framer-motion';
 
 // Single engine behind /lookbook/men and /lookbook/women — the two pages were
 // ~94% identical files; everything that differed now arrives via config.
@@ -36,8 +36,11 @@ const LookbookItem: React.FC<{
     smoothProgress: any;
     viewMode: 'editorial' | 'index';
     quote: string;
+    /** Scroll-linked parallax is desktop-only and skipped for reduced motion —
+     *  useScroll/useTransform are not covered by MotionConfig reducedMotion. */
+    parallaxEnabled: boolean;
     setSelectedLook: (look: LookItem) => void;
-}> = ({ look, index, smoothProgress, viewMode, quote, setSelectedLook }) => {
+}> = ({ look, index, smoothProgress, viewMode, quote, parallaxEnabled, setSelectedLook }) => {
     // High-Fashion Spread Layout Engine
     const isFeature = index % 5 === 0;
     const isRightAligned = index % 5 === 1 || index % 5 === 3;
@@ -66,17 +69,17 @@ const LookbookItem: React.FC<{
             colSpan = "col-span-12 md:col-span-10 lg:col-span-8";
             alignmentClass = "md:col-start-2 lg:col-start-3 content-center";
             verticalOffset = "md:mt-16";
-            parallaxStyle = { y: featureY };
+            if (parallaxEnabled) parallaxStyle = { y: featureY };
         } else if (isRightAligned) {
             colSpan = "col-span-12 md:col-span-6 lg:col-span-4";
             alignmentClass = "md:col-start-7 lg:col-start-8";
             verticalOffset = "md:-mt-32";
-            parallaxStyle = { y: rightY };
+            if (parallaxEnabled) parallaxStyle = { y: rightY };
         } else if (isLeftAligned) {
             colSpan = "col-span-12 md:col-span-7 lg:col-span-5";
             alignmentClass = "md:col-start-1 lg:col-start-2";
             verticalOffset = "md:mt-32";
-            parallaxStyle = { y: leftY };
+            if (parallaxEnabled) parallaxStyle = { y: leftY };
         } else if (isTypographyBreak) {
             colSpan = "col-span-12 md:col-span-6 lg:col-span-4";
             alignmentClass = "md:col-start-3 lg:col-start-4";
@@ -95,7 +98,9 @@ const LookbookItem: React.FC<{
             onClick={() => setSelectedLook(look)}
         >
             {isTypographyBreak && index > 0 && viewMode === 'editorial' && (
-                <div className="mb-16 md:absolute md:-left-[40%] md:top-1/4 max-w-sm pointer-events-none z-10 hidden lg:block">
+                /* Below lg the quote sits in flow as a typographic break above the
+                   garment; at lg it returns to the floated editorial composition. */
+                <div className="mb-16 lg:absolute lg:-left-[40%] lg:top-1/4 max-w-sm pointer-events-none z-10">
                     <h3 className="font-serif text-3xl md:text-5xl text-matteo-charcoal dark:text-white leading-[1.1] italic">
                         "{quote}"
                     </h3>
@@ -124,7 +129,7 @@ const LookbookItem: React.FC<{
 
             <div className="mt-6 flex justify-between items-end">
                 <div className="flex flex-col">
-                    <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-matteo-stone mb-2">Commission</span>
+                    <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-matteo-stone-ink dark:text-white/60 mb-2">Commission</span>
                     <span className="font-serif text-matteo-charcoal dark:text-white text-2xl md:text-3xl">{look.title}</span>
                 </div>
                 <div className="w-8 h-[1px] bg-matteo-charcoal/30 dark:bg-white/30 group-hover:w-16 group-hover:bg-matteo-orange transition-all duration-500"></div>
@@ -154,6 +159,22 @@ export const LookbookPage: React.FC<{ config: LookbookConfig }> = ({ config }) =
         damping: 30,
         restDelta: 0.001
     });
+
+    // Scroll-linked transforms bypass MotionConfig reducedMotion, so gate them
+    // by hand: desktop only (same 768px line as ParallaxImage) and never when
+    // the visitor asks for reduced motion. On phones the offsets slid garments
+    // over their own captions.
+    const prefersReducedMotion = useReducedMotion();
+    const [isDesktop, setIsDesktop] = useState<boolean>(
+        () => typeof window !== 'undefined' && window.innerWidth >= 768
+    );
+    useEffect(() => {
+        const checkDesktop = () => setIsDesktop(window.innerWidth >= 768);
+        checkDesktop();
+        window.addEventListener('resize', checkDesktop);
+        return () => window.removeEventListener('resize', checkDesktop);
+    }, []);
+    const parallaxEnabled = isDesktop && !prefersReducedMotion;
 
     useEffect(() => {
         const generatedLooks: LookItem[] = config.images.map((imgUrl, i) => ({
@@ -223,7 +244,7 @@ export const LookbookPage: React.FC<{ config: LookbookConfig }> = ({ config }) =
             {/* --- Header Section: eyebrow -> display -> hairline, per the system --- */}
             <div className="pt-48 pb-24 px-6 md:px-12 text-center relative z-10">
                 <RevealOnScroll>
-                    <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-matteo-orange mb-6 block">
+                    <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-matteo-orange-ink dark:text-matteo-orange mb-6 block">
                         The Archives
                     </span>
 
@@ -232,7 +253,7 @@ export const LookbookPage: React.FC<{ config: LookbookConfig }> = ({ config }) =
                             {config.label}
                         </h1>
                         <div className="w-12 h-[1px] bg-matteo-charcoal/30 dark:bg-white/30" />
-                        <span className="font-sans text-[10px] uppercase tracking-[0.25em] text-matteo-stone">
+                        <span className="font-sans text-[10px] uppercase tracking-[0.25em] text-matteo-stone-ink dark:text-white/60">
                             {config.subline}
                         </span>
                     </div>
@@ -241,14 +262,14 @@ export const LookbookPage: React.FC<{ config: LookbookConfig }> = ({ config }) =
                     <div className="flex justify-center items-center gap-6 mt-12 mb-4">
                         <button 
                             onClick={() => setViewMode('editorial')}
-                            className={`font-sans text-xs uppercase tracking-[0.2em] py-3 border-b ${viewMode === 'editorial' ? 'text-matteo-charcoal dark:text-white border-current' : 'text-matteo-stone border-transparent hover:text-matteo-charcoal dark:hover:text-white transition-colors'}`}
+                            className={`font-sans text-xs uppercase tracking-[0.2em] py-3 border-b ${viewMode === 'editorial' ? 'text-matteo-charcoal dark:text-white border-current' : 'text-matteo-stone-ink dark:text-white/60 border-transparent hover:text-matteo-charcoal dark:hover:text-white transition-colors'}`}
                         >
                             Editorial View
                         </button>
                         <div className="w-[1px] h-4 bg-matteo-stone/30"></div>
                         <button 
                             onClick={() => setViewMode('index')}
-                            className={`font-sans text-xs uppercase tracking-[0.2em] py-3 border-b ${viewMode === 'index' ? 'text-matteo-charcoal dark:text-white border-current' : 'text-matteo-stone border-transparent hover:text-matteo-charcoal dark:hover:text-white transition-colors'}`}
+                            className={`font-sans text-xs uppercase tracking-[0.2em] py-3 border-b ${viewMode === 'index' ? 'text-matteo-charcoal dark:text-white border-current' : 'text-matteo-stone-ink dark:text-white/60 border-transparent hover:text-matteo-charcoal dark:hover:text-white transition-colors'}`}
                         >
                             Index View
                         </button>
@@ -267,10 +288,11 @@ export const LookbookPage: React.FC<{ config: LookbookConfig }> = ({ config }) =
                             key={look.id} 
                             look={look} 
                             index={index} 
-                            smoothProgress={smoothProgress} 
+                            smoothProgress={smoothProgress}
                             viewMode={viewMode}
                             quote={config.quote}
-                            setSelectedLook={setSelectedLook} 
+                            parallaxEnabled={parallaxEnabled}
+                            setSelectedLook={setSelectedLook}
                         />
                     ))}
                 </motion.div>
@@ -323,15 +345,16 @@ export const LookbookPage: React.FC<{ config: LookbookConfig }> = ({ config }) =
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.98, y: 20 }}
                             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                            className="flex flex-col md:flex-row max-h-[100vh] md:max-h-[85vh] max-w-7xl w-full bg-white dark:bg-[#111] shadow-2xl overflow-hidden relative z-[105]"
+                            className="flex flex-col md:flex-row max-h-full md:max-h-[85vh] max-w-7xl w-full bg-white dark:bg-[#111] shadow-2xl overflow-hidden relative z-[105]"
                             onClick={(e) => e.stopPropagation()}
                         >
-                            {/* Image Container */}
-                            <div className="w-full md:w-2/3 relative h-[60vh] md:h-auto bg-gray-100 dark:bg-gray-900 group">
+                            {/* Image Container — capped at half the viewport on phones so the
+                                details pane (and its inquiry action) always has room below */}
+                            <div className="w-full md:w-2/3 relative h-[50vh] md:h-auto shrink-0 bg-matteo-sand dark:bg-matteo-black group">
                                 <ResponsiveImage
                                     baseSrc={selectedLook.image}
                                     alt={selectedLook.title}
-                                    className="w-full h-full object-contain bg-gray-50 dark:bg-black/50"
+                                    className="w-full h-full object-contain"
                                 />
 
                                 {/* Mobile Nav Overlay - Visible on small screens */}
@@ -341,17 +364,20 @@ export const LookbookPage: React.FC<{ config: LookbookConfig }> = ({ config }) =
                                 </div>
                             </div>
 
-                            {/* Details Container */}
-                            <div className="w-full md:w-1/3 p-8 md:p-16 flex flex-col justify-center bg-white dark:bg-[#111]">
+                            {/* Details Container — scrolls on small screens; the inquiry
+                                action stays pinned as a sticky bar so it is always reachable */}
+                            <div className="w-full md:w-1/3 min-h-0 flex flex-col bg-white dark:bg-[#111] overflow-y-auto md:overflow-visible">
 
-                                <h2 className="font-serif text-4xl md:text-5xl text-matteo-charcoal dark:text-white mb-8">
-                                    {selectedLook.title}
-                                </h2>
-                                <p className="font-serif text-lg text-matteo-stone dark:text-matteo-stone mb-12 leading-relaxed">
-                                    A bespoke commission, tailored to the specific movements and environment of the client. Each detail is negotiable; the standard of excellence is not.
-                                </p>
+                                <div className="p-8 pb-0 md:p-16 md:pb-0">
+                                    <h2 className="font-serif text-4xl md:text-5xl text-matteo-charcoal dark:text-white mb-8">
+                                        {selectedLook.title}
+                                    </h2>
+                                    <p className="font-serif text-lg text-matteo-stone-ink dark:text-white/60 mb-12 leading-relaxed">
+                                        A bespoke commission, tailored to the specific movements and environment of the client. Each detail is negotiable; the standard of excellence is not.
+                                    </p>
+                                </div>
 
-                                <div className="mt-auto">
+                                <div className="sticky bottom-0 mt-auto bg-white dark:bg-[#111] p-8 pt-4 border-t border-matteo-charcoal/10 dark:border-white/10 md:static md:p-16 md:pt-0 md:border-t-0">
                                     <button
                                         onClick={() => {
                                             setSelectedLook(null);

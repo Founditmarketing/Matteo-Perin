@@ -16,7 +16,9 @@ export default async function handler(req, res) {
   const hubspotToken = process.env.HUBSPOT_ACCESS_TOKEN;
   if (!hubspotToken) {
     console.error('[HubSpot] HUBSPOT_ACCESS_TOKEN not configured');
-    return res.status(200).json({ success: true, message: 'Received (no HubSpot token configured)' });
+    // The lead cannot be captured — surface a real failure so client forms
+    // keep the visitor on the form instead of showing a false confirmation.
+    return res.status(503).json({ success: false, error: 'Lead capture is not configured' });
   }
 
   try {
@@ -32,9 +34,8 @@ export default async function handler(req, res) {
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email || !emailRegex.test(email)) {
-      console.log(`[HubSpot] Invalid or missing email: "${email}" — skipping CRM sync`);
-      // Still return success so the UX isn't broken
-      return res.status(200).json({ success: true, message: 'Received (email invalid, not synced to CRM)' });
+      console.log(`[HubSpot] Invalid or missing email: "${email}" — cannot capture lead`);
+      return res.status(400).json({ success: false, error: 'A valid email address is required' });
     }
 
     // Standard HubSpot contact properties
@@ -83,7 +84,7 @@ export default async function handler(req, res) {
       });
     } catch (fetchErr) {
       console.error(`[HubSpot] Network error creating contact:`, fetchErr.message);
-      return res.status(200).json({ success: true, message: 'Received (network error, queued)' });
+      return res.status(502).json({ success: false, error: 'Lead could not be captured' });
     }
 
     const createData = await createRes.json();
@@ -118,6 +119,12 @@ export default async function handler(req, res) {
       }
     } else {
       console.error(`[HubSpot] Create failed:`, JSON.stringify(createData));
+    }
+
+    if (!contactId) {
+      // The contact never reached the CRM — the lead was NOT captured.
+      // Return a real failure so every client form can detect it.
+      return res.status(502).json({ success: false, error: 'Lead could not be captured' });
     }
 
     // ─── Step 2: Add to HubSpot static list (for newsletter/subscriber segmentation) ───
@@ -191,6 +198,9 @@ export default async function handler(req, res) {
         noteBody = [
           `═══ WEBSITE INQUIRY ═══`,
           `Submitted: ${new Date().toISOString()}`,
+          // Reference number quoted to the client on the success screen —
+          // keep it in the note so the house can look the request up.
+          ...(data.refNo ? [`Reference: ${data.refNo}`] : []),
           ``,
           `Name: ${data.name || 'N/A'}`,
           `Email: ${data.email || 'N/A'}`,

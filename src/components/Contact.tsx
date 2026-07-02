@@ -39,7 +39,7 @@ const FloatingInput = React.memo(({
                 rows={3}
                 value={value}
                 onChange={onChange}
-                className="block w-full bg-transparent border-b border-matteo-charcoal/20 dark:border-white/20 py-2 font-serif text-xl text-matteo-charcoal dark:text-white focus:outline-none focus:border-matteo-orange dark:focus:border-matteo-orange transition-colors peer placeholder-transparent resize-none"
+                className="block w-full bg-transparent border-b border-matteo-charcoal/20 dark:border-white/20 py-2 font-serif text-xl text-matteo-charcoal dark:text-white focus:outline-none transition-colors peer placeholder-transparent resize-none"
                 placeholder={placeholder}
                 required={required}
             />
@@ -50,14 +50,21 @@ const FloatingInput = React.memo(({
                 id={name}
                 value={value}
                 onChange={onChange as any}
-                className="block w-full bg-transparent border-b border-matteo-charcoal/20 dark:border-white/20 py-2 font-serif text-xl text-matteo-charcoal dark:text-white focus:outline-none focus:border-matteo-orange dark:focus:border-matteo-orange transition-colors peer placeholder-transparent"
+                className="block w-full bg-transparent border-b border-matteo-charcoal/20 dark:border-white/20 py-2 font-serif text-xl text-matteo-charcoal dark:text-white focus:outline-none transition-colors peer placeholder-transparent"
                 placeholder={placeholder}
                 required={required}
             />
         )}
+        {/* Terracotta underline draws from the left on focus — 600ms house
+            ease-out. Sits exactly over the resting 1px charcoal rule; retracts
+            on blur. motion-reduce: instant state change, no draw. */}
+        <span
+            aria-hidden="true"
+            className="absolute bottom-0 left-0 w-full h-px bg-matteo-orange origin-left scale-x-0 peer-focus:scale-x-100 transition-transform duration-[600ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none pointer-events-none"
+        />
         <label
             htmlFor={name}
-            className="absolute left-0 top-5 font-sans text-[10px] uppercase tracking-widest text-matteo-stone duration-300 transform -translate-y-0 scale-100 origin-[0] peer-focus:-translate-y-5 peer-focus:text-matteo-orange peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-90 peer-not-placeholder-shown:-translate-y-5 peer-not-placeholder-shown:scale-90 pointer-events-none"
+            className="absolute left-0 top-5 font-sans text-[10px] uppercase tracking-widest text-matteo-stone-ink dark:text-matteo-stone duration-300 transform -translate-y-0 scale-100 origin-[0] peer-focus:-translate-y-5 peer-focus:text-matteo-orange peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-90 peer-not-placeholder-shown:-translate-y-5 peer-not-placeholder-shown:scale-90 pointer-events-none"
         >
             {label}
         </label>
@@ -145,11 +152,11 @@ const ContactForm = memo(() => {
             <div className="max-w-md mx-auto w-full">
                 {!isSuccess ? (
                     <RevealOnScroll>
-                        <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-matteo-orange mb-4 block">Inquiry</span>
+                        <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-matteo-orange-ink dark:text-matteo-orange mb-4 block">Inquiry</span>
                         <h2 className="font-serif text-3xl md:text-5xl text-matteo-charcoal dark:text-white font-light mb-6 leading-tight">
                             Begin the<br />Dialogue
                         </h2>
-                        <p className="font-serif text-matteo-charcoal/70 dark:text-gray-400 mb-12 text-lg leading-relaxed">
+                        <p className="font-serif text-matteo-charcoal/70 dark:text-white/60 mb-12 text-lg leading-relaxed">
                             For private commissions, fittings, or press inquiries.
                         </p>
 
@@ -162,7 +169,7 @@ const ContactForm = memo(() => {
 
                             {submitError && (
                                 <p role="alert" className="font-serif text-sm text-matteo-charcoal dark:text-white leading-relaxed">
-                                    Your message could not be sent. Please try again, or write directly to <a href="mailto:concierge@matteoperin.com" className="text-matteo-orange border-b border-matteo-orange/40">concierge@matteoperin.com</a>.
+                                    Your message could not be sent. Please try again, or write directly to <a href="mailto:concierge@matteoperin.com" className="text-matteo-orange-ink dark:text-matteo-orange border-b border-matteo-orange/40">concierge@matteoperin.com</a>.
                                 </p>
                             )}
 
@@ -190,7 +197,7 @@ const ContactForm = memo(() => {
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M5 13l4 4L19 7" /></svg>
                         </div>
                         <h3 className="font-serif text-4xl text-matteo-charcoal dark:text-white mb-4">Inquiry Received</h3>
-                        <p className="font-serif text-matteo-stone text-lg leading-relaxed mb-12">
+                        <p className="font-serif text-matteo-stone-ink dark:text-matteo-stone text-lg leading-relaxed mb-12">
                             Thank you, {formData.name}.<br />
                             We have received your message regarding {formData.subject}. Our team will review your inquiry and contact you at {formData.email}.
                         </p>
@@ -199,7 +206,7 @@ const ContactForm = memo(() => {
                                 setIsSuccess(false);
                                 setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
                             }}
-                            className="text-matteo-orange font-sans text-xs uppercase tracking-widest border-b border-matteo-orange pb-1 hover:text-matteo-charcoal dark:hover:text-white hover:border-matteo-charcoal dark:hover:border-white transition-colors"
+                            className="text-matteo-orange-ink dark:text-matteo-orange font-sans text-xs uppercase tracking-widest border-b border-matteo-orange pb-1 hover:text-matteo-charcoal dark:hover:text-white hover:border-matteo-charcoal dark:hover:border-white transition-colors"
                         >
                             Submit Another Request
                         </button>

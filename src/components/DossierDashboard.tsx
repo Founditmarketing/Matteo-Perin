@@ -38,7 +38,7 @@ export const DossierDashboard: React.FC = () => {
     if (loading) {
         return (
             <div className="min-h-screen bg-[#050505] flex items-center justify-center">
-                <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-white/50 animate-pulse">Decrypting Dossier...</span>
+                <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-white/50 animate-pulse">Opening the Dossier…</span>
             </div>
         );
     }
@@ -54,7 +54,7 @@ export const DossierDashboard: React.FC = () => {
                 {/* Header */}
                 <header className="flex flex-col md:flex-row justify-between items-start md:items-end mb-24 border-b border-white/10 pb-12 gap-8">
                     <div>
-                        <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-white/40 block mb-4">Level 4 Clearance</span>
+                        <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-white/40 block mb-4">Private Client</span>
                         <h1 className="text-4xl md:text-6xl font-light tracking-wide text-white">The Dossier</h1>
                         <p className="mt-4 text-white/50 font-sans text-sm tracking-widest">{user?.email}</p>
                     </div>
@@ -62,7 +62,7 @@ export const DossierDashboard: React.FC = () => {
                         onClick={handleSignOut}
                         className="font-sans text-[10px] uppercase tracking-[0.3em] text-white/40 border border-white/10 px-6 py-3 hover:bg-white hover:text-black hover:border-white transition-all duration-500"
                     >
-                        Secure Sign Out
+                        Sign Out
                     </button>
                 </header>
 
@@ -90,7 +90,7 @@ export const DossierDashboard: React.FC = () => {
                                     <span className="font-serif text-lg text-white">Napoli Drop 7</span>
                                 </li>
                             </ul>
-                            <p className="font-sans text-[10px] text-white/30 tracking-widest uppercase mt-6 italic">Last updated: Sept 12, 2026 (Milan)</p>
+                            <p className="font-sans text-[10px] text-white/30 tracking-widest uppercase mt-6 italic">Last updated: Sept 12, 2026 (Verona)</p>
                         </section>
 
                         <section className="bg-white/5 border border-white/10 p-8 mt-12">
@@ -100,7 +100,7 @@ export const DossierDashboard: React.FC = () => {
                                 Connect directly with the Master Tailor to begin a new bespoke journey or exotic leather commission.
                             </p>
                             <button className="w-full border border-white/30 text-white font-sans text-[10px] uppercase tracking-[0.3em] py-4 hover:bg-white hover:text-black transition-colors duration-500">
-                                Open Secure Comms
+                                Write to the Concierge
                             </button>
                         </section>
                     </div>
@@ -126,7 +126,7 @@ export const DossierDashboard: React.FC = () => {
                                         <span className="font-serif text-lg text-white/70">${order.price.toLocaleString()}</span>
                                     </div>
                                     <div className="text-right flex-shrink-0">
-                                        <span className="font-sans text-xs uppercase tracking-widest text-green-500/80 mb-2 block">Procured</span>
+                                        <span className="font-sans text-xs uppercase tracking-widest text-white/60 mb-2 block">Procured</span>
                                         <span className="font-sans text-[10px] uppercase tracking-widest text-white/30">ID: #{order.id}</span>
                                     </div>
                                 </motion.div>

@@ -1,21 +1,144 @@
 import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, useScroll, useTransform, useSpring, useInView } from 'framer-motion';
+import { motion, useScroll, useTransform, useSpring, useReducedMotion } from 'framer-motion';
 import { RevealOnScroll } from './RevealOnScroll';
 import { ResponsiveImage } from './ResponsiveImage';
 
 /**
  * CrocJacketHero – Homepage feature for the Bespoke Crocodile Jacket.
- * 
+ *
  * Matches the site's matteo-cream / matteo-black design system.
  * Uses RevealOnScroll for consistency.
  * Mobile: No parallax — static image with refined overlay text.
  * Desktop: Editorial 7/5 grid with parallax on image only.
+ *
+ * NOTE ON THE TWO LAYOUT BLOCKS: the mobile (`block lg:hidden`) and desktop
+ * (`hidden lg:block`) variants both live in the DOM but are breakpoint-gated —
+ * exactly one is visible per viewport. They are intentionally NOT collapsed
+ * into a single responsive tree because they diverge structurally, not just
+ * in class names: desktop wraps the image in a scroll-parallax motion.div
+ * inside a 7/5 grid while mobile is a static stacked flow; the title is an
+ * <h2> on desktop and a <p> on mobile so the section ships exactly one H2;
+ * and the image crop differs. The shared CONTENT (spec ledger, price block)
+ * is factored into SpecLedger / PriceBlock below so the data and its styling
+ * exist once in source.
  */
+
+/** The Ledger — provenance, not statistics. Single source of truth. */
+const SPEC_ROWS: ReadonlyArray<readonly [string, string]> = [
+    ['Hide', 'Nile or Porosus, hand-selected'],
+    ['Patina', 'Hand-painted by one artisan'],
+    ['Bench', 'One hundred hours, Verona'],
+    ['Edition', 'One of one'],
+];
+
+/**
+ * SpecLedger — the ledger restaged as a watch-catalog spec table: a heavier
+ * 1px frame above and below (weight carried by opacity — 0.5px hairlines
+ * render unreliably), fine 1px rules between rows, eyebrow-register labels,
+ * serif values, generous row padding.
+ */
+const SpecLedger: React.FC<{ compact?: boolean; className?: string }> = ({
+    compact = false,
+    className = '',
+}) => (
+    <dl
+        className={`border-t border-b border-matteo-charcoal/25 dark:border-white/25 divide-y divide-matteo-charcoal/10 dark:divide-white/10 ${className}`}
+    >
+        {SPEC_ROWS.map(([label, value]) => (
+            <div
+                key={label}
+                className={`flex items-baseline justify-between gap-6 ${compact ? 'py-3.5' : 'py-4'}`}
+            >
+                <dt className="font-sans text-[10px] uppercase tracking-[0.25em] font-medium text-matteo-stone-ink dark:text-matteo-stone shrink-0">
+                    {label}
+                </dt>
+                <dd className={`font-serif ${compact ? 'text-base' : 'text-lg'} text-matteo-charcoal dark:text-white text-right`}>
+                    {value}
+                </dd>
+            </div>
+        ))}
+    </dl>
+);
+
+/**
+ * PriceBlock — the figures with a quiet macro of the hide drifting behind
+ * them. The texture holds the right edge and fades to the canvas colour
+ * under the type, so the price stays the loudest element and the labels
+ * keep AA contrast. In the compact (mobile) variant the labels reach into
+ * the strip, so it narrows to w-1/3 and the fade stays fully opaque through
+ * 55% of the strip — the 10px stone-ink labels always sit on pure canvas
+ * (4.5:1 needed; texture crevices under the fade were measuring 4.37:1).
+ * Scale drift is 1 → 1.06 over 16s, alternating direction; static for
+ * reduced-motion users (keyframe loops need manual gating — MotionConfig
+ * reducedMotion="user" does not cover `animate` loops).
+ */
+const PriceBlock: React.FC<{ compact?: boolean; reducedMotion: boolean | null }> = ({
+    compact = false,
+    reducedMotion,
+}) => (
+    <div className={`relative ${compact ? 'mb-6' : 'mb-8 border-b border-matteo-charcoal/10 dark:border-white/10'}`}>
+        {/* Macro of the hide — grayscale, desaturated, behind the figures */}
+        <div
+            className={`absolute inset-y-0 right-0 ${compact ? 'w-1/3' : 'w-2/5'} overflow-hidden pointer-events-none`}
+            aria-hidden="true"
+        >
+            <motion.div
+                className="w-full h-full"
+                animate={reducedMotion ? undefined : { scale: [1, 1.06] }}
+                transition={
+                    reducedMotion
+                        ? undefined
+                        : { duration: 16, repeat: Infinity, repeatType: 'reverse', ease: 'linear' }
+                }
+            >
+                <ResponsiveImage
+                    baseSrc="/assets/fabrics/croc.webp"
+                    alt=""
+                    maxVariant="sm"
+                    className="w-full h-full object-cover grayscale opacity-25 dark:opacity-20"
+                />
+            </motion.div>
+            {/* Fade toward the type so the figures stay the loudest element.
+                Compact: fully opaque canvas through 55% of the strip so the
+                labels that overlap it never lose AA contrast to the texture. */}
+            <div
+                className={`absolute inset-0 bg-gradient-to-r ${
+                    compact
+                        ? 'from-matteo-cream via-matteo-cream via-[55%] to-matteo-cream/10 dark:from-matteo-black dark:via-matteo-black dark:to-matteo-black/10'
+                        : 'from-matteo-cream via-matteo-cream/60 to-matteo-cream/10 dark:from-matteo-black dark:via-matteo-black/60 dark:to-matteo-black/10'
+                }`}
+            />
+        </div>
+
+        <div className={`relative ${compact ? '' : 'pb-8'}`}>
+            <div className={`flex items-baseline ${compact ? 'gap-4' : 'gap-3'} mb-2`}>
+                <span className={`font-serif ${compact ? 'text-xl' : 'text-2xl'} text-matteo-charcoal dark:text-white`}>
+                    $185,000
+                </span>
+                <span className="font-sans text-[10px] uppercase tracking-[0.25em] font-medium text-matteo-stone-ink dark:text-matteo-stone">
+                    Full Commission
+                </span>
+            </div>
+            <div className="flex items-baseline gap-2">
+                <span className={`font-serif ${compact ? 'text-base' : 'text-lg'} text-matteo-orange-ink dark:text-matteo-orange`}>
+                    $25,000
+                </span>
+                <span className="font-sans text-[10px] uppercase tracking-[0.25em] font-medium text-matteo-stone-ink dark:text-matteo-stone">
+                    Deposit to Reserve
+                </span>
+            </div>
+        </div>
+    </div>
+);
 
 export const CrocJacketHero: React.FC = () => {
     const sectionRef = useRef<HTMLElement>(null);
     const imageContainerRef = useRef<HTMLDivElement>(null);
+
+    // Scroll-linked values need manual reduced-motion gating (MotionConfig
+    // reducedMotion="user" does not neutralise useScroll/useTransform styles).
+    const prefersReducedMotion = useReducedMotion();
 
     // Parallax — DESKTOP ONLY (mobile gets none to avoid black bar)
     const { scrollYProgress } = useScroll({
@@ -40,7 +163,7 @@ export const CrocJacketHero: React.FC = () => {
                ==================================================== */}
             <div className="block lg:hidden">
                 {/* Full-width image — NO parallax, just a clean static image */}
-                <div className="relative w-full overflow-hidden">
+                <div className="relative w-full overflow-hidden" data-cursor="view">
                     <ResponsiveImage
                         baseSrc="/assets/croc-jacket/matteo_croc_new_1.webp"
                         alt="Bespoke Crocodile Jacket by Matteo Perin"
@@ -48,7 +171,7 @@ export const CrocJacketHero: React.FC = () => {
                     />
                     {/* Bottom gradient only — subtle, for the badge */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
-                    
+
                     {/* Availability badge on image */}
                     <div className="absolute bottom-4 left-4 flex items-center gap-2 z-10">
                         <span className="inline-flex rounded-full h-2 w-2 bg-matteo-orange"></span>
@@ -76,15 +199,8 @@ export const CrocJacketHero: React.FC = () => {
                         <span className="italic">Jacket.</span>
                     </p>
 
-                    {/* Price + Deposit */}
-                    <div className="flex items-baseline gap-4 mb-4">
-                        <span className="font-serif text-xl text-matteo-charcoal dark:text-white">$185,000</span>
-                        <span className="font-sans text-[10px] uppercase tracking-[0.15em] text-matteo-stone">Full Commission</span>
-                    </div>
-                    <div className="flex items-baseline gap-2 mb-6">
-                        <span className="font-serif text-base text-matteo-orange">$25,000</span>
-                        <span className="font-sans text-[10px] uppercase tracking-[0.12em] text-matteo-stone">Deposit to Reserve</span>
-                    </div>
+                    {/* Price + Deposit — with the hide in macro behind the figures */}
+                    <PriceBlock compact reducedMotion={prefersReducedMotion} />
 
                     {/* Description */}
                     <p className="font-serif text-base text-matteo-charcoal/50 dark:text-white/40 leading-relaxed mb-8">
@@ -93,19 +209,7 @@ export const CrocJacketHero: React.FC = () => {
                     </p>
 
                     {/* The Ledger — provenance, not statistics */}
-                    <div className="divide-y divide-matteo-charcoal/10 dark:divide-white/10 border-t border-b border-matteo-charcoal/10 dark:border-white/10 mb-8">
-                        {[
-                            ["Hide", "Nile or Porosus, hand-selected"],
-                            ["Patina", "Hand-painted by one artisan"],
-                            ["Bench", "One hundred hours, Verona"],
-                            ["Edition", "One of one"],
-                        ].map(([label, value]) => (
-                            <div key={label} className="flex items-baseline justify-between gap-6 py-2.5">
-                                <span className="font-sans text-[10px] uppercase tracking-[0.15em] text-matteo-stone shrink-0">{label}</span>
-                                <span className="font-serif text-base text-matteo-charcoal dark:text-white text-right">{value}</span>
-                            </div>
-                        ))}
-                    </div>
+                    <SpecLedger compact className="mb-8" />
 
                     {/* CTA */}
                     <Link
@@ -142,10 +246,11 @@ export const CrocJacketHero: React.FC = () => {
                                 <div
                                     ref={imageContainerRef}
                                     className="relative aspect-[3/4] overflow-hidden bg-[#EBEBEB] dark:bg-[#1a1a1a] group"
+                                    data-cursor="view"
                                 >
                                     <motion.div
                                         className="w-full h-full transition-transform duration-[2s] ease-out group-hover:scale-[1.03]"
-                                        style={{ y: imageSpring, scale: scaleSpring }}
+                                        style={prefersReducedMotion ? undefined : { y: imageSpring, scale: scaleSpring }}
                                     >
                                         <ResponsiveImage
                                             baseSrc="/assets/croc-jacket/matteo_croc_new_1.webp"
@@ -177,17 +282,8 @@ export const CrocJacketHero: React.FC = () => {
                                     <span className="italic">Jacket.</span>
                                 </h2>
 
-                                {/* Price Block */}
-                                <div className="mb-8 pb-8 border-b border-matteo-charcoal/10 dark:border-white/10">
-                                    <div className="flex items-baseline gap-3 mb-2">
-                                        <span className="font-serif text-2xl text-matteo-charcoal dark:text-white">$185,000</span>
-                                        <span className="font-sans text-[10px] uppercase tracking-[0.15em] text-matteo-stone">Full Commission</span>
-                                    </div>
-                                    <div className="flex items-baseline gap-2">
-                                        <span className="font-serif text-lg text-matteo-orange">$25,000</span>
-                                        <span className="font-sans text-[10px] uppercase tracking-[0.15em] text-matteo-stone">Deposit to Reserve</span>
-                                    </div>
-                                </div>
+                                {/* Price Block — with the hide in macro behind the figures */}
+                                <PriceBlock reducedMotion={prefersReducedMotion} />
 
                                 {/* Description */}
                                 <p className="font-serif text-lg text-matteo-charcoal/60 dark:text-white/50 leading-relaxed mb-10 max-w-md">
@@ -196,19 +292,7 @@ export const CrocJacketHero: React.FC = () => {
                                 </p>
 
                                 {/* The Ledger — provenance, not statistics */}
-                                <div className="divide-y divide-matteo-charcoal/10 dark:divide-white/10 border-t border-b border-matteo-charcoal/10 dark:border-white/10 mb-10">
-                                    {[
-                                        ["Hide", "Nile or Porosus, hand-selected"],
-                                        ["Patina", "Hand-painted by one artisan"],
-                                        ["Bench", "One hundred hours, Verona"],
-                                        ["Edition", "One of one"],
-                                    ].map(([label, value]) => (
-                                        <div key={label} className="flex items-baseline justify-between gap-6 py-3">
-                                            <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-matteo-stone shrink-0">{label}</span>
-                                            <span className="font-serif text-lg text-matteo-charcoal dark:text-white text-right">{value}</span>
-                                        </div>
-                                    ))}
-                                </div>
+                                <SpecLedger className="mb-10" />
 
                                 {/* CTA */}
                                 <div className="flex items-center gap-6">
@@ -218,11 +302,16 @@ export const CrocJacketHero: React.FC = () => {
                                     >
                                         Explore Commission
                                     </Link>
+                                    {/* min-h-[44px] hit area; the underline lives on the
+                                        inner span so the visual stays a hairline 4px below
+                                        the label. */}
                                     <Link
                                         to="/bespoke-crocodile-jacket"
-                                        className="font-sans text-[10px] uppercase tracking-[0.2em] text-matteo-stone hover:text-matteo-orange transition-colors border-b border-matteo-charcoal/10 dark:border-white/10 hover:border-matteo-orange pb-1"
+                                        className="group/details inline-flex items-center min-h-[44px] font-sans text-[10px] uppercase tracking-[0.2em] text-matteo-stone-ink dark:text-matteo-stone hover:text-matteo-orange transition-colors"
                                     >
-                                        View Details →
+                                        <span className="border-b border-matteo-charcoal/10 dark:border-white/10 group-hover/details:border-matteo-orange pb-1 transition-colors">
+                                            View Details →
+                                        </span>
                                     </Link>
                                 </div>
                             </RevealOnScroll>

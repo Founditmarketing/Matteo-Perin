@@ -13,7 +13,7 @@ export const Privacy: React.FC = () => {
         
         <div className="mb-16">
             <h1 className="font-serif text-4xl md:text-5xl text-matteo-charcoal mb-8">Privacy Policy</h1>
-            <p className="font-sans text-xs uppercase tracking-widest text-matteo-stone">Last Updated: January 2026</p>
+            <p className="font-sans text-xs uppercase tracking-widest text-matteo-stone-ink dark:text-matteo-stone">Last Updated: January 2026</p>
         </div>
 
         <div className="font-serif text-matteo-charcoal/80 space-y-8 leading-relaxed">

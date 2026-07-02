@@ -105,13 +105,13 @@ export const Checkout: React.FC = () => {
                             Matteo Perin
                         </span>
                     </Link>
-                    <Link to="/shop" className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone hover:text-matteo-orange transition-colors">
+                    <Link to="/shop" className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone-ink dark:text-white/60 hover:text-matteo-orange transition-colors">
                         Continue Shopping
                     </Link>
                 </div>
 
                 <h1 className="font-serif text-4xl md:text-5xl text-matteo-charcoal dark:text-white mb-2">Your Order</h1>
-                <p className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone mb-12">
+                <p className="font-sans text-[10px] uppercase tracking-widest font-medium text-matteo-stone-ink dark:text-white/60 mb-12">
                     Review your selection, then complete payment securely.
                 </p>
 
@@ -129,21 +129,21 @@ export const Checkout: React.FC = () => {
                                         ${(item.price * item.quantity).toLocaleString()}
                                     </span>
                                 </div>
-                                <p className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone mt-1 mb-3">{item.category}</p>
+                                <p className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone-ink dark:text-white/60 mt-1 mb-3">{item.category}</p>
                                 {item.id === 14 && (
-                                    <p className="font-sans text-[10px] uppercase tracking-wider text-matteo-orange mb-3">
+                                    <p className="font-sans text-[10px] uppercase tracking-wider text-matteo-orange-ink dark:text-matteo-orange mb-3">
                                         Commission deposit · Full commission $185,000 · Balance invoiced before production
                                     </p>
                                 )}
                                 {item.customizations && (
                                     <div className="mb-3">
-                                        {item.customizations.material && <p className="font-sans text-[10px] uppercase tracking-wider text-matteo-charcoal/60 dark:text-white/60">{item.customizations.material}</p>}
-                                        {item.customizations.monogram && <p className="font-sans text-[10px] uppercase tracking-wider text-matteo-charcoal/60 dark:text-white/60">Monogram: {item.customizations.monogram}</p>}
+                                        {item.customizations.material && <p className="font-sans text-[10px] uppercase tracking-wider text-matteo-stone-ink dark:text-white/60">{item.customizations.material}</p>}
+                                        {item.customizations.monogram && <p className="font-sans text-[10px] uppercase tracking-wider text-matteo-stone-ink dark:text-white/60">Monogram: {item.customizations.monogram}</p>}
                                     </div>
                                 )}
                                 <div className="flex items-center justify-between">
                                     {item.stock === 1 ? (
-                                        <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-matteo-orange">
+                                        <span className="font-sans text-[10px] uppercase tracking-[0.2em] font-medium text-matteo-orange-ink dark:text-matteo-orange">
                                             One of One
                                         </span>
                                     ) : (
@@ -169,7 +169,7 @@ export const Checkout: React.FC = () => {
                                     )}
                                     <button
                                         onClick={() => removeFromCart(item.cartItemId)}
-                                        className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone hover:text-matteo-orange transition-colors"
+                                        className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone-ink dark:text-white/60 hover:text-matteo-orange transition-colors"
                                     >
                                         Remove
                                     </button>
@@ -182,10 +182,10 @@ export const Checkout: React.FC = () => {
                 {/* Totals */}
                 <div className="space-y-3 mb-10">
                     <div className="flex justify-between items-end">
-                        <span className="font-sans text-xs uppercase tracking-widest text-matteo-stone">Subtotal</span>
+                        <span className="font-sans text-xs uppercase tracking-widest text-matteo-stone-ink dark:text-white/60">Subtotal</span>
                         <span className="font-serif text-2xl text-matteo-charcoal dark:text-white">${cartTotal.toLocaleString()}</span>
                     </div>
-                    <p className="font-sans text-[10px] text-matteo-stone tracking-wide">
+                    <p className="font-serif italic text-[15px] text-matteo-charcoal/80 dark:text-white/70">
                         Shipping and any applicable taxes are calculated at payment. Complimentary insured courier delivery is available worldwide.
                     </p>
                 </div>
@@ -212,9 +212,15 @@ export const Checkout: React.FC = () => {
                     {isProcessing ? 'Opening Secure Payment…' : 'Continue to Secure Payment'}
                 </button>
 
-                <p className="font-sans text-[10px] text-matteo-stone tracking-wide text-center mt-6 leading-relaxed">
+                <p className="font-sans text-[10px] text-matteo-stone-ink dark:text-white/60 tracking-wide text-center mt-6 leading-relaxed">
                     Payment is completed on Stripe's secure page. We never see your card details.<br />
                     Apple Pay, Google Pay, and all major cards accepted.
+                </p>
+                <p className="font-serif italic text-[15px] text-matteo-charcoal/80 dark:text-white/70 text-center mt-4 leading-relaxed">
+                    Prefer to reserve by bank transfer? Write to{' '}
+                    <a href="mailto:concierge@matteoperin.com" className="border-b border-matteo-charcoal/30 dark:border-white/30 hover:text-matteo-orange dark:hover:text-matteo-orange transition-colors">concierge@matteoperin.com</a>
+                    {' '}or call{' '}
+                    <a href="tel:+13072649655" className="border-b border-matteo-charcoal/30 dark:border-white/30 hover:text-matteo-orange dark:hover:text-matteo-orange transition-colors">307.264.9655</a>.
                 </p>
             </div>
         </div>

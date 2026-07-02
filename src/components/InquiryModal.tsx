@@ -52,7 +52,7 @@ const FloatingInput: React.FC<{
 };
 
 export const InquiryModal: React.FC = () => {
-    const { isInquiryOpen, setIsInquiryOpen, selectedProduct } = useInquiry();
+    const { isInquiryOpen, setIsInquiryOpen, selectedProduct, inquiryContext } = useInquiry();
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -67,25 +67,32 @@ export const InquiryModal: React.FC = () => {
 
     useModalA11y(isInquiryOpen, () => setIsInquiryOpen(false), dialogRef);
 
+    // Catalog garments carry numeric ids (REF: MP-0001); Casa pieces carry
+    // string ids and are referenced by name instead of a catalog number.
+    const referenceLabel = selectedProduct && typeof selectedProduct.id === 'number'
+        ? `MP-${selectedProduct.id.toString().padStart(4, '0')}`
+        : null;
+
     if (!isInquiryOpen) return null;
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
         
-        // Prepare data for backend
+        // Prepare data for backend — the context line travels with the
+        // message so the house knows a Casa piece is being discussed.
         const inquiryPayload = {
             formType: 'look-inquiry',
             name: formData.name,
             email: formData.email,
             phone: formData.phone,
             contactTime: formData.contactTime,
-            message: formData.message,
+            message: inquiryContext ? `${inquiryContext}\n\n${formData.message}`.trim() : formData.message,
             requestedProduct: selectedProduct ? {
                 id: selectedProduct.id,
                 title: selectedProduct.title,
-                reference: `MP-${selectedProduct.id.toString().padStart(4, '0')}`,
-                price: selectedProduct.price
+                reference: referenceLabel ?? `Casa — ${selectedProduct.title}`,
+                price: selectedProduct.price ?? null
             } : null
         };
         
@@ -131,7 +138,9 @@ export const InquiryModal: React.FC = () => {
                         <div className="absolute inset-0 bg-gradient-to-t from-matteo-charcoal/80 to-transparent flex flex-col justify-end p-12 text-white">
                             <span className="font-sans text-[10px] uppercase tracking-widest text-matteo-orange mb-2 block">Reference</span>
                             <h3 className="font-serif text-3xl mb-2">{selectedProduct.title}</h3>
-                            <span className="font-sans text-xs tracking-widest opacity-80">REF: MP-{selectedProduct.id.toString().padStart(4, '0')}</span>
+                            {referenceLabel && (
+                                <span className="font-sans text-xs tracking-widest opacity-80">REF: {referenceLabel}</span>
+                            )}
                         </div>
                     </div>
                 )}
@@ -149,13 +158,22 @@ export const InquiryModal: React.FC = () => {
                     <div className="max-w-md w-full mx-auto my-auto">
                         <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-matteo-orange mb-2 md:mb-4 block">Concierge Intake</span>
                         <h2 className="font-serif text-2xl md:text-4xl mb-6 md:mb-6 text-matteo-charcoal dark:text-white">
-                            {selectedProduct?.title === 'Bespoke Crocodile Jacket' ? 'SERIOUS INQUIRIES ONLY' : 'Request a Bespoke Look'}
+                            {selectedProduct?.title === 'Bespoke Crocodile Jacket'
+                                ? 'The Commission Conversation'
+                                : inquiryContext ? 'Request a Consultation' : 'Request a Bespoke Look'}
                         </h2>
+                        {inquiryContext && (
+                            <p className="font-serif italic text-[15px] text-matteo-charcoal/80 dark:text-white/80 -mt-2 mb-6">
+                                {inquiryContext}
+                            </p>
+                        )}
                         {selectedProduct && (
                             <div className="md:hidden flex items-center gap-4 mb-6 pb-6 border-b border-matteo-charcoal/10 dark:border-white/10">
                                 <img src={selectedProduct.image} alt={selectedProduct.title} className="w-16 h-16 object-cover object-top" />
                                 <div>
-                                    <span className="font-sans text-[10px] uppercase tracking-widest text-matteo-charcoal/50 dark:text-white/50 block mb-1">REF: MP-{selectedProduct.id.toString().padStart(4, '0')}</span>
+                                    {referenceLabel && (
+                                        <span className="font-sans text-[10px] uppercase tracking-widest text-matteo-charcoal/50 dark:text-white/50 block mb-1">REF: {referenceLabel}</span>
+                                    )}
                                     <h3 className="font-serif text-lg leading-tight text-matteo-charcoal dark:text-white">{selectedProduct.title}</h3>
                                 </div>
                             </div>
@@ -167,15 +185,15 @@ export const InquiryModal: React.FC = () => {
                                     <span className="text-matteo-orange text-xl">✓</span>
                                 </div>
                                 <h3 className="font-serif text-2xl text-matteo-charcoal dark:text-white mb-4">Inquiry Received</h3>
-                                <p className="font-serif text-matteo-charcoal/60 dark:text-gray-400">A senior client advisor will contact you shortly regarding the {selectedProduct?.title || 'commission'}.</p>
+                                <p className="font-serif text-matteo-charcoal/60 dark:text-white/60">A senior client advisor will contact you shortly regarding the {selectedProduct?.title || 'commission'}.</p>
                             </div>
                         ) : (
                             <>
-                                <p className="font-serif text-matteo-charcoal/60 dark:text-gray-400 text-xs md:text-sm mb-6 md:mb-10 leading-relaxed hidden sm:block">
+                                <p className="font-serif text-matteo-charcoal/60 dark:text-white/60 text-xs md:text-sm mb-6 md:mb-10 leading-relaxed hidden sm:block">
                                     Please provide your contact details. Due to the exclusive nature of our pieces, all acquisitions are handled via private consultation to ensure exact specifications and availability.
                                 </p>
                                 {selectedProduct?.title === 'Bespoke Crocodile Jacket' && (
-                                    <p className="font-sans text-[10px] uppercase tracking-widest text-matteo-orange mb-6 -mt-4">
+                                    <p className="font-sans text-[10px] uppercase tracking-widest text-matteo-orange-ink dark:text-matteo-orange mb-6 -mt-4">
                                         Three commissions accepted per year
                                     </p>
                                 )}
