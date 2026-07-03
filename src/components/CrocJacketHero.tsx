@@ -112,16 +112,8 @@ const PriceBlock: React.FC<{ compact?: boolean; reducedMotion: boolean | null }>
         </div>
 
         <div className={`relative ${compact ? '' : 'pb-8'}`}>
-            <div className={`flex items-baseline ${compact ? 'gap-4' : 'gap-3'} mb-2`}>
-                <span className={`font-serif ${compact ? 'text-xl' : 'text-2xl'} text-matteo-charcoal dark:text-white`}>
-                    $185,000
-                </span>
-                <span className="font-sans text-[10px] uppercase tracking-[0.25em] font-medium text-matteo-stone-ink dark:text-matteo-stone">
-                    Full Commission
-                </span>
-            </div>
-            <div className="flex items-baseline gap-2">
-                <span className={`font-serif ${compact ? 'text-base' : 'text-lg'} text-matteo-orange-ink dark:text-matteo-orange`}>
+            <div className="flex items-baseline gap-3">
+                <span className={`font-serif ${compact ? 'text-xl' : 'text-2xl'} text-matteo-orange-ink dark:text-matteo-orange`}>
                     $25,000
                 </span>
                 <span className="font-sans text-[10px] uppercase tracking-[0.25em] font-medium text-matteo-stone-ink dark:text-matteo-stone">

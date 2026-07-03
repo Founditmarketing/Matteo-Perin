@@ -132,7 +132,7 @@ export const Checkout: React.FC = () => {
                                 <p className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone-ink dark:text-white/60 mt-1 mb-3">{item.category}</p>
                                 {item.id === 14 && (
                                     <p className="font-sans text-[10px] uppercase tracking-wider text-matteo-orange-ink dark:text-matteo-orange mb-3">
-                                        Commission deposit · Full commission $185,000 · Balance invoiced before production
+                                        Commission deposit · Balance invoiced before production
                                     </p>
                                 )}
                                 {item.customizations && (
@@ -193,7 +193,7 @@ export const Checkout: React.FC = () => {
                 {hasDeposit && (
                     <div className="border border-matteo-orange/20 bg-matteo-orange/5 dark:bg-matteo-orange/10 p-4 mb-10">
                         <p className="font-sans text-[10px] uppercase tracking-wider text-matteo-charcoal/70 dark:text-white/60 leading-relaxed">
-                            Your $25,000 deposit reserves the Bespoke Crocodile Jacket commission. The remaining balance of $160,000 is invoiced separately before production begins.
+                            Your $25,000 deposit reserves the Bespoke Crocodile Jacket commission. The remaining balance is invoiced privately before production begins.
                         </p>
                     </div>
                 )}

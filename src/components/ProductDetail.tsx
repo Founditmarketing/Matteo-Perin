@@ -179,7 +179,7 @@ export const ProductDetail: React.FC = () => {
                                         {product.id === 14 && (
                                             <div className="mb-4">
                                                 <p className="font-sans text-[10px] uppercase tracking-[0.12em] text-matteo-stone-ink dark:text-white/60 leading-relaxed mb-2">
-                                                    Full commission: $185,000 · Secure your slot with a $25,000 deposit · Pay the rest later
+                                                    Secure your commission slot with a $25,000 deposit · Balance invoiced before production
                                                 </p>
                                                 <Link to="/bespoke-crocodile-jacket" className="font-sans text-[10px] uppercase tracking-[0.15em] text-matteo-orange-ink dark:text-matteo-orange border-b border-matteo-orange/40 pb-0.5 hover:border-matteo-orange transition-colors">
                                                     View Full Product Page →
@@ -203,7 +203,7 @@ export const ProductDetail: React.FC = () => {
                                 </Magnetic>
                                 {product.id === 14 && (
                                     <p className="font-sans text-[10px] uppercase tracking-[0.12em] text-matteo-stone-ink dark:text-white/60 text-center mb-12 leading-relaxed">
-                                        Remaining balance of $160,000 invoiced before production begins
+                                        Remaining balance invoiced privately before production begins
                                     </p>
                                 )}
 

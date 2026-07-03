@@ -216,7 +216,7 @@ export const CrocJacketLanding: React.FC = () => {
 
             <Helmet>
                 <title>Bespoke Crocodile Jacket | Handcrafted in Italy | Matteo Perin</title>
-                <meta name="description" content="Commission a 1-of-1 bespoke Porosus crocodile jacket by Matteo Perin — a hand-painted Nile crocodile coat finished with a hand-developed patina over 100+ hours of artisanal hand-stitching in Verona, Italy, using certified CITES-regulated hides. Full commission $185,000; secure your slot with a $25,000 deposit." />
+                <meta name="description" content="Commission a 1-of-1 bespoke Porosus crocodile jacket by Matteo Perin — a hand-painted Nile crocodile coat finished with a hand-developed patina over 100+ hours of artisanal hand-stitching in Verona, Italy, using certified CITES-regulated hides. Secure your commission slot with a $25,000 deposit." />
                 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
                 <link rel="canonical" href="https://www.matteoperin.com/bespoke-crocodile-jacket" />
 
@@ -229,7 +229,7 @@ export const CrocJacketLanding: React.FC = () => {
                 <meta property="og:url" content="https://www.matteoperin.com/bespoke-crocodile-jacket" />
                 <meta property="og:type" content="product" />
                 <meta property="og:site_name" content="Matteo Perin" />
-                <meta property="product:price:amount" content="185000" />
+                <meta property="product:price:amount" content="25000" />
                 <meta property="product:price:currency" content="USD" />
                 <meta property="product:availability" content="in stock" />
                 <meta property="product:condition" content="new" />
@@ -254,7 +254,8 @@ export const CrocJacketLanding: React.FC = () => {
                     offers: {
                         '@type': 'Offer',
                         priceCurrency: 'USD',
-                        price: 185000,
+                        price: 25000,
+                        description: 'Deposit to reserve a one-of-one bespoke commission; the remaining balance is invoiced privately before production begins.',
                         availability: 'https://schema.org/LimitedAvailability',
                         url: 'https://www.matteoperin.com/bespoke-crocodile-jacket',
                         itemCondition: 'https://schema.org/NewCondition',
@@ -295,7 +296,7 @@ export const CrocJacketLanding: React.FC = () => {
                         {
                             '@type': 'Question',
                             name: 'How does payment work?',
-                            acceptedAnswer: { '@type': 'Answer', text: 'A $25,000 deposit secures your commission slot. The remaining balance of $160,000 is invoiced before production begins. Because each piece is made to order, returns are not accepted once production has commenced.' },
+                            acceptedAnswer: { '@type': 'Answer', text: 'A $25,000 deposit secures your commission slot. The remaining balance is invoiced privately before production begins. Because each piece is made to order, returns are not accepted once production has commenced.' },
                         },
                         {
                             '@type': 'Question',
@@ -426,7 +427,7 @@ export const CrocJacketLanding: React.FC = () => {
                                 Bespoke<br />Crocodile Jacket
                             </motion.h1>
                             <motion.p variants={fadeUpVariant} className="font-serif italic text-[15px] text-white/70 mb-8 max-w-xl leading-relaxed">
-                                $185,000 full commission, reserved with a $25,000 deposit. One of three commissions accepted each year.
+                                Reserved with a $25,000 deposit. One of three commissions accepted each year.
                             </motion.p>
                             <motion.div variants={fadeUpVariant} className="flex flex-col sm:flex-row gap-3">
                                 <button
@@ -538,7 +539,7 @@ export const CrocJacketLanding: React.FC = () => {
                                 Drafted from<br />absolute zero
                             </motion.h2>
                             <motion.p variants={fadeUpVariant} className="font-serif text-base md:text-lg text-matteo-charcoal/70 dark:text-white/60 leading-relaxed max-w-xl">
-                                A 1-of-1 commission in certified, CITES-regulated Nile (Niloticus) or Porosus crocodile. Each piece is finished with a hand-painted patina and shaped over 100+ hours of artisanal hand-stitching in our Verona, Italy atelier. The $185,000 price reflects the rarity of the hides, the labor, and the truly singular nature of custom exotic outerwear — no two are alike.
+                                A 1-of-1 commission in certified, CITES-regulated Nile (Niloticus) or Porosus crocodile. Each piece is finished with a hand-painted patina and shaped over 100+ hours of artisanal hand-stitching in our Verona, Italy atelier. Its price reflects the rarity of the hides, the labor, and the truly singular nature of custom exotic outerwear — no two are alike.
                             </motion.p>
                         </motion.div>
 
@@ -589,11 +590,7 @@ export const CrocJacketLanding: React.FC = () => {
 
                         {/* Price */}
                         <motion.div variants={fadeUpVariant} className="mb-8">
-                            <div className="flex items-baseline gap-3">
-                                <span className="font-serif text-3xl md:text-4xl text-matteo-charcoal dark:text-white">$185,000</span>
-                                <span className="font-sans text-[10px] uppercase tracking-[0.2em] font-medium text-matteo-stone-ink dark:text-white/60">USD — Full Commission</span>
-                            </div>
-                            <div className="mt-4 p-4 bg-matteo-orange/5 dark:bg-matteo-orange/10 border border-matteo-orange/20">
+                            <div className="p-4 bg-matteo-orange/5 dark:bg-matteo-orange/10 border border-matteo-orange/20">
                                 <div className="flex items-baseline gap-2 mb-1.5">
                                     <span className="font-serif text-2xl text-matteo-orange-ink dark:text-matteo-orange">$25,000</span>
                                     <span className="font-sans text-[10px] uppercase tracking-[0.15em] font-medium text-matteo-orange-ink dark:text-matteo-orange">Deposit to Reserve</span>
@@ -651,7 +648,7 @@ export const CrocJacketLanding: React.FC = () => {
                                 {[
                                     'Within 24 hours, a senior advisor calls to begin your consultation.',
                                     'Nothing is cut before you approve — hide, patina, and fit are confirmed with you first.',
-                                    'The deposit applies in full to the $185,000 commission; the balance is invoiced only before production begins.',
+                                    'Your deposit applies in full to the commission; the remaining balance is invoiced privately before production begins.',
                                 ].map((line) => (
                                     <div key={line} className="flex items-start gap-3">
                                         <span className="w-1 h-1 rounded-full bg-matteo-orange mt-2.5 shrink-0"></span>
@@ -726,7 +723,7 @@ export const CrocJacketLanding: React.FC = () => {
                             <AccordionItem title="Shipping & Delivery">
                                 <p className="mb-3"><strong className="text-matteo-charcoal dark:text-white">Production Time:</strong> 8–12 weeks from measurement session.</p>
                                 <p className="mb-3"><strong className="text-matteo-charcoal dark:text-white">Delivery:</strong> Complimentary global white-glove delivery. Your jacket is hand-delivered in a custom leather-bound presentation case.</p>
-                                <p><strong className="text-matteo-charcoal dark:text-white">Payment:</strong> A $25,000 deposit secures your commission slot. The remaining balance of $160,000 is invoiced before production begins. Returns are not accepted once production has commenced.</p>
+                                <p><strong className="text-matteo-charcoal dark:text-white">Payment:</strong> A $25,000 deposit secures your commission slot. The remaining balance is invoiced privately before production begins. Returns are not accepted once production has commenced.</p>
                             </AccordionItem>
 
                             <AccordionItem title="Authenticity & Provenance">
@@ -861,7 +858,7 @@ export const CrocJacketLanding: React.FC = () => {
                             <span className="font-serif text-lg text-matteo-orange-ink dark:text-matteo-orange">$25,000</span>
                             <span className="font-sans text-[10px] uppercase tracking-[0.1em] font-medium text-matteo-stone-ink dark:text-white/60">Deposit</span>
                         </div>
-                        <div className="font-sans text-[10px] uppercase tracking-[0.1em] font-medium text-matteo-stone-ink dark:text-white/60">Full price: $185,000</div>
+                        <div className="font-sans text-[10px] uppercase tracking-[0.1em] font-medium text-matteo-stone-ink dark:text-white/60">To reserve your commission</div>
                     </div>
                     <button
                         onClick={handleBuyNow}

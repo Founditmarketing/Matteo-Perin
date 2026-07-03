@@ -98,7 +98,7 @@ export const CartSidebar: React.FC = () => {
                                     </span>
                                     {item.id === 14 && (
                                         <span className="block font-sans text-[10px] uppercase tracking-[0.1em] text-matteo-stone-ink dark:text-matteo-stone mt-1">
-                                            Full commission: $185,000 · Pay the rest later
+                                            Deposit toward your bespoke commission · balance invoiced before production
                                         </span>
                                     )}
                                 </div>
@@ -156,7 +156,7 @@ export const CartSidebar: React.FC = () => {
                 {cartItems.some(item => item.id === 14) && (
                     <div className="bg-matteo-orange/5 dark:bg-matteo-orange/10 border border-matteo-orange/20 rounded-sm p-3 mb-4">
                         <p className="font-sans text-[10px] uppercase tracking-[0.1em] text-matteo-charcoal/60 dark:text-white/50 leading-relaxed">
-                            <span className="text-matteo-orange font-medium">Deposit Item Included:</span> Your $25,000 deposit secures the Bespoke Crocodile Jacket commission. The remaining balance of $160,000 will be invoiced separately.
+                            <span className="text-matteo-orange font-medium">Deposit Item Included:</span> Your $25,000 deposit secures the Bespoke Crocodile Jacket commission. The remaining balance is invoiced privately before production begins.
                         </p>
                     </div>
                 )}

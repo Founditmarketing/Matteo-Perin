@@ -234,7 +234,7 @@ export const DigitalConcierge: React.FC<{ initialOpen?: boolean; suppressLaunche
             if (lowerText.includes("jacket") || lowerText.includes("crocodile") || lowerText.includes("croc") || lowerText.includes("coat")) {
                 fallbackMessage = "Exotic crocodile outerwear is commissioned privately, one piece at a time. The atelier is offline at this moment — write to [concierge@matteoperin.com](mailto:concierge@matteoperin.com) and the concierge will arrange a private viewing.";
             } else if (lowerText.includes("price") || lowerText.includes("cost") || lowerText.includes("$") || lowerText.includes("how much")) {
-                fallbackMessage = "Casa Matteo Perin operates strictly on private commission. Pieces generally begin at $15,000, with exotic outerwear commissions at $185,000. Write to [concierge@matteoperin.com](mailto:concierge@matteoperin.com) to discuss your vision.";
+                fallbackMessage = "Casa Matteo Perin operates strictly on private commission. Pieces generally begin at $15,000; exotic outerwear is quoted privately by commission. Write to [concierge@matteoperin.com](mailto:concierge@matteoperin.com) to discuss your vision.";
             } else if (lowerText.includes("bag") || lowerText.includes("briefcase") || lowerText.includes("luggage")) {
                 fallbackMessage = "Our heritage leather goods represent the pinnacle of Italian craftsmanship. The atelier is offline at this moment — you may browse a selection below, or write to [concierge@matteoperin.com](mailto:concierge@matteoperin.com).";
                 fallbackProducts = [1, 2]; // Weekender Bag, Heritage Clutch
