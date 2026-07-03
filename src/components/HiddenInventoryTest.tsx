@@ -218,22 +218,6 @@ export const HiddenInventoryTest: React.FC = () => {
                                                                     (e.target as HTMLImageElement).style.display = 'none';
                                                                 }}
                                                             />
-                                                            {/* Second-angle crossfade on hover, desktop only. When the
-                                                                sheet carries a single image the layer never mounts and
-                                                                the plate behaves exactly as before. */}
-                                                            {previewImages[1] && (
-                                                                <img
-                                                                    src={previewImages[1]}
-                                                                    alt=""
-                                                                    aria-hidden="true"
-                                                                    loading="lazy"
-                                                                    decoding="async"
-                                                                    className="hidden md:block absolute inset-0 w-full h-full object-cover mix-blend-multiply dark:mix-blend-normal opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-out motion-reduce:transition-none pointer-events-none"
-                                                                    onError={(e) => {
-                                                                        (e.target as HTMLImageElement).style.display = 'none';
-                                                                    }}
-                                                                />
-                                                            )}
                                                         </div>
                                                     ) : (
                                                         <div className="w-full h-full flex items-center justify-center">
@@ -309,23 +293,6 @@ export const HiddenInventoryTest: React.FC = () => {
                                                                 (e.target as HTMLImageElement).className = "w-1/2 h-1/2 mx-auto mt-[25%] object-contain opacity-20";
                                                             }}
                                                         />
-                                                        {/* Second-angle crossfade on hover — desktop only, and only
-                                                            while the card rests on its first image so it never
-                                                            fights the arrow navigation. Single-image pieces simply
-                                                            never mount the layer. */}
-                                                        {previewImages[1] && (activeCardImage[groupIdx] || 0) === 0 && (
-                                                            <img
-                                                                src={previewImages[1]}
-                                                                alt=""
-                                                                aria-hidden="true"
-                                                                loading="lazy"
-                                                                decoding="async"
-                                                                className="hidden md:block absolute inset-0 w-full h-full object-cover mix-blend-multiply dark:mix-blend-normal opacity-0 group-hover/card:opacity-100 transition-opacity duration-700 ease-out motion-reduce:transition-none pointer-events-none"
-                                                                onError={(e) => {
-                                                                    (e.target as HTMLImageElement).style.display = 'none';
-                                                                }}
-                                                            />
-                                                        )}
                                                     </div>
 
                                                     {/* Sold Out Badge */}
