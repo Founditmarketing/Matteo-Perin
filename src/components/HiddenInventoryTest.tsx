@@ -172,7 +172,7 @@ export const HiddenInventoryTest: React.FC = () => {
                             Piana keep it at the top of the listing, never a widget. */}
                         {!isEmbedded && (
                             <div className="flex items-baseline gap-8 shrink-0">
-                                {([['all', 'All'], ['men', 'Men'], ['ladies', 'Ladies']] as const).map(([key, label]) => (
+                                {([['all', 'All'], ['men', 'Men'], ['ladies', 'Women']] as const).map(([key, label]) => (
                                     <button
                                         key={key}
                                         onClick={() => setGenderFilter(key)}
@@ -241,7 +241,10 @@ export const HiddenInventoryTest: React.FC = () => {
                                                 className="group block animate-fade-in-up"
                                                 style={{ animationDelay: `${idx * 80}ms` }}
                                             >
-                                                <div className={`w-full ${featured ? 'aspect-[3/4]' : 'aspect-[4/5]'} bg-matteo-sand dark:bg-[#111] overflow-hidden relative mb-6`} data-cursor="view">
+                                                {/* Featured runs landscape — a tabletop product shot
+                                                    can't carry a 1,000px portrait plate; 4/3 keeps the
+                                                    whole teaser inside one viewport. */}
+                                                <div className={`w-full ${featured ? 'aspect-[4/3]' : 'aspect-[4/5]'} bg-matteo-sand dark:bg-[#111] overflow-hidden relative mb-6`} data-cursor="view">
                                                     {previewImages[0] ? (
                                                         /* The wrapper carries both the hover scale and the sand
                                                            backdrop: a transform creates a stacking context that
@@ -292,7 +295,7 @@ export const HiddenInventoryTest: React.FC = () => {
                                                 {pieces[0] && renderPlate(pieces[0], 0, true)}
                                             </div>
                                             {pieces.length > 1 && (
-                                                <div className="md:col-span-4 md:col-start-9 flex flex-col gap-16 md:pt-28">
+                                                <div className="md:col-span-4 md:col-start-9 flex flex-col gap-16">
                                                     {pieces.slice(1).map((g, i) => renderPlate(g, i + 1, false))}
                                                 </div>
                                             )}

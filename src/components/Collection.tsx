@@ -349,7 +349,10 @@ export const Collection: React.FC = () => {
             <div className={`absolute inset-0 z-50 bg-matteo-cream dark:bg-matteo-black flex items-center justify-center transition-opacity duration-1000 pointer-events-none ${loading ? 'opacity-100' : 'opacity-0'}`}>
             </div>
 
-            <div className={`relative h-auto md:sticky md:top-0 md:h-screen md:overflow-hidden flex flex-col justify-center transition-opacity duration-1000 ${loading ? 'opacity-0' : 'opacity-100'}`}>
+            {/* md:pt-32 reserves real space for the heading — it used to float
+                over the track, and raised plates (-translate-y-8) rode up into
+                the headline mid-scroll. */}
+            <div className={`relative h-auto md:sticky md:top-0 md:h-screen md:overflow-hidden flex flex-col justify-center md:pt-32 transition-opacity duration-1000 ${loading ? 'opacity-0' : 'opacity-100'}`}>
 
                 <div className="md:absolute md:top-8 md:left-0 w-full px-6 md:px-12 z-10 pt-12 md:pt-0 mb-8 md:mb-0">
                     <TextReveal className="font-serif text-3xl md:text-5xl text-matteo-charcoal dark:text-matteo-cream font-light mt-4">

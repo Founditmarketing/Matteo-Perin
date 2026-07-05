@@ -62,55 +62,13 @@ const SpecLedger: React.FC<{ compact?: boolean; className?: string }> = ({
 );
 
 /**
- * PriceBlock — the figures with a quiet macro of the hide drifting behind
- * them. The texture holds the right edge and fades to the canvas colour
- * under the type, so the price stays the loudest element and the labels
- * keep AA contrast. In the compact (mobile) variant the labels reach into
- * the strip, so it narrows to w-1/3 and the fade stays fully opaque through
- * 55% of the strip — the 10px stone-ink labels always sit on pure canvas
- * (4.5:1 needed; texture crevices under the fade were measuring 4.37:1).
- * Scale drift is 1 → 1.06 over 16s, alternating direction; static for
- * reduced-motion users (keyframe loops need manual gating — MotionConfig
- * reducedMotion="user" does not cover `animate` loops).
+ * PriceBlock — the figures alone on the canvas. A drifting croc-hide macro
+ * used to sit behind them; the fade needed to keep AA contrast reduced it
+ * to a pale floating rectangle that read as a rendering defect, so it was
+ * removed — this client reads subtle overlays as glitches.
  */
-const PriceBlock: React.FC<{ compact?: boolean; reducedMotion: boolean | null }> = ({
-    compact = false,
-    reducedMotion,
-}) => (
+const PriceBlock: React.FC<{ compact?: boolean }> = ({ compact = false }) => (
     <div className={`relative ${compact ? 'mb-6' : 'mb-8 border-b border-matteo-charcoal/10 dark:border-white/10'}`}>
-        {/* Macro of the hide — grayscale, desaturated, behind the figures */}
-        <div
-            className={`absolute inset-y-0 right-0 ${compact ? 'w-1/3' : 'w-2/5'} overflow-hidden pointer-events-none`}
-            aria-hidden="true"
-        >
-            <motion.div
-                className="w-full h-full"
-                animate={reducedMotion ? undefined : { scale: [1, 1.06] }}
-                transition={
-                    reducedMotion
-                        ? undefined
-                        : { duration: 16, repeat: Infinity, repeatType: 'reverse', ease: 'linear' }
-                }
-            >
-                <ResponsiveImage
-                    baseSrc="/assets/fabrics/croc.webp"
-                    alt=""
-                    maxVariant="sm"
-                    className="w-full h-full object-cover grayscale opacity-25 dark:opacity-20"
-                />
-            </motion.div>
-            {/* Fade toward the type so the figures stay the loudest element.
-                Compact: fully opaque canvas through 55% of the strip so the
-                labels that overlap it never lose AA contrast to the texture. */}
-            <div
-                className={`absolute inset-0 bg-gradient-to-r ${
-                    compact
-                        ? 'from-matteo-cream via-matteo-cream via-[55%] to-matteo-cream/10 dark:from-matteo-black dark:via-matteo-black dark:to-matteo-black/10'
-                        : 'from-matteo-cream via-matteo-cream/60 to-matteo-cream/10 dark:from-matteo-black dark:via-matteo-black/60 dark:to-matteo-black/10'
-                }`}
-            />
-        </div>
-
         <div className={`relative ${compact ? '' : 'pb-8'}`}>
             <div className="flex items-baseline gap-3">
                 <span className={`font-serif ${compact ? 'text-xl' : 'text-2xl'} text-matteo-orange-ink dark:text-matteo-orange`}>
@@ -192,7 +150,7 @@ export const CrocJacketHero: React.FC = () => {
                     </p>
 
                     {/* Price + Deposit — with the hide in macro behind the figures */}
-                    <PriceBlock compact reducedMotion={prefersReducedMotion} />
+                    <PriceBlock compact />
 
                     {/* Description */}
                     <p className="font-serif text-base text-matteo-charcoal/50 dark:text-white/40 leading-relaxed mb-8">
@@ -275,7 +233,7 @@ export const CrocJacketHero: React.FC = () => {
                                 </h2>
 
                                 {/* Price Block — with the hide in macro behind the figures */}
-                                <PriceBlock reducedMotion={prefersReducedMotion} />
+                                <PriceBlock />
 
                                 {/* Description */}
                                 <p className="font-serif text-lg text-matteo-charcoal/60 dark:text-white/50 leading-relaxed mb-10 max-w-md">
