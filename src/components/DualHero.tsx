@@ -84,15 +84,23 @@ export const DualHero: React.FC = () => {
     };
 
     // Specific local assets (.webp bases — ResponsiveImage serves -sm/-md/-lg variants)
+    // Each act carries its own declarative line — slide 1 speaks to the
+    // making, slide 2 to the wearing. A single shared line made the wipe
+    // read as one template refilling itself.
+    // Slide 1 opens on the work itself — the white crocodile commission,
+    // worn — not scenery. matteo_croc_new_2 is used nowhere else on the
+    // site (the croc section below runs new_1; never repeat a photo).
     const slide1 = {
-        image: "/assets/hero_grand_estate.webp",
+        image: "/assets/croc-jacket/matteo_croc_new_2.webp",
         subtitle: "MADE IN VERONA",
-        title: "The Provenance"
+        title: "The Provenance",
+        line: "One-of-one pieces and private commissions, cut and finished by hand in Italy."
     };
     const slide2 = {
         image: "/assets/hero_teton_buffalo_v2.webp",
         subtitle: "PROVEN IN THE TETONS",
-        title: "The Resilience"
+        title: "The Resilience",
+        line: "Worn and proven in Jackson Hole — the atelier's home in the American West."
     };
 
     // Combined Parallax for Background
@@ -136,8 +144,12 @@ export const DualHero: React.FC = () => {
                         >
                             <ResponsiveImage
                                 baseSrc={slide1.image}
-                                alt="The grand estate — where the house's Italian provenance begins"
-                                className="w-full h-full object-cover"
+                                alt="The bespoke white crocodile jacket, worn — the house's Italian provenance in one piece"
+                                /* Portrait source on a 16:9 stage: crop to the jacket —
+                                   collar to hem — and let the face fall cleanly out of
+                                   frame (a chin sliver under the nav logo read as awkward;
+                                   the garment is the subject). */
+                                className="w-full h-full object-cover object-[50%_32%]"
                                 fetchPriority="high"
                                 loading="eager"
                             />
@@ -260,9 +272,32 @@ export const DualHero: React.FC = () => {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2, duration: 0.6 }}
                         >
-                            <p className="font-serif italic text-base md:text-xl text-white/80 max-w-xl mb-6 md:mb-8 leading-relaxed">
-                                A bespoke Italian atelier in Jackson Hole — one-of-one pieces and private commissions.
-                            </p>
+                            {/* The declarative line cross-fades with its act. An invisible
+                                replica of the longer line reserves the height so the CTA
+                                row never shifts as the texts trade places. */}
+                            {prefersReducedMotion ? (
+                                <p className="font-serif italic text-base md:text-xl text-white/80 max-w-xl mb-6 md:mb-8 leading-relaxed">
+                                    {slide1.line}
+                                </p>
+                            ) : (
+                                <div className="relative max-w-xl mb-6 md:mb-8">
+                                    <p className="invisible font-serif italic text-base md:text-xl leading-relaxed" aria-hidden="true">
+                                        {slide1.line.length >= slide2.line.length ? slide1.line : slide2.line}
+                                    </p>
+                                    <motion.p
+                                        className="absolute inset-x-0 top-0 font-serif italic text-base md:text-xl text-white/80 leading-relaxed"
+                                        style={{ opacity: text1Opacity }}
+                                    >
+                                        {slide1.line}
+                                    </motion.p>
+                                    <motion.p
+                                        className="absolute inset-x-0 top-0 font-serif italic text-base md:text-xl text-white/80 leading-relaxed"
+                                        style={{ opacity: text2Opacity }}
+                                    >
+                                        {slide2.line}
+                                    </motion.p>
+                                </div>
+                            )}
 
                             <div className="flex flex-wrap items-center gap-x-10 gap-y-4">
                                 {/* Primary entry: the ghost button carries the weight */}
@@ -293,7 +328,7 @@ export const DualHero: React.FC = () => {
                                         className="group relative py-3.5 min-h-[44px]"
                                     >
                                         <span className="font-sans text-xs md:text-sm uppercase tracking-[0.25em] text-white/90 group-hover:text-white transition-colors duration-500">
-                                            Man
+                                            Men
                                         </span>
                                         <span className="absolute bottom-2 left-0 w-0 h-[1px] bg-matteo-orange transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:w-full"></span>
                                     </button>
@@ -305,7 +340,7 @@ export const DualHero: React.FC = () => {
                                         className="group relative py-3.5 min-h-[44px]"
                                     >
                                         <span className="font-sans text-xs md:text-sm uppercase tracking-[0.25em] text-white/90 group-hover:text-white transition-colors duration-500">
-                                            Woman
+                                            Women
                                         </span>
                                         <span className="absolute bottom-2 left-0 w-0 h-[1px] bg-matteo-orange transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:w-full"></span>
                                     </button>
