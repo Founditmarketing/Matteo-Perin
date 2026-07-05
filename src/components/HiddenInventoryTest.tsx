@@ -37,7 +37,26 @@ export const HiddenInventoryTest: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [activeCardImage, setActiveCardImage] = useState<Record<number, number>>({});
+    const [genderFilter, setGenderFilter] = useState<'all' | 'men' | 'ladies'>('all');
     const isEmbedded = location.pathname === '/';
+
+    // Parent rows in the sheet leave Gender blank — it lives on the variation
+    // rows ("Men" / "Female" / "Unisex"), so resolve it from rawRows.
+    const getGroupGender = (group: GroupedProduct): string => {
+        if (group.gender && group.gender.trim()) return group.gender.trim().toLowerCase();
+        const fromRows = group.rawRows.find(r => String(r.Gender || '').trim());
+        return String(fromRows?.Gender || '').trim().toLowerCase();
+    };
+
+    // Unisex pieces belong in both the Men and Ladies views.
+    const matchesGender = (group: GroupedProduct): boolean => {
+        if (genderFilter === 'all') return true;
+        const g = getGroupGender(group);
+        if (!g || g === 'unisex') return true;
+        return genderFilter === 'men'
+            ? (g === 'men' || g === 'man' || g === 'male')
+            : (g === 'women' || g === 'woman' || g === 'female' || g === 'ladies');
+    };
 
     useEffect(() => {
         const fetchInventory = async () => {
@@ -148,6 +167,27 @@ export const HiddenInventoryTest: React.FC = () => {
                         <p className="font-serif text-lg md:text-xl text-matteo-charcoal/60 dark:text-white/60 italic max-w-xl">
                             One-of-a-kind pieces, ready for immediate acquisition — purchase online with worldwide delivery.
                         </p>
+                        {/* Men / Ladies selector — gender lives here as quiet text
+                            tabs in the eyebrow register, the way Hermès and Loro
+                            Piana keep it at the top of the listing, never a widget. */}
+                        {!isEmbedded && (
+                            <div className="flex items-baseline gap-8 shrink-0">
+                                {([['all', 'All'], ['men', 'Men'], ['ladies', 'Ladies']] as const).map(([key, label]) => (
+                                    <button
+                                        key={key}
+                                        onClick={() => setGenderFilter(key)}
+                                        aria-pressed={genderFilter === key}
+                                        className={`font-sans text-[11px] uppercase tracking-[0.25em] pb-1.5 border-b transition-colors duration-300 ${
+                                            genderFilter === key
+                                                ? 'text-matteo-orange-ink dark:text-matteo-orange border-matteo-orange-ink dark:border-matteo-orange'
+                                                : 'text-matteo-stone-ink dark:text-white/50 border-transparent hover:text-matteo-charcoal dark:hover:text-white'
+                                        }`}
+                                    >
+                                        {label}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
                         {isEmbedded && (
                             <button
                                 onClick={() => navigate('/shop')}
@@ -260,20 +300,35 @@ export const HiddenInventoryTest: React.FC = () => {
                                     );
                                 })()
                             ) : (
-                            <div className="flex flex-col gap-24 md:gap-36">
-                                {groupedInventory.map((group, groupIdx) => {
+                            /* The listing grid \u2014 modeled on the Herm\u00e8s / Loro Piana /
+                               Brunello Cucinelli PLP convention: a uniform grid of
+                               quiet tiles (photo on flat neutral ground, small name
+                               and price beneath), several pieces visible per screen.
+                               Two columns on mobile, three on desktop. */
+                            (() => {
+                                const visible = groupedInventory.filter(matchesGender);
+                                if (visible.length === 0) {
+                                    return (
+                                        <div className="py-20 text-center">
+                                            <p className="font-serif italic text-lg text-matteo-charcoal/60 dark:text-white/60">
+                                                No pieces in this selection at the moment \u2014 view All for the full edit.
+                                            </p>
+                                        </div>
+                                    );
+                                }
+                                return (
+                            <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-6 md:gap-x-10 gap-y-14 md:gap-y-20">
+                                {visible.map((group) => {
+                                    const groupIdx = groupedInventory.indexOf(group);
                                     const previewImages = getColorPreviewImages(group);
                                     const colorCount = group.variations.length;
                                     const soldOut = isAllSoldOut(group.rawRows);
                                     const totalStock = getTotalStock(group.rawRows);
-                                    const isFeature = groupIdx === 0;
-                                    const imageLeft = groupIdx % 2 === 0;
-                                    const pieceNumber = `\u2116 ${String(groupIdx + 1).padStart(2, '0')} / ${String(groupedInventory.length).padStart(2, '0')}`;
 
-                                    // Shared image box: arrows, dots, sold-out veil
-                                    const imageBox = (
+                                    return (
+                                        <div key={groupIdx} className={`group/card animate-fade-in-up ${soldOut ? 'opacity-60' : ''}`}>
                                         <div
-                                            className={`w-full ${isFeature ? 'aspect-[4/5]' : 'aspect-[3/4]'} bg-matteo-sand dark:bg-[#111] overflow-hidden relative cursor-pointer group/card shadow-xl`}
+                                            className="w-full aspect-[3/4] bg-matteo-sand dark:bg-[#111] overflow-hidden relative cursor-pointer mb-5"
                                             onClick={() => !soldOut && navigate(`${basePath}/${slugify(group.parentName)}`)}
                                             data-cursor="view"
                                         >
@@ -336,8 +391,10 @@ export const HiddenInventoryTest: React.FC = () => {
                                                     <span className="font-sans text-[10px] uppercase tracking-widest opacity-30">No Image</span>
                                                 </div>
                                             )}
-                                            {/* Dot indicators */}
-                                            {previewImages.length > 1 && (
+                                            {/* Dot indicators — dropped past 8 colours, where a
+                                                dot row overwhelms a small tile; the arrows and the
+                                                colour count in the caption still tell the story. */}
+                                            {previewImages.length > 1 && previewImages.length <= 8 && (
                                                 <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5 pointer-events-none">
                                                     {previewImages.map((_, i) => (
                                                         <div key={i} className={`w-1.5 h-1.5 rounded-full transition-all duration-200 ${i === (activeCardImage[groupIdx] || 0) ? 'bg-white w-3 shadow-sm' : 'bg-white/40'}`}></div>
@@ -345,77 +402,28 @@ export const HiddenInventoryTest: React.FC = () => {
                                                 </div>
                                             )}
                                         </div>
-                                    );
 
-                                    // Ledger entry: number as the single flame, title at display
-                                    // scale, provenance as hairline rows. Real anchors throughout
-                                    // so crawlers reach product pages.
-                                    const infoColumn = (
-                                        <div className="flex flex-col justify-end h-full">
-                                            {/* The ledger number, pressed into the page at the entry's corner */}
-                                            <span className="self-start mb-6">
-                                                <StampSeal lines={[pieceNumber]} muted={soldOut} />
-                                            </span>
-                                            <h3 className={`font-serif ${isFeature ? 'text-4xl md:text-6xl xl:text-7xl' : 'text-3xl md:text-5xl'} text-matteo-charcoal dark:text-white leading-[1.05] mb-8 group-hover:text-matteo-orange transition-colors`}>
-                                                <Link to={`${basePath}/${slugify(group.parentName)}`}>{group.parentName}</Link>
-                                            </h3>
-
-                                            {/* The ledger */}
-                                            <div className="divide-y divide-matteo-charcoal/10 dark:divide-white/10 border-t border-b border-matteo-charcoal/10 dark:border-white/10 mb-8">
-                                                {[
-                                                    ['Edition', totalStock === 1 ? 'One of one' : totalStock ? `${totalStock} pieces` : 'Limited'],
-                                                    ['Status', soldOut ? 'Sold' : 'In stock — ships now'],
-                                                    ['Colours', `${colorCount} ${colorCount === 1 ? 'option' : 'options'}`],
-                                                    ['Price', getPriceRange(group.rawRows)],
-                                                ].map(([label, value]) => (
-                                                    <div key={label} className="flex items-baseline justify-between gap-6 py-3">
-                                                        <span className="font-sans text-[10px] uppercase tracking-[0.15em] text-matteo-charcoal/60 dark:text-white/50 shrink-0">{label}</span>
-                                                        <span className="font-serif text-base md:text-lg text-matteo-charcoal dark:text-white text-right">{value}</span>
-                                                    </div>
-                                                ))}
-                                            </div>
-
-                                            {soldOut ? (
-                                                <span className="self-start font-sans text-[10px] uppercase tracking-[0.2em] px-8 py-3.5 border border-matteo-charcoal/20 dark:border-white/20 text-matteo-stone-ink dark:text-white/60">
-                                                    Sold Out
-                                                </span>
-                                            ) : (
-                                                <Link
-                                                    to={`${basePath}/${slugify(group.parentName)}`}
-                                                    className="self-start font-sans text-[10px] uppercase tracking-[0.2em] px-10 py-4 bg-matteo-charcoal dark:bg-white text-white dark:text-matteo-black group-hover:bg-matteo-orange dark:group-hover:bg-matteo-orange group-hover:text-white dark:group-hover:text-white transition-colors duration-500"
-                                                >
-                                                    Shop This Piece
-                                                </Link>
-                                            )}
-                                        </div>
-                                    );
-
-                                    return (
-                                        <div
-                                            key={groupIdx}
-                                            className={`group grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8 items-end animate-fade-in-up ${soldOut ? 'opacity-60' : ''}`}
-                                            style={{ animationDelay: `${groupIdx * 50}ms` }}
-                                        >
-                                            {isFeature ? (
-                                                <>
-                                                    <div className="md:col-span-7">{imageBox}</div>
-                                                    <div className="md:col-span-5 md:pb-6">{infoColumn}</div>
-                                                </>
-                                            ) : imageLeft ? (
-                                                <>
-                                                    <div className="md:col-span-6">{imageBox}</div>
-                                                    <div className="md:col-span-5 md:col-start-8 md:pb-6">{infoColumn}</div>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <div className="md:col-span-5 md:pb-6 order-2 md:order-1">{infoColumn}</div>
-                                                    <div className="md:col-span-6 md:col-start-7 order-1 md:order-2">{imageBox}</div>
-                                                </>
-                                            )}
+                                    {/* Tile caption: name, price, quiet provenance line —
+                                        real anchors so crawlers reach product pages. */}
+                                    <h3 className="font-serif text-xl md:text-2xl text-matteo-charcoal dark:text-white leading-[1.15] mb-1.5 group-hover/card:text-matteo-orange-ink dark:group-hover/card:text-matteo-orange transition-colors">
+                                        <Link to={`${basePath}/${slugify(group.parentName)}`}>{group.parentName}</Link>
+                                    </h3>
+                                    <p className="font-serif text-base md:text-lg text-matteo-charcoal/80 dark:text-white/70 mb-1.5">
+                                        {getPriceRange(group.rawRows)}
+                                    </p>
+                                    <p className="font-sans text-[10px] uppercase tracking-[0.2em] text-matteo-stone-ink dark:text-white/50">
+                                        {soldOut
+                                            ? 'Sold'
+                                            : totalStock === 1
+                                                ? 'One of One'
+                                                : `${colorCount} ${colorCount === 1 ? 'colour' : 'colours'}`}
+                                    </p>
                                         </div>
                                     );
                                 })}
                             </div>
+                                );
+                            })()
                             )
                         ) : (
                             <div className="py-20 text-center">
