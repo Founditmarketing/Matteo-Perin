@@ -221,19 +221,18 @@ export const HiddenInventoryTest: React.FC = () => {
                     <div className="w-full max-w-[1600px] mx-auto">
                         {groupedInventory.length > 0 ? (
                             isEmbedded ? (
-                                /* Homepage embed: an asymmetric numbered-ledger teaser —
-                                   one featured plate, two offset plates. Never a storefront
-                                   grid; the full ledger treatment lives on /shop.
-                                   A horizontal scroll rail was considered for the desktop
-                                   embed and deliberately rejected: the teaser is hard-capped
-                                   at three pieces, so a rail would never scroll, and it would
-                                   regress this endorsed editorial spread into a carousel. */
+                                /* Homepage embed: a calm three-tile row in the same idiom
+                                   as the /shop grid — one visual language for products
+                                   everywhere. The ledger seal chip stays as the house's
+                                   scarcity mark. (An asymmetric featured+offset spread was
+                                   tried and read as broken scale beside the shop grid.) */
                                 (() => {
                                     const pieces = groupedInventory.slice(0, 3);
-                                    const renderPlate = (group: GroupedProduct, idx: number, featured: boolean) => {
+                                    const renderPlate = (group: GroupedProduct, idx: number) => {
                                         const previewImages = getColorPreviewImages(group);
                                         const soldOut = isAllSoldOut(group.rawRows);
                                         const totalStock = getTotalStock(group.rawRows);
+                                        const colorCount = group.variations.length;
                                         return (
                                             <Link
                                                 key={idx}
@@ -241,10 +240,7 @@ export const HiddenInventoryTest: React.FC = () => {
                                                 className="group block animate-fade-in-up"
                                                 style={{ animationDelay: `${idx * 80}ms` }}
                                             >
-                                                {/* Featured runs landscape — a tabletop product shot
-                                                    can't carry a 1,000px portrait plate; 4/3 keeps the
-                                                    whole teaser inside one viewport. */}
-                                                <div className={`w-full ${featured ? 'aspect-[4/3]' : 'aspect-[4/5]'} bg-matteo-sand dark:bg-[#111] overflow-hidden relative mb-6`} data-cursor="view">
+                                                <div className="w-full aspect-[3/4] bg-matteo-sand dark:bg-[#111] overflow-hidden relative mb-5" data-cursor="view">
                                                     {previewImages[0] ? (
                                                         /* The wrapper carries both the hover scale and the sand
                                                            backdrop: a transform creates a stacking context that
@@ -280,25 +276,25 @@ export const HiddenInventoryTest: React.FC = () => {
                                                         />
                                                     </div>
                                                 </div>
-                                                <h3 className={`font-serif ${featured ? 'text-3xl md:text-4xl xl:text-5xl' : 'text-2xl md:text-3xl'} text-matteo-charcoal dark:text-white leading-[1.1] group-hover:text-matteo-orange-ink dark:group-hover:text-matteo-orange transition-colors mb-2`}>
+                                                <h3 className="font-serif text-xl md:text-2xl text-matteo-charcoal dark:text-white leading-[1.15] group-hover:text-matteo-orange-ink dark:group-hover:text-matteo-orange transition-colors mb-1.5">
                                                     {group.parentName}
                                                 </h3>
-                                                <span className="font-serif text-base md:text-lg text-matteo-charcoal/80 dark:text-white/60">
+                                                <p className="font-serif text-base md:text-lg text-matteo-charcoal/80 dark:text-white/70 mb-1.5">
                                                     {getPriceRange(group.rawRows)}
-                                                </span>
+                                                </p>
+                                                <p className="font-sans text-[10px] uppercase tracking-[0.2em] text-matteo-stone-ink dark:text-white/50">
+                                                    {soldOut
+                                                        ? 'Sold'
+                                                        : totalStock === 1
+                                                            ? 'One of One'
+                                                            : `${colorCount} ${colorCount === 1 ? 'colour' : 'colours'}`}
+                                                </p>
                                             </Link>
                                         );
                                     };
                                     return (
-                                        <div className="grid grid-cols-1 md:grid-cols-12 gap-x-10 gap-y-16">
-                                            <div className="md:col-span-7">
-                                                {pieces[0] && renderPlate(pieces[0], 0, true)}
-                                            </div>
-                                            {pieces.length > 1 && (
-                                                <div className="md:col-span-4 md:col-start-9 flex flex-col gap-16">
-                                                    {pieces.slice(1).map((g, i) => renderPlate(g, i + 1, false))}
-                                                </div>
-                                            )}
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 md:gap-x-10 gap-y-14">
+                                            {pieces.map((g, i) => renderPlate(g, i))}
                                         </div>
                                     );
                                 })()

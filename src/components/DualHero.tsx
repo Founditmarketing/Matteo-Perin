@@ -87,11 +87,11 @@ export const DualHero: React.FC = () => {
     // Each act carries its own declarative line — slide 1 speaks to the
     // making, slide 2 to the wearing. A single shared line made the wipe
     // read as one template refilling itself.
-    // Slide 1 opens on the work itself — the white crocodile commission,
-    // worn — not scenery. matteo_croc_new_2 is used nowhere else on the
-    // site (the croc section below runs new_1; never repeat a photo).
+    // Slide 1 is the Verona aerial — owner's choice (a croc-portrait
+    // hero was tried 2026-07-05 and rejected; don't swap this again
+    // without asking).
     const slide1 = {
-        image: "/assets/croc-jacket/matteo_croc_new_2.webp",
+        image: "/assets/hero_grand_estate.webp",
         subtitle: "MADE IN VERONA",
         title: "The Provenance",
         line: "One-of-one pieces and private commissions, cut and finished by hand in Italy."
@@ -144,12 +144,8 @@ export const DualHero: React.FC = () => {
                         >
                             <ResponsiveImage
                                 baseSrc={slide1.image}
-                                alt="The bespoke white crocodile jacket, worn — the house's Italian provenance in one piece"
-                                /* Portrait source on a 16:9 stage: crop to the jacket —
-                                   collar to hem — and let the face fall cleanly out of
-                                   frame (a chin sliver under the nav logo read as awkward;
-                                   the garment is the subject). */
-                                className="w-full h-full object-cover object-[50%_32%]"
+                                alt="Verona at dusk — where the house's Italian provenance begins"
+                                className="w-full h-full object-cover"
                                 fetchPriority="high"
                                 loading="eager"
                             />
