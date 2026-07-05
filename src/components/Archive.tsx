@@ -137,8 +137,8 @@ export const Archive: React.FC<ArchiveProps> = ({ initialGender }) => {
     const categories = Object.keys(groupedProducts);
 
     const getTitle = () => {
-        if (initialGender === 'men') return "Man";
-        if (initialGender === 'women') return "Woman";
+        if (initialGender === 'men') return "Men";
+        if (initialGender === 'women') return "Women";
         return "The Archive";
     };
 

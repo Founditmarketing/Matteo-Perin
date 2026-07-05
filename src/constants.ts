@@ -74,8 +74,8 @@ export const NAV_ITEMS = [
   { label: 'Press', href: '/press' },
   { label: 'Casa', href: '/furniture' },
   // Right Side (Product & Service - Split Gender)
-  { label: "Man", href: '/lookbook/men' },
-  { label: "Woman", href: '/lookbook/women' },
+  { label: "Men", href: '/lookbook/men' },
+  { label: "Women", href: '/lookbook/women' },
   { label: 'Shop', href: '/shop' },
   { label: 'Bespoke', href: '/bespoke' },
 ];
