@@ -20,15 +20,15 @@ export const Home: React.FC = () => {
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://www.matteoperin.com/" />
       </Helmet>
-      {/* Act order: hero → the flagship commission → what's buyable now →
-          a short collection promenade → the dark quote → the inquiry.
-          The signature piece leads (maison order): the hero promises Italy,
-          the croc jacket proves it, then the Current Edit invites purchase. */}
+      {/* Act order (owner's call, 2026-07-05): hero → what's buyable now →
+          the collection promenade → the dark quote → the flagship commission
+          → the inquiry. The quote sets the register and the croc jacket
+          answers it, flowing straight into the contact form. */}
       <DualHero />
-      <CrocJacketHero />
       <HiddenInventoryTest />
       <Collection />
       <Interlude />
+      <CrocJacketHero />
       <Contact />
     </>
   );
