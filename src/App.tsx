@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { BrowserRouter as Router, Routes, Route, useLocation, useNavigationType, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigationType, useParams, Link } from 'react-router-dom';
 import { Navigation } from './components/Navigation';
 import { Footer } from './components/Footer';
 import { InquiryProvider } from './context/InquiryContext';
@@ -11,42 +11,6 @@ import { ThemeProvider } from './context/ThemeContext';
 import { InquiryModal } from './components/InquiryModal';
 import { Cursor } from './components/Cursor';
 import { StitchTransition, STITCH_COVER_MS } from './components/StitchTransition';
-
-// The concierge drags supabase-js + react-markdown with it (~90KB gzip), so it
-// stays out of the initial bundle: the shell renders an identical launcher
-// button and the real component loads on first click.
-const DigitalConcierge = React.lazy(() => import('./components/DigitalConcierge').then(m => ({ default: m.DigitalConcierge })));
-
-const ConciergeLauncherButton: React.FC<{ onClick?: () => void; suppressedOnMobile?: boolean }> = ({ onClick, suppressedOnMobile }) => (
-    <button
-        onClick={onClick}
-        aria-label="Open the Digital Concierge"
-        className={`fixed bottom-6 lg:bottom-8 right-6 lg:right-8 z-[90000] mix-blend-difference opacity-70 hover:opacity-100 transition-opacity duration-700 ${suppressedOnMobile ? 'hidden lg:flex' : 'flex'} flex-col items-end`}
-    >
-        <div className="w-12 h-12 rounded-full border border-white flex items-center justify-center mb-2">
-            <span className="font-serif italic text-white text-xl">M</span>
-        </div>
-        <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-white">Concierge</span>
-    </button>
-);
-
-const ConciergeGate: React.FC = () => {
-    const [requested, setRequested] = useState(false);
-    const { pathname } = useLocation();
-    // The croc landing page has its own sticky buy bar on mobile (z-50,
-    // bottom-0); the launcher's z-[90000] would intercept taps on the
-    // Secure Deposit button, so the launcher yields on that route.
-    const suppressedOnMobile = pathname === '/bespoke-crocodile-jacket';
-
-    if (!requested) {
-        return <ConciergeLauncherButton onClick={() => setRequested(true)} suppressedOnMobile={suppressedOnMobile} />;
-    }
-    return (
-        <Suspense fallback={<ConciergeLauncherButton suppressedOnMobile={suppressedOnMobile} />}>
-            <DigitalConcierge initialOpen suppressLauncherOnMobile={suppressedOnMobile} />
-        </Suspense>
-    );
-};
 
 // Code-split all page-level routes for smaller initial bundle
 const Home = React.lazy(() => import('./components/Home').then(m => ({ default: m.Home })));
@@ -63,7 +27,7 @@ const Privacy = React.lazy(() => import('./components/Privacy').then(m => ({ def
 const ArticleDetail = React.lazy(() => import('./components/ArticleDetail').then(m => ({ default: m.ArticleDetail })));
 const ProductDetail = React.lazy(() => import('./components/ProductDetail').then(m => ({ default: m.ProductDetail })));
 const Press = React.lazy(() => import('./components/Press').then(m => ({ default: m.Press })));
-const Lifestyle = React.lazy(() => import('./components/Lifestyle').then(m => ({ default: m.Lifestyle })));
+const Enquire = React.lazy(() => import('./components/Enquire').then(m => ({ default: m.Enquire })));
 
 const CrocJacketLanding = React.lazy(() => import('./components/CrocJacketLanding').then(m => ({ default: m.CrocJacketLanding })));
 const FurnitureCollection = React.lazy(() => import('./components/FurnitureCollection').then(m => ({ default: m.FurnitureCollection })));
@@ -75,6 +39,13 @@ const HiddenInventoryTest = React.lazy(() => import('./components/HiddenInventor
 const ClientServices = React.lazy(() => import('./components/ClientServices').then(m => ({ default: m.ClientServices })));
 const InventoryProductPage = React.lazy(() => import('./components/InventoryProductPage').then(m => ({ default: m.InventoryProductPage })));
 const Checkout = React.lazy(() => import('./components/Checkout').then(m => ({ default: m.Checkout })));
+
+// /inventory-test-hidden/:productName predates /shop — forward legacy product
+// links to the same slug under the canonical path.
+const LegacyInventoryRedirect: React.FC = () => {
+    const { productName } = useParams();
+    return <Navigate to={productName ? `/shop/${productName}` : '/shop'} replace />;
+};
 
 // Inline Thank You Page — no separate file needed
 interface OrderSummary {
@@ -313,19 +284,26 @@ const AnimatedRoutes = () => {
                 <Route path="/press" element={<PageTransition><Press /></PageTransition>} />
                 <Route path="/bespoke" element={<PageTransition><Bespoke /></PageTransition>} />
                 <Route path="/the-house" element={<PageTransition><TheHouse /></PageTransition>} />
-                <Route path="/lifestyle" element={<PageTransition><Lifestyle /></PageTransition>} />
+                <Route path="/enquire" element={<PageTransition><Enquire /></PageTransition>} />
+                {/* Retired paths — every enquiry route leads to the concierge hub,
+                    and the orphaned lifestyle page folds into The House. */}
+                <Route path="/contact" element={<Navigate to="/enquire" replace />} />
+                <Route path="/lifestyle" element={<Navigate to="/the-house" replace />} />
                 <Route path="/access" element={<PageTransition><PrivateAccess /></PageTransition>} />
                 <Route path="/vault" element={<PageTransition><Vault /></PageTransition>} />
                 <Route path="/portal" element={<PageTransition><ClientPortal /></PageTransition>} />
                 <Route path="/privacy" element={<PageTransition><Privacy /></PageTransition>} />
 
                 <Route path="/bespoke-crocodile-jacket" element={<PageTransition><CrocJacketLanding /></PageTransition>} />
-                <Route path="/furniture" element={<PageTransition><FurnitureCollection /></PageTransition>} />
+                {/* Casa lives at /casa — matching the nav vocabulary; the old
+                    /furniture path forwards. */}
+                <Route path="/casa" element={<PageTransition><FurnitureCollection /></PageTransition>} />
+                <Route path="/furniture" element={<Navigate to="/casa" replace />} />
                 <Route path="/dossier" element={<PageTransition><DossierLogin /></PageTransition>} />
                 <Route path="/dossier-dashboard" element={<PageTransition><DossierDashboard /></PageTransition>} />
                 <Route path="/private-client" element={<PageTransition><PrivateClientForm /></PageTransition>} />
-                <Route path="/inventory-test-hidden" element={<PageTransition><HiddenInventoryTest /></PageTransition>} />
-                <Route path="/inventory-test-hidden/:productName" element={<PageTransition><InventoryProductPage /></PageTransition>} />
+                <Route path="/inventory-test-hidden" element={<Navigate to="/shop" replace />} />
+                <Route path="/inventory-test-hidden/:productName" element={<LegacyInventoryRedirect />} />
                 <Route path="/shop" element={<PageTransition><HiddenInventoryTest /></PageTransition>} />
                 <Route path="/shop/:productName" element={<PageTransition><InventoryProductPage /></PageTransition>} />
                 <Route path="/shipping-returns" element={<PageTransition><ClientServices /></PageTransition>} />
@@ -352,7 +330,6 @@ function App() {
                     <div className="relative w-full min-h-screen flex flex-col justify-between transition-colors duration-700 bg-matteo-cream dark:bg-matteo-black text-matteo-charcoal dark:text-matteo-cream">
                         {/* Global Cursor Override Options */}
                         <Cursor />
-                        <ConciergeGate />
                         <CartSidebar />
 
                         <Navigation />

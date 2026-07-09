@@ -8,6 +8,7 @@ const CONFIG: LookbookConfig = {
     label: "Men's Lookbook",
     subline: "Luxury Men's Clothing \u00B7 Jackson Hole, Wyoming",
     quote: 'Form strictly follows intent.',
+    enquiryContext: 'Men Lookbook',
     helmet: {
         title: "Luxury Men's Clothing in Jackson, WY | Matteo Perin",
         description: "Discover luxury men's clothing in Jackson, Wyoming. Matteo Perin's men's lookbook features bespoke jackets, suits, and exotic outerwear, handcrafted in Italy and available at our Jackson Hole showroom on 164 E Deloney Ave.",

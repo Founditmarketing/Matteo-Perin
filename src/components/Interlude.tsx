@@ -40,22 +40,17 @@ export const Interlude: React.FC = () => {
                 </RevealOnScroll>
 
                 <RevealOnScroll delay={0.1}>
-                    {/* Hairline flourish — a short centered rule, the house speaking softly */}
-                    <span className="block h-[1px] w-16 md:w-24 mx-auto bg-matteo-orange/60 mb-10 md:mb-14" aria-hidden="true" />
-
-                    {/* The pull-quote at display scale — italic Playfair, one aside,
-                        enormous. The <br> only applies from md up so the line wraps
-                        naturally (never clips) at 375px. The size ladder is staged so
-                        the first line ("You do not wear it for the room.") always fits
-                        unbroken wherever the hard break is active — 72px needs ~950px
-                        of measure, hence xl; 60px fits the lg container; 48px fits md —
-                        otherwise the break strands a widowed "room." on its own line. */}
-                    <h2 className="font-serif italic text-4xl md:text-5xl lg:text-6xl xl:text-7xl text-white leading-[1.15] font-light tracking-tight">
-                        "You do not wear it for the room.<br className="hidden md:inline" />{' '}
-                        You wear it for yourself."
+                    {/* The pull-quote at poster scale — italic Playfair, one aside,
+                        owning the panel. clamp() ties the size to the viewport
+                        (8vw, floored at 3rem, capped at 7.5rem) so the type is the
+                        panel's architecture at every width. No hard break: at this
+                        scale the first sentence outruns any fixed measure, so
+                        text-balance wraps the two sentences into even poster lines
+                        and never strands a widowed "room." The hairline rules that
+                        used to frame the smaller setting fought this scale — gone. */}
+                    <h2 className="font-serif italic text-[clamp(3rem,8vw,7.5rem)] text-white leading-[1.05] font-light tracking-tight text-balance">
+                        "You do not wear it for the room. You wear it for yourself."
                     </h2>
-
-                    <span className="block h-[1px] w-16 md:w-24 mx-auto bg-matteo-orange/60 mt-10 md:mt-14" aria-hidden="true" />
                 </RevealOnScroll>
             </div>
         </section>

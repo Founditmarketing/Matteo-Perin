@@ -50,8 +50,10 @@ const ROUTES = [
   '/bespoke',
   '/press',
   '/journal',
-  '/lifestyle',
-  '/furniture',
+  '/enquire',
+  // /lifestyle and /furniture now redirect in the SPA (→ /the-house and
+  // /casa); prerendering redirect shells would emit soft-duplicate HTML.
+  '/casa',
   '/collection',
   '/shipping-returns',
   // Journal articles are intentionally NOT prerendered or emitted to the

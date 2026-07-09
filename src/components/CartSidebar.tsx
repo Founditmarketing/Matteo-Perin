@@ -1,19 +1,57 @@
 
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { useNavigate } from 'react-router-dom';
 import { useModalA11y } from '../lib/useModalA11y';
+import { trackBeginCheckout } from '../lib/analytics';
+
+// Read the GA4 client id from the `_ga` cookie (format: GA1.1.<id>.<ts>).
+// Returns the "<id>.<ts>" portion GA4 uses as client_id, or '' if absent.
+// Mirrors the helper in Checkout.tsx so both entry points attribute alike.
+const getGaClientId = (): string => {
+    if (typeof document === 'undefined') return '';
+    const match = document.cookie.match(/_ga=GA\d\.\d\.(\d+\.\d+)/);
+    return match ? match[1] : '';
+};
 
 export const CartSidebar: React.FC = () => {
   const { isCartOpen, setIsCartOpen, cartItems, removeFromCart, updateQuantity, cartTotal } = useCart();
   const navigate = useNavigate();
   const panelRef = useRef<HTMLDivElement>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   useModalA11y(isCartOpen, () => setIsCartOpen(false), panelRef);
 
-  const handleCheckout = () => {
-      setIsCartOpen(false);
-      navigate('/checkout');
+  // The drawer is already the review step, so checkout goes straight to
+  // Stripe's secure page — same request shape and analytics as Checkout.tsx.
+  // On ANY failure the /checkout page remains the recovery path.
+  const handleCheckout = async () => {
+      if (isProcessing) return;
+      setIsProcessing(true);
+      trackBeginCheckout(cartItems, cartTotal);
+      try {
+          const response = await fetch('/api/create-checkout-session', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                  items: cartItems,
+                  gaClientId: getGaClientId(),
+              }),
+          });
+
+          const session = await response.json().catch(() => ({}));
+          if (!response.ok || !session.url) {
+              throw new Error(session.error || 'We could not start the payment.');
+          }
+
+          window.location.href = session.url;
+          // isProcessing stays true while the browser leaves for Stripe.
+      } catch (err) {
+          console.error('Bag checkout error:', err);
+          setIsProcessing(false);
+          setIsCartOpen(false);
+          navigate('/checkout');
+      }
   };
 
   if (!isCartOpen) return null;
@@ -160,12 +198,20 @@ export const CartSidebar: React.FC = () => {
                         </p>
                     </div>
                 )}
-                <button 
+                <button
                     onClick={handleCheckout}
-                    className="w-full bg-matteo-charcoal dark:bg-white text-white dark:text-matteo-black py-5 font-sans text-xs uppercase tracking-[0.2em] hover:bg-matteo-orange dark:hover:bg-matteo-orange hover:text-white dark:hover:text-white transition-colors duration-300 flex justify-center items-center gap-2"
+                    disabled={isProcessing}
+                    className="w-full bg-matteo-charcoal dark:bg-white text-white dark:text-matteo-black py-5 font-sans text-xs uppercase tracking-[0.2em] hover:bg-matteo-orange dark:hover:bg-matteo-orange hover:text-white dark:hover:text-white transition-colors duration-300 flex justify-center items-center gap-2 disabled:opacity-70 disabled:cursor-wait"
                 >
-                    <span>Proceed to Checkout</span>
+                    <span>{isProcessing ? 'Opening Secure Payment…' : 'Proceed to Checkout'}</span>
                 </button>
+                {/* Bank-transfer alternative — wording mirrors /checkout */}
+                <p className="font-serif italic text-[11px] text-matteo-stone-ink dark:text-white/60 mt-4 leading-relaxed">
+                    Prefer to reserve by bank transfer? Write to{' '}
+                    <a href="mailto:concierge@matteoperin.com" className="border-b border-matteo-charcoal/30 dark:border-white/30 hover:text-matteo-orange-ink dark:hover:text-matteo-orange transition-colors">concierge@matteoperin.com</a>
+                    {' '}or call{' '}
+                    <a href="tel:+13072649655" className="border-b border-matteo-charcoal/30 dark:border-white/30 hover:text-matteo-orange-ink dark:hover:text-matteo-orange transition-colors">307.264.9655</a>.
+                </p>
             </div>
         )}
       </div>

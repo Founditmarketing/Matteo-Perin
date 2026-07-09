@@ -155,6 +155,11 @@ export default async function handler(req, res) {
     const origin = resolveOrigin(req);
 
     const sessionData = {
+      // Card only, deliberately. To offer ACH Direct Debit for five-figure
+      // deposits, it must FIRST be enabled in the Stripe Dashboard
+      // (Settings → Payment methods); only then may 'us_bank_account' be
+      // added here — adding it before the dashboard step fails session
+      // creation outright.
       payment_method_types: ['card'],
       line_items: lineItems,
       mode: 'payment',
@@ -172,6 +177,18 @@ export default async function handler(req, res) {
 
     if (customerEmail) {
       sessionData.customer_email = customerEmail;
+    }
+
+    // Deposit sessions: state the commission terms on Stripe's own payment
+    // page, so the payer never meets a bare card form with no context. The
+    // wording restates facts already published on the croc page and
+    // /shipping-returns — nothing new is claimed.
+    if (isDeposit) {
+      sessionData.custom_text = {
+        submit: {
+          message: 'Your deposit reserves the commission slot. The remaining balance is invoiced privately before production begins.',
+        },
+      };
     }
 
     // Physical orders: Stripe collects the shipping address and phone, and

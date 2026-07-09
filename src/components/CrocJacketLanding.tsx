@@ -52,6 +52,18 @@ const LEDGER_ROWS: [string, string][] = [
     ["Edition", "One of one"],
 ];
 
+// --- Deposit Terms: the payment facts, stated before the card page ---
+// Every row restates language already published on-site (the Shipping &
+// Delivery accordion below and /shipping-returns) — nothing new is claimed.
+// NOTE FOR THE HOUSE: whether the deposit is refundable BEFORE production
+// begins is stated nowhere on the site. These rows deliberately make no
+// refund claim either way — please specify the policy so a row can state it.
+const DEPOSIT_TERMS_ROWS: [string, string][] = [
+    ["Deposit", "Reserves your commission slot"],
+    ["Balance", "Invoiced privately before production begins"],
+    ["Final sale", "Once production begins — confirmed with you first"],
+];
+
 // --- Specification Accordion Item ---
 const AccordionItem: React.FC<{ title: string; children: React.ReactNode; defaultOpen?: boolean; onOpen?: () => void }> = ({ title, children, defaultOpen = false, onOpen }) => {
     const [isOpen, setIsOpen] = useState(defaultOpen);
@@ -668,6 +680,36 @@ export const CrocJacketLanding: React.FC = () => {
                             >
                                 Schedule a Private Viewing
                             </button>
+                        </motion.div>
+
+                        {/* The bank-transfer alternative — card limits are a real obstacle
+                            at this amount; the concierge is not. Wording mirrors /checkout. */}
+                        <motion.p variants={fadeUpVariant} className="font-serif italic text-[15px] text-matteo-charcoal/80 dark:text-white/70 leading-relaxed mb-8">
+                            Prefer to reserve by bank transfer? Write to{' '}
+                            <a href="mailto:concierge@matteoperin.com" className="border-b border-matteo-charcoal/30 dark:border-white/30 hover:text-matteo-orange-ink dark:hover:text-matteo-orange transition-colors">concierge@matteoperin.com</a>
+                            {' '}or call{' '}
+                            <a href="tel:+13072649655" className="border-b border-matteo-charcoal/30 dark:border-white/30 hover:text-matteo-orange-ink dark:hover:text-matteo-orange transition-colors">307.264.9655</a>.
+                        </motion.p>
+
+                        {/* Deposit Terms — hairline ledger in the page's spec-table idiom,
+                            always visible (no accordion) so the terms precede the card page.
+                            // NOTE FOR THE HOUSE: refund policy before production start is
+                            not published anywhere; see DEPOSIT_TERMS_ROWS above. */}
+                        <motion.div variants={fadeUpVariant} className="mb-8">
+                            <span className="block font-sans text-[10px] uppercase tracking-[0.25em] font-medium text-matteo-stone-ink dark:text-white/60 mb-3">
+                                Deposit Terms
+                            </span>
+                            <dl className="divide-y divide-matteo-charcoal/10 dark:divide-white/10 border-t border-b border-matteo-charcoal/10 dark:border-white/10">
+                                {DEPOSIT_TERMS_ROWS.map(([label, value]) => (
+                                    <div key={label} className="flex items-baseline justify-between gap-6 py-3">
+                                        <dt className="font-sans text-[10px] uppercase tracking-[0.15em] font-medium text-matteo-stone-ink dark:text-white/60 shrink-0">{label}</dt>
+                                        <dd className="font-serif text-sm text-matteo-charcoal dark:text-white text-right">{value}</dd>
+                                    </div>
+                                ))}
+                            </dl>
+                            <p className="font-serif italic text-[15px] text-matteo-charcoal/80 dark:text-white/70 mt-3 leading-relaxed">
+                                Bespoke commissions are crafted for you alone — final sale is confirmed with you explicitly before any commission is accepted.
+                            </p>
                         </motion.div>
 
                         {/* The Ledger — mobile keeps it in the rail (the hero shows it md+) */}

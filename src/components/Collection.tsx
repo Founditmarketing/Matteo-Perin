@@ -378,7 +378,7 @@ export const Collection: React.FC = () => {
 
                     <div className="hidden md:flex flex-col justify-center w-[20vw] max-w-xs shrink-0 pr-8 border-r border-matteo-charcoal/10 dark:border-white/10 h-[400px]">
                         <span className="block mt-8 font-sans text-[10px] uppercase tracking-[0.25em] font-medium text-matteo-orange-ink dark:text-matteo-orange">
-                            Latest
+                            Spring 2025
                         </span>
                     </div>
 

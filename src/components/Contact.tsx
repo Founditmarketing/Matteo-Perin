@@ -25,7 +25,7 @@ const FloatingInput = React.memo(({
     label: string;
     name: string;
     value: string;
-    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
     type?: string;
     required?: boolean;
     className?: string;
@@ -65,6 +65,72 @@ const FloatingInput = React.memo(({
         <label
             htmlFor={name}
             className="absolute left-0 top-5 font-sans text-[10px] uppercase tracking-widest text-matteo-stone-ink dark:text-matteo-stone duration-300 transform -translate-y-0 scale-100 origin-[0] peer-focus:-translate-y-5 peer-focus:text-matteo-orange peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-90 peer-not-placeholder-shown:-translate-y-5 peer-not-placeholder-shown:scale-90 pointer-events-none"
+        >
+            {label}
+        </label>
+    </div>
+));
+
+// --- Intent Select (same underline idiom as FloatingInput) ---
+// A <select> has no placeholder state for the peer-* label trick, so the
+// float is driven off `value` in JS instead; focus draws the same
+// terracotta underline. Submits through the `subject` payload field.
+const INTENT_OPTIONS = [
+    'Bespoke Commission',
+    'One-of-One Acquisition',
+    'Casa — Furniture',
+    'The Crocodile Jacket',
+    'Press & Media',
+    'Something Else',
+];
+
+const FloatingSelect = React.memo(({
+    label,
+    name,
+    value,
+    onChange,
+    options,
+    className = ""
+}: {
+    label: string;
+    name: string;
+    value: string;
+    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
+    options: string[];
+    className?: string;
+}) => (
+    <div className={`relative pt-5 group ${className} w-full`}>
+        <select
+            name={name}
+            id={name}
+            value={value}
+            onChange={onChange}
+            required
+            className="block w-full bg-transparent border-b border-matteo-charcoal/20 dark:border-white/20 py-2 pr-6 font-serif text-xl text-matteo-charcoal dark:text-white focus:outline-none transition-colors peer appearance-none rounded-none cursor-pointer"
+        >
+            {/* Empty resting state — the floating label reads as the prompt */}
+            <option value="" disabled hidden></option>
+            {options.map((opt) => (
+                <option key={opt} value={opt} className="font-sans text-sm bg-matteo-cream text-matteo-charcoal dark:bg-[#0a0a0a] dark:text-white">
+                    {opt}
+                </option>
+            ))}
+        </select>
+        {/* Quiet chevron in place of the stripped native arrow */}
+        <svg
+            aria-hidden="true"
+            className="absolute right-0 bottom-3.5 w-3 h-3 text-matteo-stone-ink dark:text-matteo-stone pointer-events-none"
+            viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1}
+        >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+        </svg>
+        <span
+            aria-hidden="true"
+            className="absolute bottom-0 left-0 w-full h-px bg-matteo-orange origin-left scale-x-0 peer-focus:scale-x-100 transition-transform duration-[600ms] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none pointer-events-none"
+        />
+        <label
+            htmlFor={name}
+            className={`absolute left-0 top-5 font-sans text-[10px] uppercase tracking-widest text-matteo-stone-ink dark:text-matteo-stone duration-300 transform origin-[0] peer-focus:-translate-y-5 peer-focus:scale-90 peer-focus:text-matteo-orange pointer-events-none ${value ? '-translate-y-5 scale-90' : '-translate-y-0 scale-100'}`}
         >
             {label}
         </label>
@@ -112,7 +178,7 @@ const ContactForm = memo(() => {
     const [isSuccess, setIsSuccess] = useState(false);
     const [submitError, setSubmitError] = useState(false);
 
-    const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
     }, []);
@@ -149,11 +215,12 @@ const ContactForm = memo(() => {
 
     return (
         <div className="w-full md:w-1/2 flex flex-col justify-center px-6 md:px-16 py-12 md:py-20 order-2 bg-matteo-cream dark:bg-[#0a0a0a] transition-colors duration-700 relative">
-            <div className="max-w-md mx-auto w-full">
+            <div className="max-w-xl mx-auto w-full">
                 {!isSuccess ? (
                     <RevealOnScroll>
                         <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-matteo-orange-ink dark:text-matteo-orange mb-4 block">Inquiry</span>
-                        <h2 className="font-serif text-3xl md:text-5xl text-matteo-charcoal dark:text-white font-light mb-6 leading-tight">
+                        {/* Section-display scale — the same register as The Current Edit's heading */}
+                        <h2 className="font-serif text-5xl md:text-6xl text-matteo-charcoal dark:text-white font-light mb-6 leading-[1.05]">
                             Begin the<br />Dialogue
                         </h2>
                         <p className="font-serif text-matteo-charcoal/70 dark:text-white/60 mb-12 text-lg leading-relaxed">
@@ -161,10 +228,13 @@ const ContactForm = memo(() => {
                         </p>
 
                         <form onSubmit={handleSubmit} className="space-y-10">
-                            <FloatingInput label="Full Name" name="name" value={formData.name} onChange={handleChange} />
-                            <FloatingInput label="Email Address" name="email" type="email" value={formData.email} onChange={handleChange} />
-                            <FloatingInput label="Phone Number" name="phone" type="tel" value={formData.phone} onChange={handleChange} required={false} />
-                            <FloatingInput label="Subject" name="subject" value={formData.subject} onChange={handleChange} />
+                            {/* Short fields pair up from md; Message keeps the full measure */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10">
+                                <FloatingInput label="Full Name" name="name" value={formData.name} onChange={handleChange} />
+                                <FloatingInput label="Email Address" name="email" type="email" value={formData.email} onChange={handleChange} />
+                                <FloatingInput label="Phone Number" name="phone" type="tel" value={formData.phone} onChange={handleChange} required={false} />
+                                <FloatingSelect label="Intent" name="subject" value={formData.subject} onChange={handleChange} options={INTENT_OPTIONS} />
+                            </div>
                             <FloatingInput label="Message" name="message" type="textarea" value={formData.message} onChange={handleChange} required={false} />
 
                             {submitError && (
@@ -190,6 +260,25 @@ const ContactForm = memo(() => {
                                 </button>
                             </div>
                         </form>
+
+                        {/* The door itself — for those who would rather call in person */}
+                        <div className="mt-14 pt-8 border-t border-matteo-charcoal/10 dark:border-white/10 grid grid-cols-1 sm:grid-cols-2 gap-8">
+                            <div>
+                                <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-matteo-orange-ink dark:text-matteo-orange font-medium block mb-3">The Showroom</span>
+                                <p className="font-serif text-[15px] text-matteo-charcoal/70 dark:text-white/60 leading-relaxed">
+                                    164 E Deloney Ave<br />
+                                    Jackson, Wyoming 83001
+                                </p>
+                            </div>
+                            <div>
+                                <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-matteo-orange-ink dark:text-matteo-orange font-medium block mb-3">Hours</span>
+                                <p className="font-serif text-[15px] text-matteo-charcoal/70 dark:text-white/60 leading-relaxed">
+                                    M&ndash;F: 10am &ndash; 6pm<br />
+                                    Sat: 10am &ndash; 5pm<br />
+                                    Sun: 12pm &ndash; 5pm
+                                </p>
+                            </div>
+                        </div>
                     </RevealOnScroll>
                 ) : (
                     <div className="animate-fade-in-up text-center py-12">

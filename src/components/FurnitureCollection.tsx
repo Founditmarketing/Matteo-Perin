@@ -417,10 +417,10 @@ const HeroSection: React.FC = () => {
               <span>Explore Collection</span>
               <span className="block w-6 h-[1px] bg-white group-hover:w-10 group-hover:bg-matteo-orange transition-all duration-500" />
             </button>
-            {/* No `look` state: the Bespoke form's prefill speaks of the
-                Lookbook, which is not where a Casa buyer is coming from. */}
+            {/* Casa prospects go to the concierge hub, not the tailoring
+                funnel — /enquire carries the ref so the house knows the ask. */}
             <Link
-              to="/bespoke" state={{ inquire: true }}
+              to="/enquire?ref=Casa"
               className="inline-flex items-center px-6 py-3 border border-white/20 hover:border-white/50 font-sans text-[11px] uppercase tracking-[0.25em] text-white/80 hover:text-white transition-all duration-500"
             >
               Request Bespoke
@@ -1200,7 +1200,7 @@ const CinematicInterstitial: React.FC = () => {
         <p className="font-sans text-[10px] uppercase tracking-[0.25em] font-medium text-matteo-orange mb-8">Handmade in Verona</p>
         <h2 className="font-serif text-4xl md:text-6xl lg:text-7xl text-white leading-[1.1] tracking-tight max-w-3xl">Where Form Follows <em className="italic font-light">Feeling</em></h2>
         <div className="mt-12">
-          <Link to="/bespoke" state={{ inquire: true }} className="group inline-flex items-center gap-4 px-8 py-4 border border-white/30 hover:border-matteo-orange hover:bg-matteo-orange/10 transition-all duration-500">
+          <Link to="/enquire?ref=Casa" className="group inline-flex items-center gap-4 px-8 py-4 border border-white/30 hover:border-matteo-orange hover:bg-matteo-orange/10 transition-all duration-500">
             <span className="font-sans text-[11px] uppercase tracking-[0.25em] text-white">Commission a Custom Piece</span>
             <svg className="w-4 h-4 text-white group-hover:translate-x-1 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
           </Link>
@@ -1225,7 +1225,7 @@ const ConsultationCTA: React.FC = () => {
         <h2 className="font-serif text-3xl md:text-5xl text-matteo-charcoal dark:text-matteo-cream leading-[1.15] tracking-tight mb-8">Your Vision, <br />Our Craft</h2>
         <p className="font-serif text-base md:text-lg text-matteo-charcoal/80 dark:text-matteo-cream/80 leading-relaxed mb-12 max-w-lg mx-auto">Every Matteo Perin casa piece can be customized — dimensions, fabrics, finishes, and materials. Our design consultants guide you through every selection, creating a piece that is uniquely, irrevocably yours.</p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-          <Link to="/bespoke" state={{ inquire: true }} className="group inline-flex items-center gap-3 px-10 py-4 bg-matteo-charcoal dark:bg-white text-white dark:text-matteo-charcoal hover:bg-matteo-orange dark:hover:bg-matteo-orange dark:hover:text-white transition-all duration-500"><span className="font-sans text-[11px] uppercase tracking-[0.25em]">Book a Consultation</span></Link>
+          <Link to="/enquire?ref=Casa" className="group inline-flex items-center gap-3 px-10 py-4 bg-matteo-charcoal dark:bg-white text-white dark:text-matteo-charcoal hover:bg-matteo-orange dark:hover:bg-matteo-orange dark:hover:text-white transition-all duration-500"><span className="font-sans text-[11px] uppercase tracking-[0.25em]">Book a Consultation</span></Link>
           <Link to="/the-house" className="group inline-flex items-center gap-3 font-sans text-[11px] uppercase tracking-[0.25em] text-matteo-charcoal/80 dark:text-matteo-cream/80 hover:text-matteo-orange transition-colors duration-500"><span>Visit The House</span><span className="w-6 h-[1px] bg-current group-hover:w-10 transition-all duration-500" /></Link>
         </div>
       </motion.div>
@@ -1422,7 +1422,7 @@ export const FurnitureCollection: React.FC = () => {
       <Helmet>
         <title>Casa — Matteo Perin | Italian Luxury Living</title>
         <meta name="description" content="Casa — the furniture line of Matteo Perin. Seventeen pieces of Italian luxury living, each made once: sofas, armchairs, dining, and tables handcrafted in Italy." />
-        <link rel="canonical" href="https://www.matteoperin.com/furniture" />
+        <link rel="canonical" href="https://www.matteoperin.com/casa" />
         {/* Poster is the hero's first paint — ask for it early */}
         <link rel="preload" as="image" href="/assets/furniture/casa-hero-poster.webp" />
 
@@ -1433,7 +1433,7 @@ export const FurnitureCollection: React.FC = () => {
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
         <meta name="twitter:image" content="https://www.matteoperin.com/assets/og/og-casa.jpg" />
-        <meta property="og:url" content="https://www.matteoperin.com/furniture" />
+        <meta property="og:url" content="https://www.matteoperin.com/casa" />
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content="Matteo Perin" />
 
@@ -1443,7 +1443,7 @@ export const FurnitureCollection: React.FC = () => {
             '@type': 'CollectionPage',
             name: 'Casa — Matteo Perin',
             description: 'Casa — the furniture line of Matteo Perin. Italian luxury living, handcrafted in Italy.',
-            url: 'https://www.matteoperin.com/furniture',
+            url: 'https://www.matteoperin.com/casa',
             provider: {
               '@type': 'Organization',
               name: 'Matteo Perin',

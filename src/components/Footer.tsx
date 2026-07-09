@@ -1,10 +1,9 @@
 
 import React, { useRef, useState } from 'react';
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 export const Footer: React.FC = () => {
-    const navigate = useNavigate();
     const footerRef = useRef<HTMLElement>(null);
     const [email, setEmail] = useState('');
     const [subscribed, setSubscribed] = useState(false);
@@ -19,28 +18,6 @@ export const Footer: React.FC = () => {
         offset: ["start end", "end end"]
     });
     const sealRotate = useTransform(scrollYProgress, [0, 1], [0, 100]);
-
-    const handleNav = (e: React.MouseEvent, path: string) => {
-        e.preventDefault();
-        // Handle simple hash routing manually for Footer for consistency
-        if (path.includes('#')) {
-            const [route, hash] = path.split('#');
-            navigate(route);
-            setTimeout(() => {
-                const el = document.getElementById(hash);
-                if (el) {
-                    if (window.lenis) {
-                        window.lenis.scrollTo(el);
-                    } else {
-                        el.scrollIntoView({ behavior: 'smooth' });
-                    }
-                }
-            }, 300);
-        } else {
-            navigate(path);
-            window.scrollTo(0, 0);
-        }
-    };
 
     const handleSubscribe = async () => {
         // An invalid email used to silently no-op; say so instead.
@@ -130,11 +107,11 @@ export const Footer: React.FC = () => {
                         <h4 className="font-sans text-[11px] uppercase tracking-[0.25em] font-medium text-matteo-orange mb-6">Explore</h4>
                         <ul className="space-y-4 font-serif text-white/80">
                             <li><Link to="/the-house" onClick={() => window.scrollTo(0, 0)} className="hover:text-white transition-colors block py-1">The House</Link></li>
-                            <li><a href="/#collection" onClick={(e) => handleNav(e, '/#collection')} className="hover:text-white transition-colors block py-1">Collections</a></li>
+                            <li><Link to="/collection" onClick={() => window.scrollTo(0, 0)} className="hover:text-white transition-colors block py-1">Collections</Link></li>
                             <li><Link to="/bespoke" onClick={() => window.scrollTo(0, 0)} className="hover:text-white transition-colors block py-1">Bespoke Process</Link></li>
                             {/* Journal link intentionally removed until the Journal carries real essays — restore alongside ArticleDetail. */}
                             <li><Link to="/bespoke-crocodile-jacket" onClick={() => window.scrollTo(0, 0)} className="hover:text-white transition-colors block py-1">Bespoke Crocodile Jacket</Link></li>
-                            <li><a href="/#contact" onClick={(e) => handleNav(e, '/#contact')} className="hover:text-white transition-colors block py-1">Enquire</a></li>
+                            <li><Link to="/enquire" onClick={() => window.scrollTo(0, 0)} className="hover:text-white transition-colors block py-1">Enquire</Link></li>
                             <li><Link to="/shipping-returns" onClick={() => window.scrollTo(0, 0)} className="hover:text-white transition-colors block py-1">Shipping &amp; Returns</Link></li>
                             <li><Link to="/private-client" onClick={() => window.scrollTo(0, 0)} className="hover:text-white transition-colors block py-1">Private Client</Link></li>
                         </ul>

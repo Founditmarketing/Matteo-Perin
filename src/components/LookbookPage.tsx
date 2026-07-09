@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { createPortal } from 'react-dom';
 import { RevealOnScroll } from './RevealOnScroll';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ResponsiveImage } from './ResponsiveImage';
 import { motion, AnimatePresence, useScroll, useTransform, useSpring, useReducedMotion } from 'framer-motion';
 
@@ -15,6 +15,9 @@ export interface LookbookConfig {
     label: string;            // "Men's Lookbook"
     subline: string;          // "Luxury Men's Clothing · Jackson Hole, Wyoming"
     quote: string;            // typography-break pull quote
+    /** Free-text context handed to the concierge desk — "Men Lookbook";
+     *  each look appends its own number: "Men Lookbook — Look 04". */
+    enquiryContext: string;
     helmet: {
         title: string;
         description: string;
@@ -36,11 +39,12 @@ const LookbookItem: React.FC<{
     smoothProgress: any;
     viewMode: 'editorial' | 'index';
     quote: string;
+    enquiryContext: string;
     /** Scroll-linked parallax is desktop-only and skipped for reduced motion —
      *  useScroll/useTransform are not covered by MotionConfig reducedMotion. */
     parallaxEnabled: boolean;
     setSelectedLook: (look: LookItem) => void;
-}> = ({ look, index, smoothProgress, viewMode, quote, parallaxEnabled, setSelectedLook }) => {
+}> = ({ look, index, smoothProgress, viewMode, quote, enquiryContext, parallaxEnabled, setSelectedLook }) => {
     // High-Fashion Spread Layout Engine
     const isFeature = index % 5 === 0;
     const isRightAligned = index % 5 === 1 || index % 5 === 3;
@@ -131,6 +135,17 @@ const LookbookItem: React.FC<{
                 <div className="flex flex-col">
                     <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-matteo-stone-ink dark:text-white/60 mb-2">Commission</span>
                     <span className="font-serif text-matteo-charcoal dark:text-white text-2xl md:text-3xl">{look.title}</span>
+                    {/* Quiet per-look route to the concierge desk. The card itself
+                        opens the lightbox, so the link stops propagation; the 44px
+                        hit area lives on the anchor while the hairline underline
+                        stays tucked under the label on an inner span. */}
+                    <Link
+                        to={`/enquire?ref=${encodeURIComponent(`${enquiryContext} — ${look.title}`)}`}
+                        onClick={(e) => e.stopPropagation()}
+                        className="group/req relative z-10 self-start inline-flex items-center min-h-[44px] font-sans text-[10px] uppercase tracking-[0.25em] text-matteo-orange-ink dark:text-matteo-orange"
+                    >
+                        <span className="border-b border-matteo-orange/40 pb-1 group-hover/req:border-matteo-orange transition-colors duration-500">Request This Look</span>
+                    </Link>
                 </div>
                 <div className="w-8 h-[1px] bg-matteo-charcoal/30 dark:bg-white/30 group-hover:w-16 group-hover:bg-matteo-orange transition-all duration-500"></div>
             </div>
@@ -142,7 +157,12 @@ export const LookbookPage: React.FC<{ config: LookbookConfig }> = ({ config }) =
     const [selectedLook, setSelectedLook] = useState<LookItem | null>(null);
     const [looks, setLooks] = useState<LookItem[]>([]);
     // Editorial is the house's voice — the flat index grid is the utility view.
-    const [viewMode, setViewMode] = useState<'editorial' | 'index'>('editorial');
+    // Phones open on the index grid instead: thirty full-bleed spreads make a
+    // very long scroll, so small screens (same 768px line as the parallax gate)
+    // start scannable and can opt back into the editorial sequence.
+    const [viewMode, setViewMode] = useState<'editorial' | 'index'>(
+        () => (typeof window !== 'undefined' && window.innerWidth < 768 ? 'index' : 'editorial')
+    );
     const navigate = useNavigate();
     const containerRef = useRef<HTMLDivElement>(null);
     const lightboxRef = useRef<HTMLDivElement>(null);
@@ -291,6 +311,7 @@ export const LookbookPage: React.FC<{ config: LookbookConfig }> = ({ config }) =
                             smoothProgress={smoothProgress}
                             viewMode={viewMode}
                             quote={config.quote}
+                            enquiryContext={config.enquiryContext}
                             parallaxEnabled={parallaxEnabled}
                             setSelectedLook={setSelectedLook}
                         />

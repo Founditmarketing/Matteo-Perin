@@ -181,7 +181,7 @@ const lookDescription = (n: number): string =>
 export const PRODUCTS: Product[] = [
   {
     id: 1,
-    title: 'Spring Look 01',
+    title: 'The Woven Sport Jacket — Look 01',
     category: 'Spring 2025 Lookbook',
     image: "/assets/Finals/250409_MatteoPerin_LookBook_Spring25_MLook1_003.webp",
     price: 0,
@@ -192,7 +192,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: 2,
-    title: 'Spring Look 02',
+    title: 'The Houndstooth Suit — Look 02',
     category: 'Spring 2025 Lookbook',
     image: "/assets/Finals/250409_MatteoPerin_LookBook_Spring25_WLook2_009.webp",
     price: 0,
@@ -203,7 +203,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: 3,
-    title: 'Spring Look 03',
+    title: 'The Tiered Black Dress — Look 03',
     category: 'Spring 2025 Lookbook',
     image: "/assets/Finals/250409_MatteoPerin_LookBook_Spring25_WLook10_074-Edit.webp",
     price: 0,
@@ -214,7 +214,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: 4,
-    title: 'Spring Look 04',
+    title: 'The Leather Blouson — Look 04',
     category: 'Spring 2025 Lookbook',
     // -panel = landscape face-and-shoulders crop for panel frames; the lookbook keeps the full-body original
     image: "/assets/Finals/250409_MatteoPerin_LookBook_Spring25_MLook20_023-panel.webp",
@@ -226,7 +226,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: 5,
-    title: 'Spring Look 05',
+    title: 'The Patterned Trouser Suit — Look 05',
     category: 'Spring 2025 Lookbook',
     image: "/assets/Finals/250409_MatteoPerin_LookBook_Spring25_WLook4_005.webp",
     price: 0,
@@ -237,7 +237,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: 6,
-    title: 'Spring Look 06',
+    title: 'The Belted Jacquard Jacket — Look 06',
     category: 'Spring 2025 Lookbook',
     image: "/assets/Finals/250409_MatteoPerin_LookBook_Spring25_WLook14_057.webp",
     price: 0,

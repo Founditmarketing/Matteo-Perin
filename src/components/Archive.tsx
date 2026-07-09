@@ -13,71 +13,91 @@ interface ArchiveProps {
 // 1. Editorial Card (Magazine Feel)
 const EditorialCard: React.FC<{ product: Product; featured?: boolean }> = ({ product, featured }) => {
     return (
-        <Link to={`/collection/${product.id}`} className="group block h-full">
-            <div className={`relative overflow-hidden mb-6 ${featured ? 'aspect-[16/9]' : 'aspect-[3/4]'}`}>
-                <ParallaxImage
-                    src={product.image}
-                    alt={product.title}
-                    containerClassName="w-full h-full bg-[#f4f4f4]"
-                    className="grayscale group-hover:grayscale-0 transition-all duration-1000 dark:brightness-90"
-                    speed={featured ? 0.05 : 0.08}
-                />
-                {/* Modern Hover Badge */}
-                <div className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                    <span className="bg-white/90 dark:bg-black/90 text-matteo-charcoal dark:text-white text-[10px] uppercase tracking-widest px-3 py-1 ">
-                        View
-                    </span>
+        <div className="h-full">
+            <Link to={`/collection/${product.id}`} className="group block">
+                <div className={`relative overflow-hidden mb-6 ${featured ? 'aspect-[16/9]' : 'aspect-[3/4]'}`}>
+                    <ParallaxImage
+                        src={product.image}
+                        alt={product.title}
+                        containerClassName="w-full h-full bg-[#f4f4f4]"
+                        className="grayscale group-hover:grayscale-0 transition-all duration-1000 dark:brightness-90"
+                        speed={featured ? 0.05 : 0.08}
+                    />
+                    {/* Modern Hover Badge */}
+                    <div className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                        <span className="bg-white/90 dark:bg-black/90 text-matteo-charcoal dark:text-white text-[10px] uppercase tracking-widest px-3 py-1 ">
+                            View
+                        </span>
+                    </div>
                 </div>
-            </div>
-            <div className="flex flex-col gap-1">
-                <h3 className="font-serif text-2xl text-matteo-charcoal dark:text-white group-hover:underline decoration-1 underline-offset-4 decoration-matteo-orange/50 transition-all">
-                    {product.title}
-                </h3>
-                <div className="flex justify-between items-baseline border-t border-matteo-charcoal/10 dark:border-white/10 pt-2 mt-2">
-                    <p className="font-sans text-[10px] uppercase tracking-luxury text-matteo-stone-ink dark:text-matteo-stone">
-                        {product.category}
-                    </p>
-                    {/* Price hidden for Silent Luxury */}
+                <div className="flex flex-col gap-1">
+                    <h3 className="font-serif text-2xl text-matteo-charcoal dark:text-white group-hover:underline decoration-1 underline-offset-4 decoration-matteo-orange/50 transition-all">
+                        {product.title}
+                    </h3>
+                    <div className="flex justify-between items-baseline border-t border-matteo-charcoal/10 dark:border-white/10 pt-2 mt-2">
+                        <p className="font-sans text-[10px] uppercase tracking-luxury text-matteo-stone-ink dark:text-matteo-stone">
+                            {product.category}
+                        </p>
+                        {/* Price hidden for Silent Luxury */}
+                    </div>
                 </div>
-            </div>
-        </Link>
+            </Link>
+            {/* Concierge path — a sibling of the detail link so anchors never nest;
+                the 44px hit area lives on the anchor, the hairline on an inner span. */}
+            <Link
+                to={`/enquire?ref=${encodeURIComponent(`Collection — ${product.title}`)}`}
+                className="group/req inline-flex items-center min-h-[44px] font-sans text-[10px] uppercase tracking-luxury text-matteo-orange-ink dark:text-matteo-orange"
+            >
+                <span className="border-b border-matteo-orange/40 pb-1 group-hover/req:border-matteo-orange transition-colors duration-500">Request This Look</span>
+            </Link>
+        </div>
     );
 };
 
 // 2. Grid Card (Modern Swiss Style - Left Aligned)
 const GridCard: React.FC<{ product: Product }> = ({ product }) => {
     return (
-        <Link to={`/collection/${product.id}`} className="group block relative">
-            {/* Image */}
-            <div className="relative aspect-[3/4] overflow-hidden mb-4 bg-[#f0f0f0] dark:bg-[#111]">
-                <img
-                    src={product.image}
-                    alt={product.title}
-                    loading="lazy"
-                    decoding="async"
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-[0.6s] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-105 dark:brightness-90"
-                />
+        <div>
+            <Link to={`/collection/${product.id}`} className="group block relative">
+                {/* Image */}
+                <div className="relative aspect-[3/4] overflow-hidden mb-4 bg-[#f0f0f0] dark:bg-[#111]">
+                    <img
+                        src={product.image}
+                        alt={product.title}
+                        loading="lazy"
+                        decoding="async"
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-[0.6s] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-105 dark:brightness-90"
+                    />
 
-                {/* Modern "Quick Shop" Overlay on Hover */}
-                <div className="absolute inset-x-0 bottom-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex justify-between items-end bg-gradient-to-t from-black/60 to-transparent">
-                    <span className="text-white font-sans text-[10px] uppercase tracking-widest">
-                        Quick Add +
-                    </span>
+                    {/* Modern "Quick Shop" Overlay on Hover */}
+                    <div className="absolute inset-x-0 bottom-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex justify-between items-end bg-gradient-to-t from-black/60 to-transparent">
+                        <span className="text-white font-sans text-[10px] uppercase tracking-widest">
+                            Quick Add +
+                        </span>
+                    </div>
                 </div>
-            </div>
 
-            <div className="flex justify-between items-start">
-                <div className="flex-1 pr-4">
-                    <h3 className="font-serif text-lg text-matteo-charcoal dark:text-white leading-tight mb-1 group-hover:text-matteo-orange transition-colors">
-                        {product.title}
-                    </h3>
-                    <p className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone-ink dark:text-matteo-stone">
-                        {product.category}
-                    </p>
+                <div className="flex justify-between items-start">
+                    <div className="flex-1 pr-4">
+                        <h3 className="font-serif text-lg text-matteo-charcoal dark:text-white leading-tight mb-1 group-hover:text-matteo-orange transition-colors">
+                            {product.title}
+                        </h3>
+                        <p className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone-ink dark:text-matteo-stone">
+                            {product.category}
+                        </p>
+                    </div>
+                    {/* Price hidden for Silent Luxury */}
                 </div>
-                {/* Price hidden for Silent Luxury */}
-            </div>
-        </Link>
+            </Link>
+            {/* Concierge path — a sibling of the detail link so anchors never nest;
+                the 44px hit area lives on the anchor, the hairline on an inner span. */}
+            <Link
+                to={`/enquire?ref=${encodeURIComponent(`Collection — ${product.title}`)}`}
+                className="group/req inline-flex items-center min-h-[44px] font-sans text-[10px] uppercase tracking-widest text-matteo-orange-ink dark:text-matteo-orange"
+            >
+                <span className="border-b border-matteo-orange/40 pb-1 group-hover/req:border-matteo-orange transition-colors duration-500">Request This Look</span>
+            </Link>
+        </div>
     );
 };
 

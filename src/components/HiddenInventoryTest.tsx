@@ -155,7 +155,7 @@ export const HiddenInventoryTest: React.FC = () => {
                     The homepage embed runs a quieter, smaller version of the same. */}
                 <div className={`w-full max-w-[1600px] mx-auto ${isEmbedded ? 'mb-12 md:mb-16' : 'mb-20 md:mb-28'}`}>
                     <span className="font-sans text-[10px] uppercase tracking-[0.4em] font-medium text-matteo-orange-ink dark:text-matteo-orange mb-6 block">
-                        Available Now · One of One · Ships Worldwide
+                        Available Now · Ships Worldwide
                     </span>
                     {isEmbedded ? (
                         <h2 className="font-serif text-4xl md:text-6xl text-matteo-charcoal dark:text-white leading-[1.05] mb-6 max-w-4xl">The Current Edit</h2>
@@ -165,7 +165,7 @@ export const HiddenInventoryTest: React.FC = () => {
                     <div className={`w-full h-[1px] bg-matteo-charcoal/10 dark:bg-white/10 ${isEmbedded ? 'mb-6' : 'mb-8'}`}></div>
                     <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
                         <p className="font-serif text-lg md:text-xl text-matteo-charcoal/60 dark:text-white/60 italic max-w-xl">
-                            One-of-a-kind pieces, ready for immediate acquisition — purchase online with worldwide delivery.
+                            In-stock pieces, ready for immediate acquisition — purchase online with worldwide delivery.
                         </p>
                         {/* Men / Ladies selector — gender lives here as quiet text
                             tabs in the eyebrow register, the way Hermès and Loro
@@ -306,18 +306,12 @@ export const HiddenInventoryTest: React.FC = () => {
                                Two columns on mobile, three on desktop. */
                             (() => {
                                 const visible = groupedInventory.filter(matchesGender);
-                                if (visible.length === 0) {
-                                    return (
-                                        <div className="py-20 text-center">
-                                            <p className="font-serif italic text-lg text-matteo-charcoal/60 dark:text-white/60">
-                                                No pieces in this selection at the moment \u2014 view All for the full edit.
-                                            </p>
-                                        </div>
-                                    );
-                                }
-                                return (
-                            <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-6 md:gap-x-10 gap-y-14 md:gap-y-20">
-                                {visible.map((group) => {
+                                // Sold pieces leave the working edit and settle into the
+                                // Acquired record at the foot of the page \u2014 the ledger
+                                // stays honest about what can actually be bought today.
+                                const available = visible.filter((group) => !isAllSoldOut(group.rawRows));
+                                const acquired = visible.filter((group) => isAllSoldOut(group.rawRows));
+                                const renderTile = (group: GroupedProduct) => {
                                     const groupIdx = groupedInventory.indexOf(group);
                                     const previewImages = getColorPreviewImages(group);
                                     const colorCount = group.variations.length;
@@ -419,8 +413,40 @@ export const HiddenInventoryTest: React.FC = () => {
                                     </p>
                                         </div>
                                     );
-                                })}
-                            </div>
+                                };
+                                return (
+                                    <>
+                                        {available.length === 0 ? (
+                                            <div className="py-20 text-center">
+                                                <p className="font-serif italic text-lg text-matteo-charcoal/60 dark:text-white/60">
+                                                    No pieces in this selection at the moment — view All for the full edit.
+                                                </p>
+                                            </div>
+                                        ) : (
+                                            <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-6 md:gap-x-10 gap-y-14 md:gap-y-20">
+                                                {available.map(renderTile)}
+                                            </div>
+                                        )}
+                                        {/* The Record — sold pieces close the page quietly, the
+                                            way a house ledger keeps its completed entries: same
+                                            tiles, muted, beneath their own hairline. Renders
+                                            nothing when everything is still available. */}
+                                        {acquired.length > 0 && (
+                                            <div className="mt-24 md:mt-32">
+                                                <span className="font-sans text-[10px] uppercase tracking-[0.4em] font-medium text-matteo-stone-ink dark:text-white/50 mb-6 block">
+                                                    The Record
+                                                </span>
+                                                <h2 className="font-serif text-3xl md:text-5xl text-matteo-charcoal dark:text-white leading-[1.05] mb-6">Acquired</h2>
+                                                <p className="font-serif text-lg md:text-xl text-matteo-charcoal/60 dark:text-white/60 italic max-w-xl mb-8">
+                                                    Pieces that have found their owners.
+                                                </p>
+                                                <div className="w-full h-[1px] bg-matteo-charcoal/10 dark:bg-white/10 mb-14"></div>
+                                                <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-6 md:gap-x-10 gap-y-14 md:gap-y-20">
+                                                    {acquired.map(renderTile)}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </>
                                 );
                             })()
                             )

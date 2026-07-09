@@ -209,11 +209,21 @@ export const InventoryProductPage: React.FC = () => {
 
     const activePrice = parseFloat(String(activeVariation?.Price || '').replace(/[^0-9.]/g, '')) || null;
     const activeStock = parseInt(String(activeVariation?.Stock || '').trim(), 10);
-    const isOneOfOne = activeStock === 1;
+    // "One of one" is only claimed when the data backs it: a single colourway
+    // whose stock is exactly 1. A product offered in several colours is a
+    // small series, and the register below says so instead.
+    const isOneOfOne = activeStock === 1 && selectedGroup.variations.length <= 1;
+    // Exotic leathers travel with CITES documentation (see the Authenticity
+    // section on /shipping-returns); detect them from the sheet's own facts.
+    const isExotic = /ostrich|croc|alligator|python/i.test(
+        [selectedGroup.parentName, selectedGroup.description, activeVariation?.Category]
+            .filter(Boolean)
+            .join(' ')
+    );
     const canonicalUrl = `https://www.matteoperin.com/shop/${slugify(selectedGroup.parentName)}`;
     const metaDescription = selectedGroup.description
         ? String(selectedGroup.description).slice(0, 155)
-        : `${selectedGroup.parentName} — a one-of-one piece handcrafted in Italy, in stock and ready to ship worldwide from the Matteo Perin atelier in Jackson Hole.`;
+        : `${selectedGroup.parentName} — ${isOneOfOne ? 'a one-of-one piece' : 'a small series'} handcrafted in Italy, in stock and ready to ship worldwide from the Matteo Perin atelier in Jackson Hole.`;
     const productJsonLd = {
         '@context': 'https://schema.org',
         '@type': 'Product',
@@ -236,9 +246,9 @@ export const InventoryProductPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-matteo-cream dark:bg-matteo-black py-24 md:py-32 px-6 md:px-12 lg:px-24 flex flex-col items-center">
+        <div className="min-h-screen bg-matteo-cream dark:bg-matteo-black pt-24 md:pt-32 pb-44 md:pb-32 px-6 md:px-12 lg:px-24 flex flex-col items-center">
             <Helmet>
-                <title>{`${selectedGroup.parentName} — One of One, In Stock | Matteo Perin`}</title>
+                <title>{`${selectedGroup.parentName} — ${isOneOfOne ? 'One of One, In Stock' : 'In Stock'} | Matteo Perin`}</title>
                 <meta name="description" content={metaDescription} />
                 <link rel="canonical" href={canonicalUrl} />
                 <meta property="og:title" content={`${selectedGroup.parentName} | Matteo Perin`} />
@@ -315,13 +325,13 @@ export const InventoryProductPage: React.FC = () => {
                 
                 {/* Header Navigation */}
                 <div className="mb-12 flex items-center justify-between">
-                    <button 
-                        onClick={() => navigate(basePath)}
+                    <Link
+                        to={basePath}
                         className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone-ink dark:text-white/60 hover:text-matteo-orange dark:hover:text-matteo-orange transition-colors flex items-center gap-2 group"
                     >
                         <span className="group-hover:-translate-x-1 transition-transform">←</span>
-                        <span>Back to Collection</span>
-                    </button>
+                        <span>{basePath === '/shop' ? 'Back to the Shop' : 'Back to Collection'}</span>
+                    </Link>
                 </div>
 
                 <div className="w-full flex flex-col lg:flex-row gap-8 lg:gap-16 animate-fade-in-up">
@@ -514,17 +524,29 @@ export const InventoryProductPage: React.FC = () => {
                             </div>
                         )}
 
+                        {/* ── WHAT ACCOMPANIES YOUR PIECE — mirrors the Authenticity
+                            section on /shipping-returns (ClientServices.tsx) ── */}
+                        <div className="mb-8">
+                            <h4 className="font-sans text-[10px] uppercase tracking-[0.2em] font-medium text-matteo-stone-ink dark:text-white/60 mb-3">What Accompanies Your Piece</h4>
+                            <p className="font-serif text-base leading-relaxed text-matteo-charcoal dark:text-white/80">
+                                Each piece arrives with documentation of its materials and provenance.
+                                {isExotic && ' Exotic leathers are sourced in full compliance with CITES certification, and that documentation travels with the piece.'}
+                            </p>
+                        </div>
+
                         {/* ── ADD TO BAG / CHECKOUT ── */}
                         <div className="mt-4 space-y-4">
-                            {!currentSoldOut && isOneOfOne && (
+                            {!currentSoldOut && (
                                 <p className="font-serif italic text-lg text-matteo-charcoal/80 dark:text-white/70 pb-2">
-                                    One of one. When it's acquired, it's gone.
+                                    {isOneOfOne
+                                        ? "One of one. When it's acquired, it's gone."
+                                        : 'A small series — each piece cut and finished by hand.'}
                                 </p>
                             )}
                             {currentSoldOut ? (
                                 <button
                                     disabled
-                                    className="w-full bg-matteo-charcoal/20 dark:bg-white/10 text-matteo-charcoal/40 dark:text-white/30 py-4 font-sans text-[10px] uppercase tracking-[0.2em] cursor-not-allowed"
+                                    className="w-full bg-matteo-charcoal/20 dark:bg-white/10 text-matteo-charcoal/40 dark:text-white/30 py-4 font-sans text-xs uppercase tracking-[0.2em] cursor-not-allowed"
                                 >
                                     Sold Out
                                 </button>
@@ -532,13 +554,13 @@ export const InventoryProductPage: React.FC = () => {
                                 <>
                                     <button
                                         onClick={handleAddToBag}
-                                        className="w-full bg-matteo-charcoal dark:bg-white text-white dark:text-matteo-black py-4 font-sans text-[10px] uppercase tracking-[0.2em] hover:bg-matteo-orange dark:hover:bg-matteo-orange hover:text-white transition-colors duration-300"
+                                        className="w-full bg-matteo-charcoal dark:bg-white text-white dark:text-matteo-black py-4 font-sans text-xs uppercase tracking-[0.2em] hover:bg-matteo-orange dark:hover:bg-matteo-orange hover:text-white transition-colors duration-300"
                                     >
                                         Add to Bag — {activeVariation?.Price || getPriceRange(selectedGroup.variations)}
                                     </button>
                                     <button
                                         onClick={handleBuyNow}
-                                        className="w-full border border-matteo-charcoal/20 dark:border-white/20 text-matteo-charcoal dark:text-white py-4 font-sans text-[10px] uppercase tracking-[0.2em] hover:border-matteo-orange hover:text-matteo-orange transition-colors duration-300"
+                                        className="w-full border border-matteo-charcoal/20 dark:border-white/20 text-matteo-charcoal dark:text-white py-4 font-sans text-xs uppercase tracking-[0.2em] hover:border-matteo-orange hover:text-matteo-orange transition-colors duration-300"
                                     >
                                         Buy Now
                                     </button>
@@ -557,6 +579,31 @@ export const InventoryProductPage: React.FC = () => {
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            {/* ── MOBILE BUY BAR — keeps the CTA reachable on small screens ── */}
+            <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-matteo-cream dark:bg-matteo-black border-t border-matteo-charcoal/10 dark:border-white/10">
+                <div className="px-4 py-3 flex items-center justify-between gap-3">
+                    <div className="min-w-0">
+                        <span className="block font-sans text-[10px] uppercase tracking-[0.2em] font-medium text-matteo-stone-ink dark:text-white/60 truncate">
+                            {selectedGroup.parentName}
+                        </span>
+                        <span className="font-serif text-lg text-matteo-charcoal dark:text-white">
+                            {activeVariation?.Price || getPriceRange(selectedGroup.variations)}
+                        </span>
+                    </div>
+                    <button
+                        onClick={handleAddToBag}
+                        disabled={currentSoldOut}
+                        className={`shrink-0 py-3.5 px-6 font-sans text-[11px] uppercase tracking-[0.2em] transition-colors duration-300 ${
+                            currentSoldOut
+                                ? 'bg-matteo-charcoal/20 dark:bg-white/10 text-matteo-charcoal/40 dark:text-white/30 cursor-not-allowed'
+                                : 'bg-matteo-charcoal dark:bg-white text-white dark:text-matteo-black hover:bg-matteo-orange dark:hover:bg-matteo-orange hover:text-white'
+                        }`}
+                    >
+                        {currentSoldOut ? 'Sold Out' : 'Add to Bag'}
+                    </button>
                 </div>
             </div>
         </div>

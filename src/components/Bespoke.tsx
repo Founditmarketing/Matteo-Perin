@@ -38,7 +38,10 @@ const PROCESS_STEPS = [
         id: "04",
         title: "The Handover",
         subtitle: "Acquisition",
-        description: "After 50+ hours of hand-work, the commission is complete. No longer ours. Yours.",
+        // NOTE FOR THE HOUSE: this step once cited "50+ hours" while /the-house
+        // and the crocodile page cite "over 100 hours" — confirm the true
+        // per-garment figure before any number returns to this copy.
+        description: "The hand-work complete, the commission is finished. No longer ours. Yours.",
         image: IMAGES.journal_3
     }
 ];
