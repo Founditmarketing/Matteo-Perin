@@ -258,7 +258,7 @@ export const TheHouse: React.FC = () => {
                     house's clothes. No claims, no superlatives: the evidence is
                     the frame. Captions name only what is visible. */}
                 <section className="py-24 md:py-32 px-6 md:px-12 max-w-[1400px] mx-auto">
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 xl:gap-16 items-end mb-16 md:mb-20">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 xl:gap-16 items-end mb-20 md:mb-32">
                         <div className="lg:col-span-6">
                             <RevealOnScroll>
                                 <div className="flex items-center gap-4 mb-8">
@@ -277,12 +277,12 @@ export const TheHouse: React.FC = () => {
                             </RevealOnScroll>
                         </div>
                         <div className="lg:col-span-5 lg:col-start-8">
-                            <RevealOnScroll delay={0.15}>
+                            <RevealOnScroll delay={0.15} className="group">
                                 <div className="relative aspect-[4/5] overflow-hidden">
                                     <ResponsiveImage
                                         baseSrc="/assets/house/maker-balcony-dusk.webp"
                                         alt="Matteo Perin at dusk on a balcony, coffee in both hands, in a hooded cashmere lounge set and green crocodile sneakers"
-                                        className="w-full h-full object-cover"
+                                        className="w-full h-full object-cover transition-transform duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
                                     />
                                 </div>
                                 <p className="font-serif italic text-[13px] text-matteo-stone-ink dark:text-white/50 mt-3">
@@ -292,43 +292,14 @@ export const TheHouse: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* The sequence is paced like a printed spread: an asymmetric
-                        pair, a full-bleed black-and-white breath, a three-plate
-                        row, then a nocturne of dark portraits to close. */}
+                    {/* Three beats only: feature (color) → wide breath (b&w) →
+                        closer (b&w), a descent toward the black chapter below.
+                        The generous margins are the design. */}
 
-                    {/* Movement I — asymmetric pair */}
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-x-6 md:gap-x-10 gap-y-12 mb-16 md:mb-24">
-                        <RevealOnScroll className="lg:col-span-7 group">
-                            <div className="relative aspect-[4/5] overflow-hidden">
-                                <ResponsiveImage
-                                    baseSrc="/assets/house/maker-colonnade.webp"
-                                    alt="Matteo Perin buttoning a chunky knit cardigan against a brick colonnade"
-                                    className="w-full h-full object-cover transition-transform duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
-                                />
-                            </div>
-                            <p className="font-serif italic text-[13px] text-matteo-stone-ink dark:text-white/50 mt-3">
-                                Under the colonnade — shawl cardigan, striped shirt.
-                            </p>
-                        </RevealOnScroll>
-                        <RevealOnScroll delay={0.15} className="lg:col-span-5 lg:pt-24 group">
-                            <div className="relative aspect-[3/4] overflow-hidden">
-                                <ResponsiveImage
-                                    baseSrc="/assets/house/maker-newyork-snow.webp"
-                                    alt="Matteo Perin in midwinter snow wearing a camel double-breasted overcoat over a windowpane-check suit"
-                                    maxVariant="md"
-                                    className="w-full h-full object-cover transition-transform duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
-                                />
-                            </div>
-                            <p className="font-serif italic text-[13px] text-matteo-stone-ink dark:text-white/50 mt-3">
-                                Midwinter — camel double-breasted, windowpane check.
-                            </p>
-                        </RevealOnScroll>
-                    </div>
-
-                    {/* Movement II — the full-bleed breath. A portrait negative
-                        cropped wide in CSS; the figures sit high, so the focal
-                        band is pinned at 28% from the top. */}
-                    <RevealOnScroll className="mb-16 md:mb-24 group">
+                    {/* The wide breath. A portrait negative cropped wide in CSS;
+                        the figures sit high, so the focal band is pinned at 28%
+                        from the top. */}
+                    <RevealOnScroll className="mb-20 md:mb-32 group">
                         <div className="relative aspect-[3/2] md:aspect-[2/1] overflow-hidden">
                             <ResponsiveImage
                                 baseSrc="/assets/house/maker-paddock-bw.webp"
@@ -341,75 +312,11 @@ export const TheHouse: React.FC = () => {
                         </p>
                     </RevealOnScroll>
 
-                    {/* Movement III — three across */}
-                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-6 md:gap-x-10 gap-y-12 mb-16 md:mb-24">
-                        {[
-                            {
-                                src: "/assets/house/maker-vineyard.webp",
-                                alt: "Matteo Perin in a spring vineyard blowing dandelion seeds, in a blue suit and waistcoat",
-                                caption: "Spring in the vineyard — blue suit, leather sneakers.",
-                            },
-                            {
-                                src: "/assets/house/maker-studio-bw.webp",
-                                alt: "Black-and-white studio portrait of Matteo Perin in a leather café-racer jacket, hands clasped",
-                                caption: "In the studio — café-racer leather.",
-                            },
-                            {
-                                src: "/assets/house/maker-portrait-linen.webp",
-                                alt: "Portrait of Matteo Perin in a brown check sport jacket over an open linen shirt, in golden light",
-                                caption: "Check sport jacket, open linen.",
-                            },
-                        ].map((photo, idx) => (
-                            <RevealOnScroll
-                                key={photo.src}
-                                delay={0.05 * idx}
-                                className={`group ${idx === 1 ? "lg:mt-16" : ""}`}
-                            >
-                                <div className="relative aspect-[4/5] overflow-hidden">
-                                    <ResponsiveImage
-                                        baseSrc={photo.src}
-                                        alt={photo.alt}
-                                        maxVariant="md"
-                                        className="w-full h-full object-cover transition-transform duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
-                                    />
-                                </div>
-                                <p className="font-serif italic text-[13px] text-matteo-stone-ink dark:text-white/50 mt-3">
-                                    {photo.caption}
-                                </p>
-                            </RevealOnScroll>
-                        ))}
-                    </div>
-
-                    {/* Movement IV — the nocturne. Three plates stepping down in
-                        size and up in shadow to end the chapter quietly. */}
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-x-6 md:gap-x-10 gap-y-12 items-start">
-                        <RevealOnScroll className="lg:col-span-5 group">
-                            <div className="relative aspect-[4/5] overflow-hidden">
-                                <ResponsiveImage
-                                    baseSrc="/assets/house/maker-autumn-stripe.webp"
-                                    alt="Matteo Perin leaning on a lamppost in an autumn park, in a navy chalk-stripe suit over an orange roll-neck"
-                                    maxVariant="md"
-                                    className="w-full h-full object-cover transition-transform duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
-                                />
-                            </div>
-                            <p className="font-serif italic text-[13px] text-matteo-stone-ink dark:text-white/50 mt-3">
-                                Autumn — navy chalk stripe, orange roll-neck.
-                            </p>
-                        </RevealOnScroll>
-                        <RevealOnScroll delay={0.1} className="lg:col-span-4 lg:mt-16 group">
-                            <div className="relative aspect-[4/5] overflow-hidden">
-                                <ResponsiveImage
-                                    baseSrc="/assets/house/maker-vitrine.webp"
-                                    alt="Moody profile of Matteo Perin leaning in a wood-paneled doorway in a black leather jacket with quilted shoulders"
-                                    maxVariant="md"
-                                    className="w-full h-full object-cover transition-transform duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
-                                />
-                            </div>
-                            <p className="font-serif italic text-[13px] text-matteo-stone-ink dark:text-white/50 mt-3">
-                                In the doorway — quilted-shoulder leather.
-                            </p>
-                        </RevealOnScroll>
-                        <RevealOnScroll delay={0.2} className="lg:col-span-3 lg:mt-32 group">
+                    {/* The closer hangs on the same right-hand axis as the
+                        feature; the seven empty columns beside it are the
+                        design. Its black ground meets the black section below. */}
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-x-6 md:gap-x-10">
+                        <RevealOnScroll delay={0.15} className="lg:col-span-4 lg:col-start-8 group max-w-sm mx-auto lg:max-w-none lg:mx-0 w-full">
                             <div className="relative aspect-[4/5] overflow-hidden">
                                 <ResponsiveImage
                                     baseSrc="/assets/house/maker-armchair-bw.webp"
@@ -419,7 +326,7 @@ export const TheHouse: React.FC = () => {
                                 />
                             </div>
                             <p className="font-serif italic text-[13px] text-matteo-stone-ink dark:text-white/50 mt-3">
-                                In the armchair — unstructured, in thought.
+                                In the armchair — a pale unstructured jacket.
                             </p>
                         </RevealOnScroll>
                     </div>
