@@ -103,7 +103,13 @@ export const groupInventoryRows = (rows: any[]): GroupedProduct[] => {
                 currentParent.variations.push(styleGroup);
             }
             if (row['Main Image Link']) {
-                styleGroup.images.push({ Title: row.Title, Url: row['Main Image Link'] });
+                // The sheet sometimes repeats one Drive link across several
+                // rows of the same colorway — never show the same photo twice
+                // in a gallery.
+                const url = String(row['Main Image Link']).trim();
+                if (!styleGroup.images.some(img => String(img.Url).trim() === url)) {
+                    styleGroup.images.push({ Title: row.Title, Url: row['Main Image Link'] });
+                }
             }
             if (styleGroup.images.length === 1) {
                 styleGroup['Main Image Link'] = row['Main Image Link'];
