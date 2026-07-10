@@ -57,7 +57,10 @@ export const CartSidebar: React.FC = () => {
   if (!isCartOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex justify-end">
+    // Above the nav (z-[100000]) — otherwise the nav's logo, bag and
+    // hamburger float over the drawer header and steal taps meant for
+    // the close button.
+    <div className="fixed inset-0 z-[100001] flex justify-end">
       {/* Backdrop */}
       <div 
         className="absolute inset-0 bg-black/20  transition-opacity"
@@ -71,7 +74,7 @@ export const CartSidebar: React.FC = () => {
               <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-matteo-orange block mb-1">Your Selection</span>
               <h2 className="font-serif text-2xl text-matteo-charcoal dark:text-white">The Bag</h2>
           </div>
-          <button onClick={() => setIsCartOpen(false)} aria-label="Close bag" className="text-matteo-stone-ink dark:text-matteo-stone hover:text-matteo-charcoal dark:hover:text-white transition-colors">
+          <button onClick={() => setIsCartOpen(false)} aria-label="Close bag" className="min-w-[44px] min-h-[44px] -mr-2 flex items-center justify-center text-matteo-stone-ink dark:text-matteo-stone hover:text-matteo-charcoal dark:hover:text-white transition-colors">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M6 18L18 6M6 6l12 12" />
             </svg>

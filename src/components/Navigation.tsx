@@ -98,7 +98,8 @@ export const Navigation: React.FC = () => {
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 w-full z-[100000] transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] 
+        className={`fixed top-0 left-0 w-full z-[100000] transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]
+                ${mobileMenuOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}
                 ${visible ? 'translate-y-0' : '-translate-y-full'}
                 ${showSolidNav ? 'bg-matteo-cream/95 dark:bg-matteo-black/95  py-4 border-b border-matteo-charcoal/5 dark:border-white/5' : 'bg-transparent py-8'}
                 ${textColorClass}`}
@@ -220,20 +221,51 @@ export const Navigation: React.FC = () => {
           </button>
         </div>
 
-        <div className="h-full flex flex-col items-center justify-center space-y-8 relative z-10 text-center">
-          {NAV_ITEMS.map((item, index) => (
+        {/* A ledger, not a list: each destination carries one quiet line
+            saying what it is. The current page reads in orange. */}
+        <div className="h-full overflow-y-auto flex flex-col justify-center px-10 sm:px-14 py-24 relative z-10">
+          <span
+            className={`font-sans text-[10px] uppercase tracking-[0.25em] font-medium text-matteo-orange mb-10 block transition-all duration-700 transform ${mobileMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'}`}
+            style={{ transitionDelay: '80ms' }}
+          >
+            Matteo Perin
+          </span>
+
+          <nav className="space-y-6">
+            {NAV_ITEMS.map((item, index) => {
+              const isCurrent = location.pathname === item.href;
+              return (
+                <Link
+                  key={item.label}
+                  to={item.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  aria-current={isCurrent ? 'page' : undefined}
+                  className={`group block transition-all duration-700 transform ${mobileMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}
+                  style={{ transitionDelay: `${140 + index * 70}ms` }}
+                >
+                  <span className={`font-serif text-3xl leading-none transition-colors ${isCurrent ? 'text-matteo-orange' : 'text-white group-hover:text-matteo-orange'}`}>
+                    {item.label}
+                  </span>
+                  <span className="block font-serif italic text-[13px] leading-snug text-white/50 mt-1.5">
+                    {item.description}
+                  </span>
+                </Link>
+              );
+            })}
+          </nav>
+
+          <div
+            className={`mt-12 pt-8 border-t border-white/10 transition-all duration-700 transform ${mobileMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'}`}
+            style={{ transitionDelay: `${140 + NAV_ITEMS.length * 70 + 60}ms` }}
+          >
             <Link
-              key={item.label}
-              to={item.href}
+              to="/enquire"
               onClick={() => setMobileMenuOpen(false)}
-              className={`font-serif text-4xl md:text-5xl text-white hover:italic hover:text-matteo-orange transition-all duration-700 transform ${mobileMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-12 opacity-0'}`}
-              style={{ transitionDelay: `${100 + index * 100}ms` }}
+              className="font-sans text-[10px] uppercase tracking-[0.25em] font-medium text-white/70 hover:text-matteo-orange transition-colors"
             >
-              {item.label}
+              Enquire — begin a conversation
             </Link>
-          ))}
-
-
+          </div>
         </div>
       </div>
     </>

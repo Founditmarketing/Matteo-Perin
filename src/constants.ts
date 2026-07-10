@@ -70,14 +70,16 @@ export const AUDIO = {
 
 export const NAV_ITEMS = [
   // Left Side (Brand & Lifestyle)
-  { label: 'The House', href: '/the-house' },
-  { label: 'Press', href: '/press' },
-  { label: 'Casa', href: '/furniture' },
+  // `description` renders only in the mobile menu — one quiet line saying
+  // what each page is. Desktop nav reads label/href alone.
+  { label: 'The House', href: '/the-house', description: 'The story of the maker — Verona, the world, Jackson Hole.' },
+  { label: 'Press', href: '/press', description: 'Selected coverage of the house.' },
+  { label: 'Casa', href: '/furniture', description: 'The furniture collection.' },
   // Right Side (Product & Service - Split Gender)
-  { label: "Men", href: '/lookbook/men' },
-  { label: "Women", href: '/lookbook/women' },
-  { label: 'Shop', href: '/shop' },
-  { label: 'Bespoke', href: '/bespoke' },
+  { label: "Men", href: '/lookbook/men', description: "The men's lookbook." },
+  { label: "Women", href: '/lookbook/women', description: "The women's lookbook." },
+  { label: 'Shop', href: '/shop', description: 'Finished pieces, available now.' },
+  { label: 'Bespoke', href: '/bespoke', description: 'The commission — from dialogue to handover.' },
 ];
 
 export const MENS_LOOKBOOK_IMAGES = [
