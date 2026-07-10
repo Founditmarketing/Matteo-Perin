@@ -280,53 +280,53 @@ export const TheHouse: React.FC = () => {
                             <RevealOnScroll delay={0.15} className="group">
                                 <div className="relative aspect-[4/5] overflow-hidden">
                                     <ResponsiveImage
-                                        baseSrc="/assets/house/maker-balcony-dusk.webp"
-                                        alt="Matteo Perin at dusk on a balcony, coffee in both hands, in a hooded cashmere lounge set and green crocodile sneakers"
+                                        baseSrc="/assets/house/maker-autumn-stripe.webp"
+                                        alt="Matteo Perin leaning on a lamppost in an autumn park, in a navy chalk-stripe double-breasted suit over an orange roll-neck"
                                         className="w-full h-full object-cover transition-transform duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
                                     />
                                 </div>
                                 <p className="font-serif italic text-[13px] text-matteo-stone-ink dark:text-white/50 mt-3">
-                                    Dusk on the balcony — hooded cashmere, crocodile sneakers.
+                                    In the autumn park — a chalk-stripe double-breasted suit over an orange roll-neck.
                                 </p>
                             </RevealOnScroll>
                         </div>
                     </div>
 
-                    {/* Three beats only: feature (color) → wide breath (b&w) →
-                        closer (b&w), a descent toward the black chapter below.
-                        The generous margins are the design. */}
+                    {/* Three beats only, three seasons of tailoring: autumn
+                        chalk-stripe (feature) → spring vines (wide) → summer
+                        linen (closer). The generous margins are the design. */}
 
                     {/* The wide breath. A portrait negative cropped wide in CSS;
-                        the figures sit high, so the focal band is pinned at 28%
-                        from the top. */}
+                        the head and the vine-row vanishing point sit high, so
+                        the focal band is pinned at 25% from the top. */}
                     <RevealOnScroll className="mb-20 md:mb-32 group">
                         <div className="relative aspect-[3/2] md:aspect-[2/1] overflow-hidden">
                             <ResponsiveImage
-                                baseSrc="/assets/house/maker-paddock-bw.webp"
-                                alt="Black-and-white photograph of Matteo Perin in a tweed jacket at a white paddock fence with a companion in a long leather coat, sheep grazing beyond"
-                                className="w-full h-full object-cover object-[50%_28%] transition-transform duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
+                                baseSrc="/assets/house/maker-vineyard.webp"
+                                alt="Matteo Perin among spring vineyard rows in a blue suit and waistcoat, blowing dandelion seeds"
+                                className="w-full h-full object-cover object-[50%_25%] transition-transform duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
                             />
                         </div>
                         <p className="font-serif italic text-[13px] text-matteo-stone-ink dark:text-white/50 mt-3">
-                            At the paddock fence — tweed, and a long leather coat beside him.
+                            Spring among the vines — a blue suit, waistcoat beneath.
                         </p>
                     </RevealOnScroll>
 
                     {/* The closer hangs on the same right-hand axis as the
                         feature; the seven empty columns beside it are the
-                        design. Its black ground meets the black section below. */}
+                        design. Its golden light meets the black section below. */}
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-x-6 md:gap-x-10">
                         <RevealOnScroll delay={0.15} className="lg:col-span-4 lg:col-start-8 group max-w-sm mx-auto lg:max-w-none lg:mx-0 w-full">
                             <div className="relative aspect-[4/5] overflow-hidden">
                                 <ResponsiveImage
-                                    baseSrc="/assets/house/maker-armchair-bw.webp"
-                                    alt="Black-and-white portrait of Matteo Perin in a pale unstructured jacket, seated in a leather armchair against darkness, fist to his lips"
+                                    baseSrc="/assets/house/maker-portrait-linen.webp"
+                                    alt="Matteo Perin smiling in golden light, in a brown check sport jacket over an open linen shirt"
                                     maxVariant="md"
                                     className="w-full h-full object-cover transition-transform duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
                                 />
                             </div>
                             <p className="font-serif italic text-[13px] text-matteo-stone-ink dark:text-white/50 mt-3">
-                                In the armchair — a pale unstructured jacket.
+                                Golden light — a brown check sport jacket, an open linen shirt.
                             </p>
                         </RevealOnScroll>
                     </div>
