@@ -25,14 +25,15 @@ const PROCESS_STEPS = [
         title: "The Architecture",
         subtitle: "The Blueprint",
         description: "No templates. A second skin, drafted from zero. This is the blueprint of your second skin, accounting for every nuance of your posture.",
-        image: IMAGES.atelier
+        // Plain <img> below — must be a real file, not a ResponsiveImage base.
+        image: "/assets/house/bespoke-sketching-md.webp"
     },
     {
         id: "03",
         title: "The Fitting",
         subtitle: "Sculpting",
         description: "The garment is assembled in a 'basted' state. We meet to refine the silhouette. Perfection is not an accident; it is a discipline.",
-        image: IMAGES.journal_4
+        image: "/assets/house/bespoke-fitting-bw-md.webp"
     },
     {
         id: "04",

@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useSearchParams } from 'react-router-dom';
 import { RevealOnScroll } from './RevealOnScroll';
+import { ResponsiveImage } from './ResponsiveImage';
 import { reportInquiryConversion } from '@/lib/gtagConversion';
 
 // The concierge's menu of intents — mirrored in the HubSpot note subject so
@@ -288,6 +289,16 @@ export const Enquire: React.FC = () => {
                         <RevealOnScroll>
                             <div className="lg:border-l lg:border-matteo-charcoal/10 lg:dark:border-white/10 lg:pl-12">
                                 <h2 className="font-sans text-[11px] uppercase tracking-[0.25em] font-medium text-matteo-orange-ink dark:text-matteo-orange mb-6">The Showroom</h2>
+                                {/* The actual shop on Deloney — an address with a door
+                                    reads as a destination, not a mailbox. */}
+                                <div className="relative aspect-[3/2] overflow-hidden mb-6">
+                                    <ResponsiveImage
+                                        baseSrc="/assets/house/storefront-wide.webp"
+                                        alt="The Matteo Perin — Made in Italy storefront in Jackson, Wyoming"
+                                        maxVariant="md"
+                                        className="w-full h-full object-cover"
+                                    />
+                                </div>
                                 <p className="font-sans text-xs text-matteo-charcoal/70 dark:text-white/60 leading-loose mb-8">
                                     164 E Deloney Ave<br />
                                     Jackson, Wyoming 83001<br /><br />

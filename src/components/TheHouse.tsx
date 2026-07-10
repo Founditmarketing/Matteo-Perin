@@ -106,12 +106,15 @@ export const TheHouse: React.FC = () => {
                             <RevealOnScroll>
                                 <div className="relative aspect-[4/5] overflow-hidden">
                                     <ResponsiveImage
-                                        baseSrc="/assets/fabrics/croc.webp"
-                                        alt="A hand-selected crocodile hide in deep blue — the raw material of a one-of-one commission"
+                                        baseSrc="/assets/house/maker-verona-parapet.webp"
+                                        alt="Matteo Perin seated on a brick parapet above the Verona skyline, the river and bell towers behind him"
                                         className="w-full h-full object-cover"
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent pointer-events-none" />
                                 </div>
+                                <p className="font-serif italic text-[13px] text-matteo-stone-ink dark:text-white/50 mt-3">
+                                    Verona, above the Adige.
+                                </p>
                             </RevealOnScroll>
                         </div>
                         <div className="lg:col-span-7">
@@ -195,6 +198,20 @@ export const TheHouse: React.FC = () => {
                 {/* CHAPTER III — JACKSON HOLE */}
                 <section className="bg-matteo-sand dark:bg-matteo-charcoal transition-colors duration-700">
                     <div className="py-24 md:py-32 px-6 md:px-12 max-w-[1400px] mx-auto">
+                        {/* The shop itself — the page has always named Deloney Avenue;
+                            now it shows the door. */}
+                        <RevealOnScroll>
+                            <div className="relative aspect-[3/2] md:aspect-[2/1] overflow-hidden mb-6">
+                                <ResponsiveImage
+                                    baseSrc="/assets/house/storefront-corner.webp"
+                                    alt="The Matteo Perin — Made in Italy storefront at 164 E Deloney Ave, Jackson, Wyoming, with Matteo crossing the street in front"
+                                    className="w-full h-full object-cover"
+                                />
+                            </div>
+                            <p className="font-serif italic text-[13px] text-matteo-stone-ink dark:text-white/50 mb-14">
+                                164 E Deloney Ave, Jackson, Wyoming.
+                            </p>
+                        </RevealOnScroll>
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 xl:gap-16">
                             <div className="lg:col-span-7">
                                 <RevealOnScroll>
@@ -234,6 +251,98 @@ export const TheHouse: React.FC = () => {
                                 </RevealOnScroll>
                             </div>
                         </div>
+                    </div>
+                </section>
+
+                {/* 2.5 THE MAN IN THE WORK — the maker photographed wearing the
+                    house's clothes. No claims, no superlatives: the evidence is
+                    the frame. Captions name only what is visible. */}
+                <section className="py-24 md:py-32 px-6 md:px-12 max-w-[1400px] mx-auto">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 xl:gap-16 items-end mb-16 md:mb-20">
+                        <div className="lg:col-span-6">
+                            <RevealOnScroll>
+                                <div className="flex items-center gap-4 mb-8">
+                                    <span className="w-12 h-[1px] bg-matteo-orange" />
+                                    <span className="font-sans text-[10px] uppercase tracking-[0.25em] font-medium text-matteo-orange-ink dark:text-matteo-orange">
+                                        The Wardrobe
+                                    </span>
+                                </div>
+                                <h2 className="font-serif text-4xl md:text-6xl text-matteo-charcoal dark:text-white font-light leading-[1.1]">
+                                    The man<br />in the work.
+                                </h2>
+                                <p className="font-serif italic text-[15px] text-matteo-charcoal/80 dark:text-white/70 mt-6 max-w-md leading-relaxed">
+                                    The clothes are not displayed on forms. They are worn — by the
+                                    man who makes them.
+                                </p>
+                            </RevealOnScroll>
+                        </div>
+                        <div className="lg:col-span-5 lg:col-start-8">
+                            <RevealOnScroll delay={0.15}>
+                                <div className="relative aspect-[4/5] overflow-hidden">
+                                    <ResponsiveImage
+                                        baseSrc="/assets/house/maker-balcony-dusk.webp"
+                                        alt="Matteo Perin at dusk on a balcony, coffee in both hands, in a hooded cashmere lounge set and green crocodile sneakers"
+                                        className="w-full h-full object-cover"
+                                    />
+                                </div>
+                                <p className="font-serif italic text-[13px] text-matteo-stone-ink dark:text-white/50 mt-3">
+                                    Dusk on the balcony — hooded cashmere, crocodile sneakers.
+                                </p>
+                            </RevealOnScroll>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-6 md:gap-x-10 gap-y-12">
+                        {[
+                            {
+                                src: "/assets/house/maker-colonnade.webp",
+                                alt: "Matteo Perin buttoning a chunky knit cardigan against a brick colonnade",
+                                caption: "Under the colonnade — shawl cardigan, striped shirt.",
+                            },
+                            {
+                                src: "/assets/house/maker-vineyard.webp",
+                                alt: "Matteo Perin in a spring vineyard blowing dandelion seeds, in a blue suit and waistcoat",
+                                caption: "Spring in the vineyard — blue suit, leather sneakers.",
+                            },
+                            {
+                                src: "/assets/house/maker-studio-bw.webp",
+                                alt: "Black-and-white studio portrait of Matteo Perin in a leather café-racer jacket, hands clasped",
+                                caption: "In the studio — café-racer leather.",
+                            },
+                            {
+                                src: "/assets/house/maker-newyork-snow.webp",
+                                alt: "Matteo Perin in midwinter snow wearing a camel double-breasted overcoat over a windowpane-check suit",
+                                caption: "Midwinter — camel double-breasted, windowpane check.",
+                            },
+                            {
+                                src: "/assets/house/maker-portrait-linen.webp",
+                                alt: "Portrait of Matteo Perin in a brown check sport jacket over an open linen shirt, in golden light",
+                                caption: "Check sport jacket, open linen.",
+                            },
+                            {
+                                src: "/assets/house/maker-autumn-stripe.webp",
+                                alt: "Matteo Perin leaning on a lamppost in an autumn park, in a navy chalk-stripe suit over an orange roll-neck",
+                                caption: "Autumn — navy chalk stripe, orange roll-neck.",
+                            },
+                        ].map((photo, idx) => (
+                            <RevealOnScroll
+                                key={photo.src}
+                                delay={0.05 * idx}
+                                className={idx % 3 === 1 ? "lg:mt-16" : ""}
+                            >
+                                <div className="relative aspect-[4/5] overflow-hidden">
+                                    <ResponsiveImage
+                                        baseSrc={photo.src}
+                                        alt={photo.alt}
+                                        maxVariant="md"
+                                        className="w-full h-full object-cover"
+                                    />
+                                </div>
+                                <p className="font-serif italic text-[13px] text-matteo-stone-ink dark:text-white/50 mt-3">
+                                    {photo.caption}
+                                </p>
+                            </RevealOnScroll>
+                        ))}
                     </div>
                 </section>
 
