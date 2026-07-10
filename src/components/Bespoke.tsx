@@ -43,7 +43,9 @@ const PROCESS_STEPS = [
         // and the crocodile page cite "over 100 hours" — confirm the true
         // per-garment figure before any number returns to this copy.
         description: "The hand-work complete, the commission is finished. No longer ours. Yours.",
-        image: IMAGES.journal_3
+        // The client seated in the finished chalk-stripe, the maker a step
+        // behind — the handover itself, not another fitting.
+        image: "/assets/house/bespoke-handover-md.webp"
     }
 ];
 
