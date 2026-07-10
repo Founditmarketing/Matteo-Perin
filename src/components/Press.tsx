@@ -8,7 +8,7 @@ export const Press: React.FC = () => {
         <div className="bg-matteo-cream dark:bg-matteo-black min-h-screen pt-32 pb-32 transition-colors duration-700">
             <Helmet>
                 <title>Press & Media Coverage | Matteo Perin</title>
-                <meta name="description" content="Matteo Perin in the press — coverage from JH Style Magazine, Private Air Magazine, and Hollywood in Toto. The Italian bespoke luxury designer based in Jackson Hole, Wyoming." />
+                <meta name="description" content="Matteo Perin in the press — coverage from VanityClass, JH Style Magazine, Private Air Magazine, and Hollywood in Toto. The Italian bespoke luxury designer based in Jackson Hole, Wyoming." />
                 <link rel="canonical" href="https://www.matteoperin.com/press" />
                 <meta property="og:title" content="Press & Media Coverage | Matteo Perin" />
                 <meta property="og:description" content="Featured coverage of Matteo Perin, the Italian bespoke luxury designer based in Jackson Hole, Wyoming." />

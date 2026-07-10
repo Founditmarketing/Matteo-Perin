@@ -430,6 +430,17 @@ export const ARTICLES: Article[] = [
 
 export const PRESS_ARTICLES = [
   {
+    id: 4,
+    publication: "VanityClass",
+    title: "L'uomo dietro al look di John Travolta",
+    date: "May 2026",
+    // Pre-cropped to the featured slot's 21/9 band (faces + the wall of
+    // photographers) — the source frame is a 3:4 red-carpet portrait.
+    image: "/assets/press/travolta-cannes.webp",
+    link: "https://vanityclass.it/matteo-perin-luomo-dietro-al-look-di-john-travolta/",
+    excerpt: "An all-Italian red carpet for the Pulp Fiction star — dressed by the house at the 79th Cannes Film Festival, where he received the honorary Palme d'Or and presented his directorial debut."
+  },
+  {
     id: 1,
     publication: "JH Style Magazine",
     title: "From the Dolomites to Deloney Avenue",
