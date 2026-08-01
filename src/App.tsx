@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigationType, useParams, Link } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import { Navigation } from './components/Navigation';
 import { Footer } from './components/Footer';
 import { InquiryProvider } from './context/InquiryContext';
@@ -344,6 +345,7 @@ function App() {
                         <Footer />
                     </div>
                     </MotionConfig>
+                    <Analytics />
                 </Router>
             </InquiryProvider>
             </CartProvider>
