@@ -51,6 +51,17 @@ const PROCESS_STEPS = [
 
 
 
+const BESPOKE_JSON_LD = {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    serviceType: 'Bespoke Tailoring',
+    name: 'The Bespoke Commission Process',
+    description: 'Commission a bespoke garment with Matteo Perin — private consultation, made-to-measure pattern drafting, fitting, and hand-finishing in Italy.',
+    provider: { '@type': 'ClothingStore', name: 'Matteo Perin', '@id': 'https://www.matteoperin.com/#store' },
+    areaServed: ['Jackson, WY', 'Jackson Hole', 'Teton County, Wyoming'],
+    url: 'https://www.matteoperin.com/bespoke',
+};
+
 export const Bespoke: React.FC = () => {
     const location = useLocation();
 
@@ -163,6 +174,7 @@ export const Bespoke: React.FC = () => {
                 <meta property="og:description" content="From private consultation to hand-finishing in Italy — the made-to-measure process behind Matteo Perin's one-of-a-kind pieces." />
                 <meta property="og:type" content="website" />
                 <meta property="og:url" content="https://www.matteoperin.com/bespoke" />
+                <script type="application/ld+json">{JSON.stringify(BESPOKE_JSON_LD)}</script>
             </Helmet>
 
             {/* --- HERO SECTION --- */}

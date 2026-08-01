@@ -3,6 +3,23 @@ import { Helmet } from 'react-helmet-async';
 import { RevealOnScroll } from './RevealOnScroll';
 import { PRESS_ARTICLES } from '../constants';
 
+const PRESS_JSON_LD = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    itemListElement: PRESS_ARTICLES.map((article, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        item: {
+            '@type': 'NewsArticle',
+            headline: article.title,
+            image: `https://www.matteoperin.com${article.image}`,
+            url: article.link,
+            publisher: { '@type': 'Organization', name: article.publication },
+            about: { '@type': 'ClothingStore', name: 'Matteo Perin' },
+        },
+    })),
+};
+
 export const Press: React.FC = () => {
     return (
         <div className="bg-matteo-cream dark:bg-matteo-black min-h-screen pt-32 pb-32 transition-colors duration-700">
@@ -14,6 +31,7 @@ export const Press: React.FC = () => {
                 <meta property="og:description" content="Featured coverage of Matteo Perin, the Italian bespoke luxury designer based in Jackson Hole, Wyoming." />
                 <meta property="og:type" content="website" />
                 <meta property="og:url" content="https://www.matteoperin.com/press" />
+                <script type="application/ld+json">{JSON.stringify(PRESS_JSON_LD)}</script>
             </Helmet>
             <div className="max-w-[1920px] mx-auto px-6 md:px-12">
 
