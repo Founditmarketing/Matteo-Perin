@@ -2,7 +2,7 @@ const fs = require('fs');
 
 // Simple PDF text extraction without external deps
 // PDFs store text in streams - we'll extract readable text manually
-const buf = fs.readFileSync('public/MATTEO PERIN.pdf');
+const buf = fs.readFileSync('source_pdfs/MATTEO PERIN.pdf');
 const str = buf.toString('latin1');
 
 // Extract text between BT and ET markers (PDF text objects)

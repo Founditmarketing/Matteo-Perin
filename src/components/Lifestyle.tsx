@@ -38,7 +38,6 @@ export const Lifestyle: React.FC = () => {
             <Helmet>
                 <title>The Lifestyle | Considered Luxury by Matteo Perin</title>
                 <meta name="description" content="The Matteo Perin lifestyle — where Italian craftsmanship meets the adventurous spirit of Jackson Hole. Exotic outerwear, bespoke leather, and pieces made for a life well lived." />
-                <meta name="keywords" content="luxury lifestyle Jackson Hole, Matteo Perin lifestyle, considered luxury, bespoke leather goods Wyoming" />
                 <link rel="canonical" href="https://www.matteoperin.com/lifestyle" />
                 <meta property="og:title" content="The Lifestyle | Considered Luxury by Matteo Perin" />
                 <meta property="og:description" content="Where Italian craftsmanship meets the adventurous spirit of Jackson Hole." />
@@ -54,7 +53,7 @@ export const Lifestyle: React.FC = () => {
                         A Day in the Life</h1>
                 </RevealOnScroll>
 
-                <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce opacity-30">
+                <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-pulse opacity-30" style={{ animationDuration: '3s' }}>
                     <span className="font-serif text-xl">↓</span>
                 </div>
             </div>
@@ -72,6 +71,8 @@ export const Lifestyle: React.FC = () => {
                             <img
                                 src={section.image}
                                 alt={section.title}
+                                loading="lazy"
+                                decoding="async"
                                 className="w-full h-full object-cover opacity-70 scale-105"
                             />
                             <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-black/80"></div>
@@ -93,7 +94,7 @@ export const Lifestyle: React.FC = () => {
                                     <h2 className="font-serif text-4xl md:text-9xl mb-8 leading-[0.85] tracking-tight">
                                         {section.title}
                                     </h2>
-                                    <p className={`font-serif text-xl md:text-2xl text-gray-300 leading-relaxed mb-12 font-light ${section.align === 'center' ? 'mx-auto' : ''}`}>
+                                    <p className={`font-serif text-xl md:text-2xl text-white/80 leading-relaxed mb-12 font-light ${section.align === 'center' ? 'mx-auto' : ''}`}>
                                         {section.description}
                                     </p>
                                     <Link

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { ProductService } from '@/services/productService';
 import { Link } from 'react-router-dom';
 import { RevealOnScroll } from './RevealOnScroll';
@@ -12,69 +13,91 @@ interface ArchiveProps {
 // 1. Editorial Card (Magazine Feel)
 const EditorialCard: React.FC<{ product: Product; featured?: boolean }> = ({ product, featured }) => {
     return (
-        <Link to={`/collection/${product.id}`} className="group block h-full">
-            <div className={`relative overflow-hidden mb-6 ${featured ? 'aspect-[16/9]' : 'aspect-[3/4]'}`}>
-                <ParallaxImage
-                    src={product.image}
-                    alt={product.title}
-                    containerClassName="w-full h-full bg-[#f4f4f4]"
-                    className="grayscale group-hover:grayscale-0 transition-all duration-1000 dark:brightness-90"
-                    speed={featured ? 0.05 : 0.08}
-                />
-                {/* Modern Hover Badge */}
-                <div className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                    <span className="bg-white/90 dark:bg-black/90 text-matteo-charcoal dark:text-white text-[9px] uppercase tracking-widest px-3 py-1 ">
-                        View
-                    </span>
+        <div className="h-full">
+            <Link to={`/collection/${product.id}`} className="group block">
+                <div className={`relative overflow-hidden mb-6 ${featured ? 'aspect-[16/9]' : 'aspect-[3/4]'}`}>
+                    <ParallaxImage
+                        src={product.image}
+                        alt={product.title}
+                        containerClassName="w-full h-full bg-[#f4f4f4]"
+                        className="grayscale group-hover:grayscale-0 transition-all duration-1000 dark:brightness-90"
+                        speed={featured ? 0.05 : 0.08}
+                    />
+                    {/* Modern Hover Badge */}
+                    <div className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                        <span className="bg-white/90 dark:bg-black/90 text-matteo-charcoal dark:text-white text-[10px] uppercase tracking-widest px-3 py-1 ">
+                            View
+                        </span>
+                    </div>
                 </div>
-            </div>
-            <div className="flex flex-col gap-1">
-                <h3 className="font-serif text-2xl text-matteo-charcoal dark:text-white group-hover:underline decoration-1 underline-offset-4 decoration-matteo-orange/50 transition-all">
-                    {product.title}
-                </h3>
-                <div className="flex justify-between items-baseline border-t border-matteo-charcoal/10 dark:border-white/10 pt-2 mt-2">
-                    <p className="font-sans text-[10px] uppercase tracking-luxury text-matteo-stone">
-                        {product.category}
-                    </p>
-                    {/* Price hidden for Silent Luxury */}
+                <div className="flex flex-col gap-1">
+                    <h3 className="font-serif text-2xl text-matteo-charcoal dark:text-white group-hover:underline decoration-1 underline-offset-4 decoration-matteo-orange/50 transition-all">
+                        {product.title}
+                    </h3>
+                    <div className="flex justify-between items-baseline border-t border-matteo-charcoal/10 dark:border-white/10 pt-2 mt-2">
+                        <p className="font-sans text-[10px] uppercase tracking-luxury text-matteo-stone-ink dark:text-matteo-stone">
+                            {product.category}
+                        </p>
+                        {/* Price hidden for Silent Luxury */}
+                    </div>
                 </div>
-            </div>
-        </Link>
+            </Link>
+            {/* Concierge path — a sibling of the detail link so anchors never nest;
+                the 44px hit area lives on the anchor, the hairline on an inner span. */}
+            <Link
+                to={`/enquire?ref=${encodeURIComponent(`Collection — ${product.title}`)}`}
+                className="group/req inline-flex items-center min-h-[44px] font-sans text-[10px] uppercase tracking-luxury text-matteo-orange-ink dark:text-matteo-orange"
+            >
+                <span className="border-b border-matteo-orange/40 pb-1 group-hover/req:border-matteo-orange transition-colors duration-500">Request This Look</span>
+            </Link>
+        </div>
     );
 };
 
 // 2. Grid Card (Modern Swiss Style - Left Aligned)
 const GridCard: React.FC<{ product: Product }> = ({ product }) => {
     return (
-        <Link to={`/collection/${product.id}`} className="group block relative">
-            {/* Image */}
-            <div className="relative aspect-[3/4] overflow-hidden mb-4 bg-[#f0f0f0] dark:bg-[#111]">
-                <img
-                    src={product.image}
-                    alt={product.title}
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-[0.6s] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-105 dark:brightness-90"
-                />
+        <div>
+            <Link to={`/collection/${product.id}`} className="group block relative">
+                {/* Image */}
+                <div className="relative aspect-[3/4] overflow-hidden mb-4 bg-[#f0f0f0] dark:bg-[#111]">
+                    <img
+                        src={product.image}
+                        alt={product.title}
+                        loading="lazy"
+                        decoding="async"
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-[0.6s] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-105 dark:brightness-90"
+                    />
 
-                {/* Modern "Quick Shop" Overlay on Hover */}
-                <div className="absolute inset-x-0 bottom-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex justify-between items-end bg-gradient-to-t from-black/60 to-transparent">
-                    <span className="text-white font-sans text-[9px] uppercase tracking-widest">
-                        Quick Add +
-                    </span>
+                    {/* Modern "Quick Shop" Overlay on Hover */}
+                    <div className="absolute inset-x-0 bottom-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex justify-between items-end bg-gradient-to-t from-black/60 to-transparent">
+                        <span className="text-white font-sans text-[10px] uppercase tracking-widest">
+                            Quick Add +
+                        </span>
+                    </div>
                 </div>
-            </div>
 
-            <div className="flex justify-between items-start">
-                <div className="flex-1 pr-4">
-                    <h3 className="font-serif text-lg text-matteo-charcoal dark:text-white leading-tight mb-1 group-hover:text-matteo-orange transition-colors">
-                        {product.title}
-                    </h3>
-                    <p className="font-sans text-[9px] uppercase tracking-widest text-matteo-stone">
-                        {product.category}
-                    </p>
+                <div className="flex justify-between items-start">
+                    <div className="flex-1 pr-4">
+                        <h3 className="font-serif text-lg text-matteo-charcoal dark:text-white leading-tight mb-1 group-hover:text-matteo-orange transition-colors">
+                            {product.title}
+                        </h3>
+                        <p className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone-ink dark:text-matteo-stone">
+                            {product.category}
+                        </p>
+                    </div>
+                    {/* Price hidden for Silent Luxury */}
                 </div>
-                {/* Price hidden for Silent Luxury */}
-            </div>
-        </Link>
+            </Link>
+            {/* Concierge path — a sibling of the detail link so anchors never nest;
+                the 44px hit area lives on the anchor, the hairline on an inner span. */}
+            <Link
+                to={`/enquire?ref=${encodeURIComponent(`Collection — ${product.title}`)}`}
+                className="group/req inline-flex items-center min-h-[44px] font-sans text-[10px] uppercase tracking-widest text-matteo-orange-ink dark:text-matteo-orange"
+            >
+                <span className="border-b border-matteo-orange/40 pb-1 group-hover/req:border-matteo-orange transition-colors duration-500">Request This Look</span>
+            </Link>
+        </div>
     );
 };
 
@@ -134,8 +157,8 @@ export const Archive: React.FC<ArchiveProps> = ({ initialGender }) => {
     const categories = Object.keys(groupedProducts);
 
     const getTitle = () => {
-        if (initialGender === 'men') return "Man";
-        if (initialGender === 'women') return "Woman";
+        if (initialGender === 'men') return "Men";
+        if (initialGender === 'women') return "Women";
         return "The Archive";
     };
 
@@ -150,11 +173,21 @@ export const Archive: React.FC<ArchiveProps> = ({ initialGender }) => {
     return (
         <div className="bg-matteo-cream dark:bg-matteo-black min-h-screen pt-32 pb-32 transition-colors duration-700 animate-fade-in-up">
 
+            <Helmet>
+                <title>The Collection — Luxury Clothing &amp; Exotic Leather in Jackson, WY | Matteo Perin</title>
+                <meta name="description" content="Browse the Matteo Perin collection — bespoke jackets, exotic leather goods, and one-of-a-kind luxury pieces for men and women, handcrafted in Italy and shown at our Jackson Hole atelier on 164 E Deloney Ave." />
+                <link rel="canonical" href="https://www.matteoperin.com/collection" />
+                <meta property="og:title" content="The Collection — Luxury Clothing in Jackson, WY | Matteo Perin" />
+                <meta property="og:description" content="Bespoke jackets, exotic leather, and one-of-a-kind luxury pieces, handcrafted in Italy. Shown at the Matteo Perin atelier in Jackson Hole." />
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content="https://www.matteoperin.com/collection" />
+            </Helmet>
+
             {/* HEADER SECTION */}
             <div className="max-w-[1920px] mx-auto px-6 md:px-12 mb-16">
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 pb-8 border-b border-matteo-charcoal/10 dark:border-white/10">
                     <RevealOnScroll>
-                        <span className="font-sans text-[10px] uppercase tracking-luxury text-matteo-stone block mb-4">
+                        <span className="font-sans text-[10px] uppercase tracking-luxury text-matteo-stone-ink dark:text-matteo-stone block mb-4">
                             The Reference Archive
                         </span>
                         <h1 className="font-serif text-6xl md:text-8xl text-matteo-charcoal dark:text-white font-light leading-none">
@@ -173,7 +206,7 @@ export const Archive: React.FC<ArchiveProps> = ({ initialGender }) => {
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                     className="bg-transparent border-b border-transparent group-hover:border-matteo-charcoal dark:group-hover:border-white py-1 font-sans text-xs uppercase tracking-widest text-matteo-charcoal dark:text-white placeholder-matteo-stone focus:outline-none focus:border-matteo-orange transition-all w-32 focus:w-48 text-right"
                                 />
-                                <span className="absolute right-full mr-2 top-1 text-matteo-stone">
+                                <span className="absolute right-full mr-2 top-1 text-matteo-stone-ink dark:text-matteo-stone">
                                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                                 </span>
                             </div>
@@ -182,14 +215,14 @@ export const Archive: React.FC<ArchiveProps> = ({ initialGender }) => {
                             <div className="flex items-center gap-4">
                                 <button
                                     onClick={() => setActiveView('editorial')}
-                                    className={`w-11 h-11 flex items-center justify-center border transition-colors ${activeView === 'editorial' ? 'border-matteo-charcoal dark:border-white bg-matteo-charcoal dark:bg-white text-white dark:text-black' : 'border-matteo-charcoal/20 dark:border-white/20 text-matteo-stone hover:border-matteo-orange'}`}
+                                    className={`w-11 h-11 flex items-center justify-center border transition-colors ${activeView === 'editorial' ? 'border-matteo-charcoal dark:border-white bg-matteo-charcoal dark:bg-white text-white dark:text-black' : 'border-matteo-charcoal/20 dark:border-white/20 text-matteo-stone-ink dark:text-matteo-stone hover:border-matteo-orange'}`}
                                     title="Editorial View"
                                 >
                                     <span className="font-serif italic text-lg">E</span>
                                 </button>
                                 <button
                                     onClick={() => setActiveView('grid')}
-                                    className={`w-11 h-11 flex items-center justify-center border transition-colors ${activeView === 'grid' ? 'border-matteo-charcoal dark:border-white bg-matteo-charcoal dark:bg-white text-white dark:text-black' : 'border-matteo-charcoal/20 dark:border-white/20 text-matteo-stone hover:border-matteo-orange'}`}
+                                    className={`w-11 h-11 flex items-center justify-center border transition-colors ${activeView === 'grid' ? 'border-matteo-charcoal dark:border-white bg-matteo-charcoal dark:bg-white text-white dark:text-black' : 'border-matteo-charcoal/20 dark:border-white/20 text-matteo-stone-ink dark:text-matteo-stone hover:border-matteo-orange'}`}
                                     title="Grid View"
                                 >
                                     <div className="grid grid-cols-2 gap-0.5">
@@ -211,14 +244,14 @@ export const Archive: React.FC<ArchiveProps> = ({ initialGender }) => {
                             Filter +
                         </button>
                         <div className="w-[1px] h-3 bg-matteo-charcoal/10 dark:bg-white/10"></div>
-                        <span className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone whitespace-nowrap">
+                        <span className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone-ink dark:text-matteo-stone whitespace-nowrap">
                             {filteredProducts.length} Results
                         </span>
                         {/* Placeholder Filter Chips for aesthetic */}
                         {isFilterOpen && (
                             <div className="flex gap-4 animate-fade-in-up">
                                 {['Outerwear', 'Tailoring', 'Leather Goods', 'Accessories'].map(f => (
-                                    <button key={f} className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone hover:text-matteo-charcoal dark:hover:text-white transition-colors whitespace-nowrap p-2">
+                                    <button key={f} className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone-ink dark:text-matteo-stone hover:text-matteo-charcoal dark:hover:text-white transition-colors whitespace-nowrap p-2">
                                         {f}
                                     </button>
                                 ))}
@@ -286,7 +319,7 @@ export const Archive: React.FC<ArchiveProps> = ({ initialGender }) => {
                         </div>
                     ) : (
                         <div className="py-32 text-center">
-                            <p className="font-serif text-xl text-matteo-stone">No items found.</p>
+                            <p className="font-serif text-xl text-matteo-stone-ink dark:text-matteo-stone">No items found.</p>
                             <button onClick={() => setSearchQuery('')} className="mt-4 text-matteo-orange font-sans text-xs uppercase tracking-widest border-b border-current">Clear Search</button>
                         </div>
                     )}

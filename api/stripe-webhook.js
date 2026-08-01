@@ -222,19 +222,20 @@ export default async function handler(req, res) {
 
     let event;
 
-    if (webhookSecret && sig) {
-      // Verify the webhook signature (recommended for production)
-      try {
-        event = stripe.webhooks.constructEvent(rawBody, sig, webhookSecret);
-      } catch (err) {
-        console.error(`⚠️ Webhook signature verification failed:`, err.message);
-        return res.status(400).json({ error: `Webhook Error: ${err.message}` });
-      }
-    } else {
-      // If no webhook secret is configured, parse the event directly
-      // (useful during initial setup, but not recommended for production)
-      console.warn('⚠️ No STRIPE_WEBHOOK_SECRET set — skipping signature verification');
-      event = JSON.parse(rawBody.toString());
+    // Fail closed: unsigned events are never trusted. An unverified payload
+    // could otherwise decrement inventory and emit fake purchase analytics.
+    if (!webhookSecret) {
+      console.error('STRIPE_WEBHOOK_SECRET is not set — rejecting webhook');
+      return res.status(500).json({ error: 'Webhook not configured' });
+    }
+    if (!sig) {
+      return res.status(400).json({ error: 'Missing stripe-signature header' });
+    }
+    try {
+      event = stripe.webhooks.constructEvent(rawBody, sig, webhookSecret);
+    } catch (err) {
+      console.error(`⚠️ Webhook signature verification failed:`, err.message);
+      return res.status(400).json({ error: `Webhook Error: ${err.message}` });
     }
 
     // ── Handle the event ──

@@ -1,7 +1,14 @@
 {
+  "redirects": [
+    { "source": "/contact", "destination": "/enquire", "permanent": true },
+    { "source": "/lifestyle", "destination": "/the-house", "permanent": true },
+    { "source": "/furniture", "destination": "/casa", "permanent": true },
+    { "source": "/inventory-test-hidden", "destination": "/shop", "permanent": true },
+    { "source": "/inventory-test-hidden/:slug", "destination": "/shop/:slug", "permanent": true }
+  ],
   "rewrites": [
     { "source": "/assets/(.*)", "destination": "/assets/$1" },
-    { "source": "/((?!api/|assets/).*)", "destination": "/index.html" }
+    { "source": "/((?!api/|assets/|sitemap\\.xml|robots\\.txt).*)", "destination": "/index.html" }
   ],
   "headers": [
     {

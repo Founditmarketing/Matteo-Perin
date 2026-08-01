@@ -14,7 +14,19 @@ export const TextReveal: React.FC<TextRevealProps> = ({
   stagger = 0.05
 }) => {
   const [isVisible, setIsVisible] = useState(false);
+  // prefers-reduced-motion users get static text — the word-by-word rise is
+  // pure ornament and this component sits under headline copy site-wide.
+  const [reducedMotion, setReducedMotion] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  );
   const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const onChange = () => setReducedMotion(mq.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -40,6 +52,16 @@ export const TextReveal: React.FC<TextRevealProps> = ({
 
   // Split text into words
   const words = children.split(" ");
+
+  if (reducedMotion) {
+    return (
+      <div ref={ref} className={`${className} flex flex-wrap gap-x-[0.25em] gap-y-[0.1em]`}>
+        {words.map((word, i) => (
+          <span key={i} className="inline-block">{word}</span>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div ref={ref} className={`${className} flex flex-wrap gap-x-[0.25em] gap-y-[0.1em]`}>

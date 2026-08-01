@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
 import { supabase } from '../lib/supabaseClient';
 import { useNavigate } from 'react-router-dom';
@@ -37,19 +38,23 @@ export const DossierDashboard: React.FC = () => {
     if (loading) {
         return (
             <div className="min-h-screen bg-[#050505] flex items-center justify-center">
-                <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-white/50 animate-pulse">Decrypting Dossier...</span>
+                <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-white/50 animate-pulse">Opening the Dossier…</span>
             </div>
         );
     }
 
     return (
         <div className="min-h-screen bg-[#0a0a0a] text-matteo-cream font-serif pt-32 pb-24 px-6 md:px-12 selection:bg-white selection:text-black">
-            
+            <Helmet>
+                <title>Dossier Dashboard | Matteo Perin</title>
+                <meta name="robots" content="noindex, nofollow" />
+            </Helmet>
+
             <div className="max-w-5xl mx-auto">
                 {/* Header */}
                 <header className="flex flex-col md:flex-row justify-between items-start md:items-end mb-24 border-b border-white/10 pb-12 gap-8">
                     <div>
-                        <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-white/40 block mb-4">Level 4 Clearance</span>
+                        <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-white/40 block mb-4">Private Client</span>
                         <h1 className="text-4xl md:text-6xl font-light tracking-wide text-white">The Dossier</h1>
                         <p className="mt-4 text-white/50 font-sans text-sm tracking-widest">{user?.email}</p>
                     </div>
@@ -57,7 +62,7 @@ export const DossierDashboard: React.FC = () => {
                         onClick={handleSignOut}
                         className="font-sans text-[10px] uppercase tracking-[0.3em] text-white/40 border border-white/10 px-6 py-3 hover:bg-white hover:text-black hover:border-white transition-all duration-500"
                     >
-                        Secure Sign Out
+                        Sign Out
                     </button>
                 </header>
 
@@ -85,7 +90,7 @@ export const DossierDashboard: React.FC = () => {
                                     <span className="font-serif text-lg text-white">Napoli Drop 7</span>
                                 </li>
                             </ul>
-                            <p className="font-sans text-[10px] text-white/30 tracking-widest uppercase mt-6 italic">Last updated: Sept 12, 2026 (Milan)</p>
+                            <p className="font-sans text-[10px] text-white/30 tracking-widest uppercase mt-6 italic">Last updated: Sept 12, 2026 (Verona)</p>
                         </section>
 
                         <section className="bg-white/5 border border-white/10 p-8 mt-12">
@@ -94,8 +99,8 @@ export const DossierDashboard: React.FC = () => {
                             <p className="font-serif text-sm text-white/60 leading-relaxed mb-8">
                                 Connect directly with the Master Tailor to begin a new bespoke journey or exotic leather commission.
                             </p>
-                            <button className="w-full border border-white/30 text-white font-sans text-[9px] uppercase tracking-[0.3em] py-4 hover:bg-white hover:text-black transition-colors duration-500">
-                                Open Secure Comms
+                            <button className="w-full border border-white/30 text-white font-sans text-[10px] uppercase tracking-[0.3em] py-4 hover:bg-white hover:text-black transition-colors duration-500">
+                                Write to the Concierge
                             </button>
                         </section>
                     </div>
@@ -113,15 +118,15 @@ export const DossierDashboard: React.FC = () => {
                                     className="group flex flex-col sm:flex-row gap-8 items-start sm:items-center bg-[#050505] border border-white/5 p-6 hover:border-white/20 transition-colors duration-500"
                                 >
                                     <div className="w-24 h-32 flex-shrink-0 overflow-hidden bg-black/50">
-                                        <img src={order.image} alt={order.title} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" />
+                                        <img src={order.image} alt={order.title} loading="lazy" decoding="async" className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" />
                                     </div>
                                     <div className="flex-1">
-                                        <span className="font-sans text-[9px] uppercase tracking-[0.3em] text-white/40 block mb-2">{order.category}</span>
+                                        <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-white/40 block mb-2">{order.category}</span>
                                         <h3 className="font-serif text-2xl tracking-wide text-white mb-3">{order.title}</h3>
                                         <span className="font-serif text-lg text-white/70">${order.price.toLocaleString()}</span>
                                     </div>
                                     <div className="text-right flex-shrink-0">
-                                        <span className="font-sans text-xs uppercase tracking-widest text-green-500/80 mb-2 block">Procured</span>
+                                        <span className="font-sans text-xs uppercase tracking-widest text-white/60 mb-2 block">Procured</span>
                                         <span className="font-sans text-[10px] uppercase tracking-widest text-white/30">ID: #{order.id}</span>
                                     </div>
                                 </motion.div>

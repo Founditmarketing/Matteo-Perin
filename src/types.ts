@@ -15,6 +15,7 @@ export interface Product {
   description?: string;
   link?: string;
   gallery?: string[]; // Multiple images for detail page
+  stock?: number; // Available units (1 = one-of-one piece)
 }
 
 export interface Article {
@@ -53,15 +54,6 @@ export interface CartItem extends Product {
   cartItemId: string; // Unique ID for the item in the cart (to distinguish customized versions)
   quantity: number;
   customizations?: CustomizationOptions;
-}
-
-export interface LookbookItem {
-  id: number;
-  title: string; // e.g., "Look 01"
-  season: string;
-  image: string;
-  description: string;
-  wearing: string[]; // List of items in the photo
 }
 
 export interface Material {

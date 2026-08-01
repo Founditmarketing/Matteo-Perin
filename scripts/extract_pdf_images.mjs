@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import zlib from 'zlib';
 
-const PDF_PATH = './public/CATALOGO SOFA DESIGN P.pdf';
+const PDF_PATH = './source_pdfs/CATALOGO SOFA DESIGN P.pdf';
 const OUTPUT_DIR = './public/assets/furniture';
 
 if (!fs.existsSync(OUTPUT_DIR)) {

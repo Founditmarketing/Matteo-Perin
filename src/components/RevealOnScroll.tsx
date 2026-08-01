@@ -44,11 +44,9 @@ export const RevealOnScroll: React.FC<RevealOnScrollProps> = ({
       observer.observe(ref.current);
     }
 
-    return () => {
-      if (ref.current) {
-        observer.unobserve(ref.current);
-      }
-    };
+    // disconnect() doesn't depend on the (possibly stale) ref in the cleanup
+    // closure, so the observer can never leak.
+    return () => observer.disconnect();
   }, [threshold, isVisible]);
 
   const delayClass = delay === 0.1 ? 'delay-100' : delay === 0.2 ? 'delay-200' : delay === 0.3 ? 'delay-300' : '';

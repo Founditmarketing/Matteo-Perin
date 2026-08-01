@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useInquiry } from '../context/InquiryContext';
 import { reportInquiryConversion } from '@/lib/gtagConversion';
+import { useModalA11y } from '../lib/useModalA11y';
 
 const FloatingInput: React.FC<{
     label: string;
@@ -40,7 +41,7 @@ const FloatingInput: React.FC<{
             )}
             <label
                 htmlFor={id}
-                className={`absolute left-0 font-sans text-[10px] uppercase tracking-widest transition-all duration-300 pointer-events-none ${isActive ? '-top-4 text-matteo-orange text-[8px]' : 'top-3 text-matteo-charcoal/40 dark:text-white/40'}`}
+                className={`absolute left-0 font-sans text-[10px] uppercase tracking-widest transition-all duration-300 pointer-events-none ${isActive ? '-top-4 text-matteo-orange text-[10px]' : 'top-3 text-matteo-charcoal/40 dark:text-white/40'}`}
             >
                 {label} {required && '*'}
             </label>
@@ -51,7 +52,7 @@ const FloatingInput: React.FC<{
 };
 
 export const InquiryModal: React.FC = () => {
-    const { isInquiryOpen, setIsInquiryOpen, selectedProduct } = useInquiry();
+    const { isInquiryOpen, setIsInquiryOpen, selectedProduct, inquiryContext } = useInquiry();
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -61,6 +62,16 @@ export const InquiryModal: React.FC = () => {
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
+    const [submitError, setSubmitError] = useState(false);
+    const dialogRef = useRef<HTMLDivElement>(null);
+
+    useModalA11y(isInquiryOpen, () => setIsInquiryOpen(false), dialogRef);
+
+    // Catalog garments carry numeric ids (REF: MP-0001); Casa pieces carry
+    // string ids and are referenced by name instead of a catalog number.
+    const referenceLabel = selectedProduct && typeof selectedProduct.id === 'number'
+        ? `MP-${selectedProduct.id.toString().padStart(4, '0')}`
+        : null;
 
     if (!isInquiryOpen) return null;
 
@@ -68,40 +79,43 @@ export const InquiryModal: React.FC = () => {
         e.preventDefault();
         setIsSubmitting(true);
         
-        // Prepare data for backend
+        // Prepare data for backend — the context line travels with the
+        // message so the house knows a Casa piece is being discussed.
         const inquiryPayload = {
             formType: 'look-inquiry',
             name: formData.name,
             email: formData.email,
             phone: formData.phone,
             contactTime: formData.contactTime,
-            message: formData.message,
+            message: inquiryContext ? `${inquiryContext}\n\n${formData.message}`.trim() : formData.message,
             requestedProduct: selectedProduct ? {
                 id: selectedProduct.id,
                 title: selectedProduct.title,
-                reference: `MP-${selectedProduct.id.toString().padStart(4, '0')}`,
-                price: selectedProduct.price
+                reference: referenceLabel ?? `Casa — ${selectedProduct.title}`,
+                price: selectedProduct.price ?? null
             } : null
         };
         
         try {
-            await fetch('/api/private-client', {
+            const res = await fetch('/api/private-client', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(inquiryPayload)
             });
-        } catch (err) {
-            console.error("HubSpot submission failed:", err);
-        } finally {
-            // Fire Google Ads conversion
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            // Conversion + success only for inquiries that actually reached us
             reportInquiryConversion();
-            setIsSubmitting(false);
             setIsSuccess(true);
             setTimeout(() => {
                 setIsInquiryOpen(false);
                 setIsSuccess(false);
                 setFormData({ name: '', email: '', phone: '', contactTime: '', message: '' });
             }, 3000);
+        } catch (err) {
+            console.error("HubSpot submission failed:", err);
+            setSubmitError(true);
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -111,7 +125,7 @@ export const InquiryModal: React.FC = () => {
 
     return (
         <div className="fixed inset-0 z-[99999] bg-matteo-charcoal/95 dark:bg-[#050505]/95 backdrop-blur-md flex items-center justify-center p-6 transition-all duration-500">
-            <div className="bg-matteo-cream dark:bg-matteo-black w-full max-w-5xl relative overflow-hidden shadow-2xl flex flex-col md:flex-row h-full max-h-[90vh] animate-fade-in-up">
+            <div ref={dialogRef} role="dialog" aria-modal="true" aria-label={selectedProduct ? `Inquire about ${selectedProduct.title}` : 'Private inquiry'} tabIndex={-1} className="bg-matteo-cream dark:bg-matteo-black w-full max-w-5xl relative overflow-hidden shadow-2xl flex flex-col md:flex-row h-full max-h-[90vh] animate-fade-in-up outline-none">
                 
                 {/* Left Side: Product Image (Hidden on very small screens) */}
                 {selectedProduct && (
@@ -124,7 +138,9 @@ export const InquiryModal: React.FC = () => {
                         <div className="absolute inset-0 bg-gradient-to-t from-matteo-charcoal/80 to-transparent flex flex-col justify-end p-12 text-white">
                             <span className="font-sans text-[10px] uppercase tracking-widest text-matteo-orange mb-2 block">Reference</span>
                             <h3 className="font-serif text-3xl mb-2">{selectedProduct.title}</h3>
-                            <span className="font-sans text-xs tracking-widest opacity-80">REF: MP-{selectedProduct.id.toString().padStart(4, '0')}</span>
+                            {referenceLabel && (
+                                <span className="font-sans text-xs tracking-widest opacity-80">REF: {referenceLabel}</span>
+                            )}
                         </div>
                     </div>
                 )}
@@ -142,13 +158,22 @@ export const InquiryModal: React.FC = () => {
                     <div className="max-w-md w-full mx-auto my-auto">
                         <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-matteo-orange mb-2 md:mb-4 block">Concierge Intake</span>
                         <h2 className="font-serif text-2xl md:text-4xl mb-6 md:mb-6 text-matteo-charcoal dark:text-white">
-                            {selectedProduct?.title === 'Bespoke Crocodile Jacket' ? 'SERIOUS INQUIRIES ONLY' : 'Request a Bespoke Look'}
+                            {selectedProduct?.title === 'Bespoke Crocodile Jacket'
+                                ? 'The Commission Conversation'
+                                : inquiryContext ? 'Request a Consultation' : 'Request a Bespoke Look'}
                         </h2>
+                        {inquiryContext && (
+                            <p className="font-serif italic text-[15px] text-matteo-charcoal/80 dark:text-white/80 -mt-2 mb-6">
+                                {inquiryContext}
+                            </p>
+                        )}
                         {selectedProduct && (
                             <div className="md:hidden flex items-center gap-4 mb-6 pb-6 border-b border-matteo-charcoal/10 dark:border-white/10">
                                 <img src={selectedProduct.image} alt={selectedProduct.title} className="w-16 h-16 object-cover object-top" />
                                 <div>
-                                    <span className="font-sans text-[8px] uppercase tracking-widest text-matteo-charcoal/50 dark:text-white/50 block mb-1">REF: MP-{selectedProduct.id.toString().padStart(4, '0')}</span>
+                                    {referenceLabel && (
+                                        <span className="font-sans text-[10px] uppercase tracking-widest text-matteo-charcoal/50 dark:text-white/50 block mb-1">REF: {referenceLabel}</span>
+                                    )}
                                     <h3 className="font-serif text-lg leading-tight text-matteo-charcoal dark:text-white">{selectedProduct.title}</h3>
                                 </div>
                             </div>
@@ -160,16 +185,16 @@ export const InquiryModal: React.FC = () => {
                                     <span className="text-matteo-orange text-xl">✓</span>
                                 </div>
                                 <h3 className="font-serif text-2xl text-matteo-charcoal dark:text-white mb-4">Inquiry Received</h3>
-                                <p className="font-serif text-matteo-charcoal/60 dark:text-gray-400">A senior client advisor will contact you shortly regarding the {selectedProduct?.title || 'commission'}.</p>
+                                <p className="font-serif text-matteo-charcoal/60 dark:text-white/60">A senior client advisor will contact you shortly regarding the {selectedProduct?.title || 'commission'}.</p>
                             </div>
                         ) : (
                             <>
-                                <p className="font-serif text-matteo-charcoal/60 dark:text-gray-400 text-xs md:text-sm mb-6 md:mb-10 leading-relaxed hidden sm:block">
+                                <p className="font-serif text-matteo-charcoal/60 dark:text-white/60 text-xs md:text-sm mb-6 md:mb-10 leading-relaxed hidden sm:block">
                                     Please provide your contact details. Due to the exclusive nature of our pieces, all acquisitions are handled via private consultation to ensure exact specifications and availability.
                                 </p>
                                 {selectedProduct?.title === 'Bespoke Crocodile Jacket' && (
-                                    <p className="font-sans text-[10px] uppercase tracking-widest text-matteo-orange mb-6 -mt-4">
-                                        * Note: Serious Inquiries Only
+                                    <p className="font-sans text-[10px] uppercase tracking-widest text-matteo-orange-ink dark:text-matteo-orange mb-6 -mt-4">
+                                        Three commissions accepted per year
                                     </p>
                                 )}
 
@@ -181,7 +206,13 @@ export const InquiryModal: React.FC = () => {
                                         <FloatingInput id="contactTime" label="Preferred Contact Time" value={formData.contactTime} onChange={handleChange} />
                                     </div>
                                     <FloatingInput id="message" label="Additional Requirements or Vision" value={formData.message} onChange={handleChange} multiline />
-                                    
+
+                                    {submitError && (
+                                        <p role="alert" className="font-serif text-sm text-matteo-charcoal dark:text-white leading-relaxed pt-4">
+                                            Your request could not be sent. Please try again, or write directly to <a href="mailto:concierge@matteoperin.com" className="text-matteo-orange border-b border-matteo-orange/40">concierge@matteoperin.com</a>.
+                                        </p>
+                                    )}
+
                                     <button 
                                         type="submit"
                                         disabled={isSubmitting}

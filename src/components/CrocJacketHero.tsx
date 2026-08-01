@@ -1,20 +1,94 @@
 import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, useScroll, useTransform, useSpring, useInView } from 'framer-motion';
+import { motion, useScroll, useTransform, useSpring, useReducedMotion } from 'framer-motion';
 import { RevealOnScroll } from './RevealOnScroll';
+import { ResponsiveImage } from './ResponsiveImage';
 
 /**
  * CrocJacketHero – Homepage feature for the Bespoke Crocodile Jacket.
- * 
+ *
  * Matches the site's matteo-cream / matteo-black design system.
  * Uses RevealOnScroll for consistency.
  * Mobile: No parallax — static image with refined overlay text.
  * Desktop: Editorial 7/5 grid with parallax on image only.
+ *
+ * NOTE ON THE TWO LAYOUT BLOCKS: the mobile (`block lg:hidden`) and desktop
+ * (`hidden lg:block`) variants both live in the DOM but are breakpoint-gated —
+ * exactly one is visible per viewport. They are intentionally NOT collapsed
+ * into a single responsive tree because they diverge structurally, not just
+ * in class names: desktop wraps the image in a scroll-parallax motion.div
+ * inside a 7/5 grid while mobile is a static stacked flow; the title is an
+ * <h2> on desktop and a <p> on mobile so the section ships exactly one H2;
+ * and the image crop differs. The shared CONTENT (spec ledger, price block)
+ * is factored into SpecLedger / PriceBlock below so the data and its styling
+ * exist once in source.
  */
+
+/** The Ledger — provenance, not statistics. Single source of truth. */
+const SPEC_ROWS: ReadonlyArray<readonly [string, string]> = [
+    ['Hide', 'Nile or Porosus, hand-selected'],
+    ['Patina', 'Hand-painted by one artisan'],
+    ['Bench', 'One hundred hours, Verona'],
+    ['Edition', 'One of one'],
+];
+
+/**
+ * SpecLedger — the ledger restaged as a watch-catalog spec table: a heavier
+ * 1px frame above and below (weight carried by opacity — 0.5px hairlines
+ * render unreliably), fine 1px rules between rows, eyebrow-register labels,
+ * serif values, generous row padding.
+ */
+const SpecLedger: React.FC<{ compact?: boolean; className?: string }> = ({
+    compact = false,
+    className = '',
+}) => (
+    <dl
+        className={`border-t border-b border-matteo-charcoal/25 dark:border-white/25 divide-y divide-matteo-charcoal/10 dark:divide-white/10 ${className}`}
+    >
+        {SPEC_ROWS.map(([label, value]) => (
+            <div
+                key={label}
+                className={`flex items-baseline justify-between gap-6 ${compact ? 'py-3.5' : 'py-4'}`}
+            >
+                <dt className="font-sans text-[10px] uppercase tracking-[0.25em] font-medium text-matteo-stone-ink dark:text-matteo-stone shrink-0">
+                    {label}
+                </dt>
+                <dd className={`font-serif ${compact ? 'text-base' : 'text-lg'} text-matteo-charcoal dark:text-white text-right`}>
+                    {value}
+                </dd>
+            </div>
+        ))}
+    </dl>
+);
+
+/**
+ * PriceBlock — the figures alone on the canvas. A drifting croc-hide macro
+ * used to sit behind them; the fade needed to keep AA contrast reduced it
+ * to a pale floating rectangle that read as a rendering defect, so it was
+ * removed — this client reads subtle overlays as glitches.
+ */
+const PriceBlock: React.FC<{ compact?: boolean }> = ({ compact = false }) => (
+    <div className={`relative ${compact ? 'mb-6' : 'mb-8 border-b border-matteo-charcoal/10 dark:border-white/10'}`}>
+        <div className={`relative ${compact ? '' : 'pb-8'}`}>
+            <div className="flex items-baseline gap-3">
+                <span className={`font-serif ${compact ? 'text-xl' : 'text-2xl'} text-matteo-orange-ink dark:text-matteo-orange`}>
+                    $25,000
+                </span>
+                <span className="font-sans text-[10px] uppercase tracking-[0.25em] font-medium text-matteo-stone-ink dark:text-matteo-stone">
+                    Deposit to Reserve
+                </span>
+            </div>
+        </div>
+    </div>
+);
 
 export const CrocJacketHero: React.FC = () => {
     const sectionRef = useRef<HTMLElement>(null);
     const imageContainerRef = useRef<HTMLDivElement>(null);
+
+    // Scroll-linked values need manual reduced-motion gating (MotionConfig
+    // reducedMotion="user" does not neutralise useScroll/useTransform styles).
+    const prefersReducedMotion = useReducedMotion();
 
     // Parallax — DESKTOP ONLY (mobile gets none to avoid black bar)
     const { scrollYProgress } = useScroll({
@@ -39,22 +113,19 @@ export const CrocJacketHero: React.FC = () => {
                ==================================================== */}
             <div className="block lg:hidden">
                 {/* Full-width image — NO parallax, just a clean static image */}
-                <div className="relative w-full overflow-hidden">
-                    <img
-                        src="/assets/croc jacket/matteo_croc_new_1.jpg"
+                <div className="relative w-full overflow-hidden" data-cursor="view">
+                    <ResponsiveImage
+                        baseSrc="/assets/croc-jacket/matteo_croc_new_1.webp"
                         alt="Bespoke Crocodile Jacket by Matteo Perin"
                         className="w-full aspect-[3/4] object-cover object-center"
                     />
                     {/* Bottom gradient only — subtle, for the badge */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
-                    
+
                     {/* Availability badge on image */}
                     <div className="absolute bottom-4 left-4 flex items-center gap-2 z-10">
-                        <span className="relative flex h-2 w-2">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                        </span>
-                        <span className="font-sans text-[7px] uppercase tracking-[0.15em] text-white/80 bg-black/30 backdrop-blur-sm px-2 py-1">
+                        <span className="inline-flex rounded-full h-2 w-2 bg-matteo-orange"></span>
+                        <span className="font-sans text-[10px] uppercase tracking-[0.15em] text-white/80 bg-black/30 backdrop-blur-sm px-2 py-1">
                             Accepting Commissions
                         </span>
                     </div>
@@ -65,26 +136,21 @@ export const CrocJacketHero: React.FC = () => {
                     {/* Eyebrow */}
                     <div className="flex items-center gap-3 mb-5">
                         <span className="w-8 h-[1px] bg-matteo-orange" />
-                        <span className="font-sans text-[9px] uppercase tracking-[0.3em] text-matteo-orange">
+                        <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-matteo-orange">
                             Bespoke Exotics
                         </span>
                     </div>
 
-                    {/* Title */}
-                    <h2 className="font-serif text-4xl text-matteo-charcoal dark:text-white leading-[0.95] tracking-tight mb-5 font-light">
+                    {/* Title — rendered as <p> so the page ships a single H2 for this
+                        section (the desktop variant's); both variants live in the DOM
+                        and are gated by lg: media classes. */}
+                    <p className="font-serif text-4xl text-matteo-charcoal dark:text-white leading-[0.95] tracking-tight mb-5 font-light">
                         Bespoke Crocodile<br />
                         <span className="italic">Jacket.</span>
-                    </h2>
+                    </p>
 
-                    {/* Price + Deposit */}
-                    <div className="flex items-baseline gap-4 mb-4">
-                        <span className="font-serif text-xl text-matteo-charcoal dark:text-white">$185,000</span>
-                        <span className="font-sans text-[8px] uppercase tracking-[0.15em] text-matteo-stone">Full Commission</span>
-                    </div>
-                    <div className="flex items-baseline gap-2 mb-6">
-                        <span className="font-serif text-base text-matteo-orange">$25,000</span>
-                        <span className="font-sans text-[7px] uppercase tracking-[0.12em] text-matteo-stone">Deposit to Reserve</span>
-                    </div>
+                    {/* Price + Deposit — with the hide in macro behind the figures */}
+                    <PriceBlock compact />
 
                     {/* Description */}
                     <p className="font-serif text-base text-matteo-charcoal/50 dark:text-white/40 leading-relaxed mb-8">
@@ -92,19 +158,8 @@ export const CrocJacketHero: React.FC = () => {
                         Over 100 hours of artisanal labor. Limited to 3 commissions per year.
                     </p>
 
-                    {/* Stats */}
-                    <div className="grid grid-cols-3 gap-4 py-5 border-t border-b border-matteo-charcoal/10 dark:border-white/10 mb-8">
-                        {[
-                            { value: "100+", label: "Hours" },
-                            { value: "1 of 1", label: "Edition" },
-                            { value: "Italy", label: "Origin" },
-                        ].map((stat) => (
-                            <div key={stat.label} className="text-center">
-                                <span className="font-serif text-lg text-matteo-charcoal dark:text-white block mb-0.5">{stat.value}</span>
-                                <span className="font-sans text-[7px] uppercase tracking-[0.15em] text-matteo-stone">{stat.label}</span>
-                            </div>
-                        ))}
-                    </div>
+                    {/* The Ledger — provenance, not statistics */}
+                    <SpecLedger compact className="mb-8" />
 
                     {/* CTA */}
                     <Link
@@ -127,7 +182,7 @@ export const CrocJacketHero: React.FC = () => {
                     <RevealOnScroll>
                         <div className="flex items-center gap-4 mb-16">
                             <span className="w-12 h-[1px] bg-matteo-orange" />
-                            <span className="font-sans text-[9px] uppercase tracking-[0.3em] text-matteo-orange">
+                            <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-matteo-orange">
                                 Bespoke Exotics
                             </span>
                         </div>
@@ -141,23 +196,25 @@ export const CrocJacketHero: React.FC = () => {
                                 <div
                                     ref={imageContainerRef}
                                     className="relative aspect-[3/4] overflow-hidden bg-[#EBEBEB] dark:bg-[#1a1a1a] group"
+                                    data-cursor="view"
                                 >
-                                    <motion.img
-                                        src="/assets/croc jacket/matteo_croc_new_1.jpg"
-                                        alt="Bespoke Crocodile Jacket by Matteo Perin"
-                                        className="w-full h-full object-cover object-[center_30%] transition-transform duration-[2s] ease-out group-hover:scale-[1.03] dark:brightness-90"
-                                        style={{ y: imageSpring, scale: scaleSpring }}
-                                    />
+                                    <motion.div
+                                        className="w-full h-full transition-transform duration-[2s] ease-out group-hover:scale-[1.03]"
+                                        style={prefersReducedMotion ? undefined : { y: imageSpring, scale: scaleSpring }}
+                                    >
+                                        <ResponsiveImage
+                                            baseSrc="/assets/croc-jacket/matteo_croc_new_1.webp"
+                                            alt="Bespoke Crocodile Jacket by Matteo Perin"
+                                            className="w-full h-full object-cover object-[center_30%] dark:brightness-90"
+                                        />
+                                    </motion.div>
                                     {/* Subtle vignette */}
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent pointer-events-none" />
 
                                     {/* Availability badge */}
                                     <div className="absolute bottom-6 left-6 flex items-center gap-2.5 z-10">
-                                        <span className="relative flex h-2 w-2">
-                                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                                        </span>
-                                        <span className="font-sans text-[8px] uppercase tracking-[0.2em] text-white/80 bg-black/30 backdrop-blur-sm px-2 py-1">
+                                        <span className="inline-flex rounded-full h-2 w-2 bg-matteo-orange"></span>
+                                        <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-white/80 bg-black/30 backdrop-blur-sm px-2 py-1">
                                             Accepting Commissions
                                         </span>
                                     </div>
@@ -175,17 +232,8 @@ export const CrocJacketHero: React.FC = () => {
                                     <span className="italic">Jacket.</span>
                                 </h2>
 
-                                {/* Price Block */}
-                                <div className="mb-8 pb-8 border-b border-matteo-charcoal/10 dark:border-white/10">
-                                    <div className="flex items-baseline gap-3 mb-2">
-                                        <span className="font-serif text-2xl text-matteo-charcoal dark:text-white">$185,000</span>
-                                        <span className="font-sans text-[9px] uppercase tracking-[0.15em] text-matteo-stone">Full Commission</span>
-                                    </div>
-                                    <div className="flex items-baseline gap-2">
-                                        <span className="font-serif text-lg text-matteo-orange">$25,000</span>
-                                        <span className="font-sans text-[8px] uppercase tracking-[0.15em] text-matteo-stone">Deposit to Reserve</span>
-                                    </div>
-                                </div>
+                                {/* Price Block — with the hide in macro behind the figures */}
+                                <PriceBlock />
 
                                 {/* Description */}
                                 <p className="font-serif text-lg text-matteo-charcoal/60 dark:text-white/50 leading-relaxed mb-10 max-w-md">
@@ -193,19 +241,8 @@ export const CrocJacketHero: React.FC = () => {
                                     Over 100 hours of artisanal labor. Limited to 3 commissions per year.
                                 </p>
 
-                                {/* Stats */}
-                                <div className="grid grid-cols-3 gap-6 py-6 border-t border-b border-matteo-charcoal/10 dark:border-white/10 mb-10">
-                                    {[
-                                        { value: "100+", label: "Hours Crafted" },
-                                        { value: "1 of 1", label: "Unique Piece" },
-                                        { value: "Italy", label: "Handcrafted" },
-                                    ].map((stat) => (
-                                        <div key={stat.label} className="text-center">
-                                            <span className="font-serif text-lg text-matteo-charcoal dark:text-white block mb-1">{stat.value}</span>
-                                            <span className="font-sans text-[7px] uppercase tracking-[0.2em] text-matteo-stone">{stat.label}</span>
-                                        </div>
-                                    ))}
-                                </div>
+                                {/* The Ledger — provenance, not statistics */}
+                                <SpecLedger className="mb-10" />
 
                                 {/* CTA */}
                                 <div className="flex items-center gap-6">
@@ -215,11 +252,16 @@ export const CrocJacketHero: React.FC = () => {
                                     >
                                         Explore Commission
                                     </Link>
+                                    {/* min-h-[44px] hit area; the underline lives on the
+                                        inner span so the visual stays a hairline 4px below
+                                        the label. */}
                                     <Link
                                         to="/bespoke-crocodile-jacket"
-                                        className="font-sans text-[9px] uppercase tracking-[0.2em] text-matteo-stone hover:text-matteo-orange transition-colors border-b border-matteo-charcoal/10 dark:border-white/10 hover:border-matteo-orange pb-1"
+                                        className="group/details inline-flex items-center min-h-[44px] font-sans text-[10px] uppercase tracking-[0.2em] text-matteo-stone-ink dark:text-matteo-stone hover:text-matteo-orange transition-colors"
                                     >
-                                        View Details →
+                                        <span className="border-b border-matteo-charcoal/10 dark:border-white/10 group-hover/details:border-matteo-orange pb-1 transition-colors">
+                                            View Details →
+                                        </span>
                                     </Link>
                                 </div>
                             </RevealOnScroll>

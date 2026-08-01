@@ -2,6 +2,9 @@
 <html lang="en" class="light">
 
 <head>
+  <!-- Warm the tag-stack origin before the GTM/gtag snippets below fire -->
+  <link rel="preconnect" href="https://www.googletagmanager.com" />
+
   <!-- Google Tag Manager -->
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
   new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -26,8 +29,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#F2EFE9" />
-  <title>Matteo Perin | Luxury Men's & Women's Clothing in Jackson, WY</title>
-  <meta name="description" content="Matteo Perin is a luxury clothing atelier in Jackson, Wyoming, offering bespoke men's and women's outerwear, leather goods, and exotic pieces. Visit our Jackson Hole showroom at 164 E Deloney Ave." />
+  <title>Matteo Perin | Bespoke Italian Atelier — Jackson Hole</title>
+  <meta name="description" content="Luxury men's and women's clothing in Jackson, WY. Matteo Perin is a bespoke Italian atelier offering outerwear, leather goods, and exotic one-of-one pieces. Visit our Jackson Hole showroom at 164 E Deloney Ave." />
+
+  <!-- Social cards (sitewide defaults; route-level Helmet tags override) -->
+  <meta property="og:site_name" content="Matteo Perin" />
+  <meta property="og:image" content="https://www.matteoperin.com/assets/og/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://www.matteoperin.com/assets/og/og-image.jpg" />
 
   <!-- Local / Geo Targeting (Jackson, WY) -->
   <meta name="geo.region" content="US-WY" />
@@ -76,17 +87,25 @@
   }
   </script>
 
-  <!-- DNS Prefetch + Preconnect for speed -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <!-- DNS Prefetch + Preconnect for speed (fonts are now self-hosted via
+       @fontsource imports in src/index.tsx — no Google Fonts connection) -->
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link rel="dns-prefetch" href="https://www.google-analytics.com" />
+  <link rel="dns-prefetch" href="https://js.hs-scripts.com" />
+  <link rel="dns-prefetch" href="https://www.founditos.com" />
 
-  <!-- Non-blocking Google Fonts (swap = text appears immediately with fallback) -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap"
-    rel="stylesheet" media="print" onload="this.media='all'" />
+  <!-- Brand-critical self-hosted fonts (400-weight latin subsets), preloaded so
+       Playfair Display and Montserrat render without a flash of fallback.
+       NOTE: these are Vite content-hashed filenames verified against the
+       production build in dist/assets — re-verify (and update) after any
+       @fontsource/playfair-display or @fontsource/montserrat upgrade.
+       In dev they 404 harmlessly; dev serves fonts from node_modules. -->
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/playfair-display-latin-400-normal-CFtfchNt.woff2" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/montserrat-latin-400-normal-BLhwKU8k.woff2" />
+
+  <!-- Without JS the IntersectionObserver never reveals scroll content -->
   <noscript>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet" />
+    <style>.reveal-hidden{opacity:1 !important;transform:none !important}</style>
   </noscript>
 
   <!-- PWA Manifest -->
@@ -102,6 +121,8 @@
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       if (typeof Lenis === 'undefined') return;
+      // Respect reduced-motion: native scrolling, no smoothing layer
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
       const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
       const lenis = new Lenis({
         duration: 1.2,
@@ -124,35 +145,23 @@
     });
   </script>
 
-  <!-- CRITICAL DEBUGGING: Global Error Handler -->
+  <!-- Dev-only startup error overlay; production errors stay in the console
+       (the React ErrorBoundary in src/index.tsx handles render crashes). -->
   <script>
-    window.onerror = function (message, source, lineno, colno, error) {
-      const errorContainer = document.createElement('div');
-      errorContainer.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:99999; padding:20px; color:red; font-family:monospace; white-space:pre-wrap; overflow:auto;';
-      errorContainer.innerHTML = '<h1>CRITICAL STARTUP ERROR</h1>' +
-        '<strong>Message:</strong> ' + message + '\n' +
-        '<strong>Source:</strong> ' + source + ':' + lineno + '\n' +
-        '<strong>Stack:</strong> ' + (error ? error.stack : 'N/A');
-      document.body.appendChild(errorContainer);
-    };
+    if (['localhost', '127.0.0.1'].includes(location.hostname)) {
+      window.onerror = function (message, source, lineno, colno, error) {
+        const errorContainer = document.createElement('div');
+        errorContainer.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:99999; padding:20px; color:red; font-family:monospace; white-space:pre-wrap; overflow:auto;';
+        errorContainer.innerHTML = '<h1>CRITICAL STARTUP ERROR</h1>' +
+          '<strong>Message:</strong> ' + message + '\n' +
+          '<strong>Source:</strong> ' + source + ':' + lineno + '\n' +
+          '<strong>Stack:</strong> ' + (error ? error.stack : 'N/A');
+        document.body.appendChild(errorContainer);
+      };
+    }
   </script>
-
-  <script>
-    window.onload = function() {
-      document.body.classList.remove('invisible');
-    };
-  </script>
-
-
-
-<!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-DVB0C4ZNJB"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-DVB0C4ZNJB');
-</script>
+<!-- Found It Lead Capture -->
+<script src="https://www.founditos.com/embed/lead-capture.js" data-account="5105c5b3-645f-431c-bf53-c68984c26954" async></script>
 </head>
 
 <body

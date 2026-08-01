@@ -45,12 +45,26 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         return [...prev, newItem];
       }
 
-      // Check if non-customized version exists
-      const existing = prev.find(item => item.id === product.id && !item.customizations);
+      // Check if a non-customized version of the same piece already exists.
+      // Inventory pieces also carry parentName + styleName (the identity the
+      // checkout API matches against the live sheet); compare on those too so
+      // the same one-of-one is recognised even when a cart persisted in
+      // localStorage carries an older client-side id for it.
+      const sameInventoryPiece = (item: CartItem) => {
+        const a = item as any;
+        const b = product as any;
+        return Boolean(
+          a.parentName && b.parentName &&
+          a.parentName === b.parentName &&
+          (a.styleName || a.variationTitle || '') === (b.styleName || b.variationTitle || '')
+        );
+      };
+      const existing = prev.find(item => !item.customizations && (item.id === product.id || sameInventoryPiece(item)));
       if (existing) {
+        const maxQty = existing.stock ?? Infinity;
         return prev.map(item =>
           item.cartItemId === existing.cartItemId
-            ? { ...item, quantity: item.quantity + 1 }
+            ? { ...item, quantity: Math.min(item.quantity + 1, maxQty) }
             : item
         );
       }
@@ -76,7 +90,9 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
     setCartItems(prev =>
       prev.map(item =>
-        item.cartItemId === cartItemId ? { ...item, quantity } : item
+        item.cartItemId === cartItemId
+          ? { ...item, quantity: Math.min(quantity, item.stock ?? Infinity) }
+          : item
       )
     );
   };

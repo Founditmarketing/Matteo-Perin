@@ -8,7 +8,15 @@ interface ResponsiveImageProps {
   loading?: "lazy" | "eager";
   draggable?: boolean;
   style?: React.CSSProperties;
+  /** Optional cap on the largest generated variant served. Card-size slots
+      can pass 'md' (or 'sm') so they stop fetching the heavy -lg files.
+      Omitted = no cap; output is identical to before this prop existed. */
+  maxVariant?: 'sm' | 'md' | 'lg';
+  /** Optional passthrough for the native img `sizes` attribute. */
+  sizes?: string;
 }
+
+const VARIANT_ORDER = ['sm', 'md', 'lg'] as const;
 
 export const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
   baseSrc,
@@ -17,9 +25,19 @@ export const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
   fetchPriority = "auto",
   loading = "lazy",
   draggable,
-  style
+  style,
+  maxVariant,
+  sizes
 }) => {
-  // If the src does not end in .webp or is missing, simply return a standard image 
+  // React 18 drops the camelCase `fetchPriority` prop with a console warning;
+  // lowercase custom attributes are forwarded to the DOM as-is. We omit the
+  // attribute entirely for "auto" (the spec default) so default markup is
+  // unchanged for existing callers.
+  const fetchPriorityAttr = (
+    fetchPriority !== 'auto' ? { fetchpriority: fetchPriority } : {}
+  ) as Record<string, string>;
+
+  // If the src does not end in .webp or is missing, simply return a standard image
   // (We only generated srcset variants for .webp via our node script)
   if (!baseSrc || typeof baseSrc !== 'string' || !baseSrc.endsWith('.webp')) {
     return (
@@ -27,10 +45,11 @@ export const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
         src={baseSrc}
         alt={alt}
         className={className}
-        fetchPriority={fetchPriority}
+        {...fetchPriorityAttr}
         loading={loading}
         draggable={draggable}
         style={style}
+        sizes={sizes}
       />
     );
   }
@@ -40,9 +59,16 @@ export const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
   const filename = baseSrc.substring(baseSrc.lastIndexOf('/') + 1);
   const nameBase = filename.substring(0, filename.lastIndexOf('.'));
 
-  const smUrl = `${dir}/${nameBase}-sm.webp`;
-  const mdUrl = `${dir}/${nameBase}-md.webp`;
-  const lgUrl = `${dir}/${nameBase}-lg.webp`;
+  // Cap each slot at maxVariant when provided (default: no cap)
+  const capIndex = maxVariant ? VARIANT_ORDER.indexOf(maxVariant) : VARIANT_ORDER.length - 1;
+  const variantUrl = (size: (typeof VARIANT_ORDER)[number]) => {
+    const capped = VARIANT_ORDER[Math.min(VARIANT_ORDER.indexOf(size), capIndex)];
+    return `${dir}/${nameBase}-${capped}.webp`;
+  };
+
+  const smUrl = variantUrl('sm');
+  const mdUrl = variantUrl('md');
+  const lgUrl = variantUrl('lg');
 
   return (
     <picture>
@@ -50,13 +76,14 @@ export const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
       <source media="(max-width: 1024px)" srcSet={mdUrl} />
       <source media="(min-width: 1025px)" srcSet={lgUrl} />
       <img
-        src={lgUrl} // Fallback to large
+        src={lgUrl} // Fallback to the largest permitted variant
         alt={alt}
         className={className}
-        fetchPriority={fetchPriority}
+        {...fetchPriorityAttr}
         loading={loading}
         draggable={draggable}
         style={style}
+        sizes={sizes}
       />
     </picture>
   );

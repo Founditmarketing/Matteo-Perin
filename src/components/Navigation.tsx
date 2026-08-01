@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Logo } from './Logo';
 import { SpinningLogo } from './SpinningLogo';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 
 import { useTheme } from '../context/ThemeContext';
+import { useCart } from '../context/CartContext';
 import { NAV_ITEMS } from '../constants';
+import { useModalA11y } from '../lib/useModalA11y';
 
 export const Navigation: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -12,13 +13,19 @@ export const Navigation: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const { theme, toggleTheme } = useTheme();
+  const { cartCount, setIsCartOpen } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
 
   const holdTimer = React.useRef<NodeJS.Timeout | null>(null);
   const holdingSucceeded = React.useRef(false);
+  const mobileMenuRef = React.useRef<HTMLDivElement>(null);
 
-  const startHold = () => {
+  // The 3-second vault hold is a desktop-only gesture. On touch it must never
+  // run: a hold would hijack quick taps (navigate home, then teleport to
+  // /vault 3s later) and fight the browser's scroll/long-press gestures.
+  const startHold = (e: React.PointerEvent) => {
+    if (e.pointerType !== 'mouse') return;
     holdingSucceeded.current = false;
     holdTimer.current = setTimeout(() => {
       holdingSucceeded.current = true;
@@ -29,12 +36,16 @@ export const Navigation: React.FC = () => {
   const endHold = () => {
     if (holdTimer.current) {
       clearTimeout(holdTimer.current);
+      holdTimer.current = null;
     }
   };
 
   const handleClick = (e: React.MouseEvent) => {
     if (holdingSucceeded.current) {
       e.preventDefault();
+      // One-shot: without this reset a later keyboard Enter on the logo
+      // (which fires click with no pointerdown) would also be swallowed.
+      holdingSucceeded.current = false;
     }
   };
 
@@ -62,14 +73,9 @@ export const Navigation: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [mobileMenuOpen]);
 
-  // Escape key closes mobile menu
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && mobileMenuOpen) setMobileMenuOpen(false);
-    };
-    window.addEventListener('keydown', handleEscape);
-    return () => window.removeEventListener('keydown', handleEscape);
-  }, [mobileMenuOpen]);
+  // Mobile menu dialog behavior: Escape closes, focus is trapped inside and
+  // restored to the hamburger on close (shared house hook — see useModalA11y).
+  useModalA11y(mobileMenuOpen, () => setMobileMenuOpen(false), mobileMenuRef);
 
   // Lock body scroll when mobile menu is open
   useEffect(() => {
@@ -80,8 +86,10 @@ export const Navigation: React.FC = () => {
   const isHome = location.pathname === '/';
   const showSolidNav = scrolled && !mobileMenuOpen;
 
-  // Smart Contrast: Force White on Dark Hero pages (Home, Casa, The House, Bespoke, Lookbook)
-  const darkHeroPages = ['/', '/furniture', '/the-house', '/bespoke', '/lookbook/men', '/lookbook/women'];
+  // Smart Contrast: force white only on pages that truly open on a dark hero.
+  // (/bespoke and both lookbooks open on cream — white links with text-shadow
+  // halos were barely legible there.)
+  const darkHeroPages = ['/', '/furniture', '/the-house'];
   const hasDarkHero = darkHeroPages.includes(location.pathname);
   const textColorClass = (!showSolidNav && hasDarkHero)
     ? 'text-white [text-shadow:0_1px_8px_rgba(0,0,0,0.6),0_0_2px_rgba(0,0,0,0.4)]'
@@ -90,7 +98,8 @@ export const Navigation: React.FC = () => {
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 w-full z-[100000] transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] 
+        className={`fixed top-0 left-0 w-full z-[100000] transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]
+                ${mobileMenuOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}
                 ${visible ? 'translate-y-0' : '-translate-y-full'}
                 ${showSolidNav ? 'bg-matteo-cream/95 dark:bg-matteo-black/95  py-4 border-b border-matteo-charcoal/5 dark:border-white/5' : 'bg-transparent py-8'}
                 ${textColorClass}`}
@@ -103,13 +112,16 @@ export const Navigation: React.FC = () => {
           onPointerUp={endHold}
           onPointerLeave={endHold}
           onPointerCancel={endHold}
-          onTouchStart={startHold}
-          onTouchEnd={endHold}
-          onTouchCancel={endHold}
           onContextMenu={(e) => e.preventDefault()}
-          className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[300000] select-none touch-none focus:outline-none focus:ring-0 active:outline-none"
+          className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[300000] select-none"
           style={{ WebkitTouchCallout: 'none', WebkitUserSelect: 'none' }}
         >
+          {/* The seal <img> itself lives in SpinningLogo (shared with Footer and
+              PrivateAccess). Measured on disk: logo-seal-sm.webp is 73KB vs
+              logo-seal.png at 69KB, so pointing only the nav at the webp would
+              add bytes AND split the browser cache across two URLs. Regenerate
+              a genuinely small webp (nav renders at 40-64px), then swap the
+              source inside SpinningLogo so all consumers benefit. */}
           <SpinningLogo
             size={showSolidNav ? 40 : 64}
             duration={20}
@@ -146,13 +158,31 @@ export const Navigation: React.FC = () => {
             </div>
           </div>
 
-          {/* Actions: Absolute Right */}
-          <div className="absolute right-8 md:right-16 top-1/2 -translate-y-1/2 flex items-center gap-6">
+          {/* Actions: Absolute Right — both controls hold a >=44px hit area
+              while the glyphs keep their original size and spacing. */}
+          <div className="absolute right-8 md:right-16 top-1/2 -translate-y-1/2 flex items-center gap-4">
 
+            {/* Bag — persistent cart trigger */}
+            <button
+              onClick={() => setIsCartOpen(true)}
+              className="min-w-[44px] min-h-[44px] flex items-center justify-center hover:text-matteo-orange transition-colors"
+              aria-label={`Open bag${cartCount > 0 ? `, ${cartCount} item${cartCount === 1 ? '' : 's'}` : ''}`}
+            >
+              <span className="relative">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007Z" />
+                </svg>
+                {cartCount > 0 && (
+                  <span className="absolute -top-2.5 -right-2.5 min-w-[16px] h-4 px-1 rounded-full bg-matteo-orange text-white font-sans text-[10px] leading-4 text-center">
+                    {cartCount}
+                  </span>
+                )}
+              </span>
+            </button>
 
             <button
               onClick={() => setMobileMenuOpen(true)}
-              className="lg:hidden group flex flex-col gap-1.5 p-2 hover:opacity-70 transition-opacity"
+              className="lg:hidden group min-w-[44px] min-h-[44px] flex flex-col items-center justify-center gap-1.5 hover:opacity-70 transition-opacity"
               aria-label="Toggle navigation menu"
               aria-expanded={mobileMenuOpen}
               aria-controls="mobile-navigation"
@@ -165,11 +195,24 @@ export const Navigation: React.FC = () => {
         </div>
       </nav>
 
-      {/* Mobile Menu Overlay - Restored to Dark Luxury Standard */}
+      {/* Mobile Menu Overlay - Restored to Dark Luxury Standard.
+          Visibility must NOT transition on open: useModalA11y focuses the
+          dialog in the same commit as the class change, and focus() on an
+          element whose computed visibility is still 'hidden' silently no-ops.
+          So: open transitions opacity only (visibility flips instantly),
+          close keeps the 700ms fade by delaying the visibility flip until
+          the fade completes. */}
       <div
         id="mobile-navigation"
+        ref={mobileMenuRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Site navigation"
+        tabIndex={-1}
         onClick={(e) => { if (e.target === e.currentTarget) setMobileMenuOpen(false); }}
-        className={`fixed top-0 left-0 w-full h-[100dvh] z-[100001] bg-matteo-black/95 transition-all duration-700 ease-[cubic-bezier(0.76,0,0.24,1)] ${mobileMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}
+        className={`fixed top-0 left-0 w-full h-[100dvh] z-[100001] bg-matteo-black/95 ${mobileMenuOpen
+          ? '[transition:opacity_700ms_cubic-bezier(0.76,0,0.24,1)] opacity-100 visible'
+          : '[transition:opacity_700ms_cubic-bezier(0.76,0,0.24,1),visibility_0s_700ms] opacity-0 invisible pointer-events-none'}`}
       >
 
         <div className="absolute top-6 right-6 z-[100002]">
@@ -178,20 +221,51 @@ export const Navigation: React.FC = () => {
           </button>
         </div>
 
-        <div className="h-full flex flex-col items-center justify-center space-y-8 relative z-10 text-center">
-          {NAV_ITEMS.map((item, index) => (
+        {/* A ledger, not a list: each destination carries one quiet line
+            saying what it is. The current page reads in orange. */}
+        <div className="h-full overflow-y-auto flex flex-col justify-center px-10 sm:px-14 py-24 relative z-10">
+          <span
+            className={`font-sans text-[10px] uppercase tracking-[0.25em] font-medium text-matteo-orange mb-10 block transition-all duration-700 transform ${mobileMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'}`}
+            style={{ transitionDelay: '80ms' }}
+          >
+            Matteo Perin
+          </span>
+
+          <nav className="space-y-6">
+            {NAV_ITEMS.map((item, index) => {
+              const isCurrent = location.pathname === item.href;
+              return (
+                <Link
+                  key={item.label}
+                  to={item.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  aria-current={isCurrent ? 'page' : undefined}
+                  className={`group block transition-all duration-700 transform ${mobileMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}
+                  style={{ transitionDelay: `${140 + index * 70}ms` }}
+                >
+                  <span className={`font-serif text-3xl leading-none transition-colors ${isCurrent ? 'text-matteo-orange' : 'text-white group-hover:text-matteo-orange'}`}>
+                    {item.label}
+                  </span>
+                  <span className="block font-serif italic text-[13px] leading-snug text-white/50 mt-1.5">
+                    {item.description}
+                  </span>
+                </Link>
+              );
+            })}
+          </nav>
+
+          <div
+            className={`mt-12 pt-8 border-t border-white/10 transition-all duration-700 transform ${mobileMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'}`}
+            style={{ transitionDelay: `${140 + NAV_ITEMS.length * 70 + 60}ms` }}
+          >
             <Link
-              key={item.label}
-              to={item.href}
+              to="/enquire"
               onClick={() => setMobileMenuOpen(false)}
-              className={`font-serif text-4xl md:text-5xl text-white hover:italic hover:text-matteo-orange transition-all duration-700 transform ${mobileMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-12 opacity-0'}`}
-              style={{ transitionDelay: `${100 + index * 100}ms` }}
+              className="font-sans text-[10px] uppercase tracking-[0.25em] font-medium text-white/70 hover:text-matteo-orange transition-colors"
             >
-              {item.label}
+              Enquire — begin a conversation
             </Link>
-          ))}
-
-
+          </div>
         </div>
       </div>
     </>

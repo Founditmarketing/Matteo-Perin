@@ -37,3 +37,7 @@ source_videos/
 .vercel
 
 .vercel
+
+# Claude Code local session config (machine-specific)
+.claude/
+ig-photos/

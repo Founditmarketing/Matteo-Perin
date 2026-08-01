@@ -3,28 +3,36 @@ import { getGeminiModel } from '../services/geminiService';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import { PRODUCTS } from '../constants';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
+import { useModalA11y } from '../lib/useModalA11y';
 
 interface Message {
     role: 'user' | 'model';
     text: string;
     products?: number[];
     dossierComplete?: boolean;
+    navigateTo?: string;
 }
 
 const LOADING_PHRASES = [
     "Casa Matteo Perin curating your selection...",
-    "Accessing the Milan Vault...",
+    "Accessing the Verona Vault...",
     "Reviewing bespoke patterns...",
     "Crafting your luxury experience..."
 ];
 
+// Shown whenever the model reply cannot be delivered as intended — the
+// concierge never surfaces raw errors to a client.
+const GRACEFUL_FALLBACK = "The secure line has experienced interference. Please repeat your precise query.";
+
 const LOCAL_STORAGE_KEY = 'matteo_client_dossier';
 
-export const DigitalConcierge: React.FC = () => {
-    const [isOpen, setIsOpen] = useState(false);
-    const navigate = useNavigate();
+// initialOpen: the App shell renders a lightweight launcher button and only
+// mounts this component (plus its supabase/markdown dependencies) on first
+// click — so the drawer should open immediately once loaded.
+export const DigitalConcierge: React.FC<{ initialOpen?: boolean; suppressLauncherOnMobile?: boolean }> = ({ initialOpen = false, suppressLauncherOnMobile = false }) => {
+    const [isOpen, setIsOpen] = useState(initialOpen);
     const [messages, setMessages] = useState<Message[]>([]);
     const [hasInitialized, setHasInitialized] = useState(false);
     const [input, setInput] = useState('');
@@ -32,6 +40,9 @@ export const DigitalConcierge: React.FC = () => {
     const [loadingPhraseIndex, setLoadingPhraseIndex] = useState(0);
     const [sessionUser, setSessionUser] = useState<any>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const drawerRef = useRef<HTMLDivElement>(null);
+
+    useModalA11y(isOpen, () => setIsOpen(false), drawerRef);
 
     // Auto-scroll to bottom of chat
     useEffect(() => {
@@ -127,10 +138,11 @@ export const DigitalConcierge: React.FC = () => {
                 setMessages(prev => [...prev, { role: 'model', text: parsedData.message, products: parsedData.suggestedProducts || [] }]);
             } catch (e) {
                 console.error("Failed to parse welcome back JSON", responseText);
-                setMessages(prev => [...prev, { role: 'model', text: `WELCOME BACK JSON FORMAT ERROR: The raw text received was -> ${responseText || 'EMPTY PAYLOAD'}` }]);
+                setMessages(prev => [...prev, { role: 'model', text: GRACEFUL_FALLBACK }]);
             }
         } catch (e) {
             console.error("Failed to generate welcome back", e);
+            setMessages(prev => [...prev, { role: 'model', text: GRACEFUL_FALLBACK }]);
         } finally {
             setIsTyping(false);
             setLoadingPhraseIndex(0);
@@ -140,10 +152,10 @@ export const DigitalConcierge: React.FC = () => {
     const clearDossier = async () => {
         if (sessionUser) {
             await supabase.from('chat_history').delete().eq('user_id', sessionUser.id);
-            setMessages([{ role: 'model', text: "Dossier purged. Welcome to the private line. How may I assist you?" }]);
+            setMessages([{ role: 'model', text: "Your dossier has been cleared. Welcome to the private line. How may I assist you?" }]);
         } else {
             localStorage.removeItem(LOCAL_STORAGE_KEY);
-            setMessages([{ role: 'model', text: "Dossier purged. Welcome to Casa Matteo Perin. I am the Digital Concierge. How may I assist you with your curation?" }]);
+            setMessages([{ role: 'model', text: "Your dossier has been cleared. Welcome to Casa Matteo Perin. I am the Digital Concierge. How may I assist you with your curation?" }]);
         }
     };
 
@@ -190,14 +202,15 @@ export const DigitalConcierge: React.FC = () => {
             } catch (e) {
                 console.error("Failed to parse AI JSON response", responseText);
                 // Fallback for strict markdown breakage
-                parsedData = { message: "The secure line has experienced interference. Please repeat your precise query." };
+                parsedData = { message: GRACEFUL_FALLBACK };
             }
 
-            const newModelMsg: Message = { 
-                role: 'model', 
-                text: parsedData.message, 
+            const newModelMsg: Message = {
+                role: 'model',
+                text: parsedData.message,
                 products: parsedData.suggestedProducts || [],
-                dossierComplete: parsedData.dossierComplete
+                dossierComplete: parsedData.dossierComplete,
+                navigateTo: typeof parsedData.navigateTo === 'string' ? parsedData.navigateTo : undefined
             };
             setMessages(prev => [...prev, newModelMsg]);
 
@@ -210,29 +223,20 @@ export const DigitalConcierge: React.FC = () => {
                     dossier_complete: newModelMsg.dossierComplete 
                 }).then();
             }
-
-            // Browser Hijacking Logic
-            if (parsedData.navigateTo) {
-                setTimeout(() => {
-                    setIsOpen(false);
-                    navigate(parsedData.navigateTo);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                }, 2500); // Cinematic 2.5s delay to read the message before teleporting
-            }
         } catch (error) {
             console.error("Gemini AI API Error (Network/Quota/Model):", error);
             
-            // Heuristic Fallback Engine (Offline Mode)
+            // Honest offline fallbacks — the concierge never invents busyness.
             const lowerText = userText.toLowerCase();
-            let fallbackMessage = "The Master Tailor is currently in a private fitting. Please leave your formal request, and Casa Matteo Perin will contact you shortly.";
+            let fallbackMessage = "The atelier is offline at this moment. Write to [concierge@matteoperin.com](mailto:concierge@matteoperin.com) and the concierge will reply to you personally.";
             let fallbackProducts: number[] = [];
-            
+
             if (lowerText.includes("jacket") || lowerText.includes("crocodile") || lowerText.includes("croc") || lowerText.includes("coat")) {
-                fallbackMessage = "Our bespoke Nile or Porosus crocodile outerwear requires over 30 hours of strict symmetry mapping. Due to the high volume of private commissions today, the Master Tailor is currently in a fitting. May we arrange a private viewing?";
+                fallbackMessage = "Exotic crocodile outerwear is commissioned privately, one piece at a time. The atelier is offline at this moment — write to [concierge@matteoperin.com](mailto:concierge@matteoperin.com) and the concierge will arrange a private viewing.";
             } else if (lowerText.includes("price") || lowerText.includes("cost") || lowerText.includes("$") || lowerText.includes("how much")) {
-                fallbackMessage = "Casa Matteo Perin operates strictly on private commission. Pieces generally begin at $15,000, with exotic outerwear starting at $185,000. Our team will reach out directly to discuss your specific vision.";
+                fallbackMessage = "Casa Matteo Perin operates strictly on private commission. Pieces generally begin at $15,000; exotic outerwear is quoted privately by commission. Write to [concierge@matteoperin.com](mailto:concierge@matteoperin.com) to discuss your vision.";
             } else if (lowerText.includes("bag") || lowerText.includes("briefcase") || lowerText.includes("luggage")) {
-                fallbackMessage = "Our heritage leather goods represent the pinnacle of Italian craftsmanship. The Concierge line is currently saturated, but you may browse our existing selections below while you hold.";
+                fallbackMessage = "Our heritage leather goods represent the pinnacle of Italian craftsmanship. The atelier is offline at this moment — you may browse a selection below, or write to [concierge@matteoperin.com](mailto:concierge@matteoperin.com).";
                 fallbackProducts = [1, 2]; // Weekender Bag, Heritage Clutch
             }
             
@@ -258,12 +262,12 @@ export const DigitalConcierge: React.FC = () => {
             {/* The Trigger */}
             <button 
                 onClick={() => setIsOpen(true)}
-                className={`fixed bottom-6 lg:bottom-8 right-6 lg:right-8 z-[90000] mix-blend-difference opacity-70 hover:opacity-100 transition-opacity duration-700 flex flex-col items-end ${isOpen ? 'pointer-events-none opacity-0' : ''}`}
+                className={`fixed bottom-6 lg:bottom-8 right-6 lg:right-8 z-[90000] mix-blend-difference opacity-70 hover:opacity-100 transition-opacity duration-700 ${suppressLauncherOnMobile ? 'hidden lg:flex' : 'flex'} flex-col items-end ${isOpen ? 'pointer-events-none opacity-0' : ''}`}
             >
                 <div className="w-12 h-12 rounded-full border border-white flex items-center justify-center mb-2">
                     <span className="font-serif italic text-white text-xl">M</span>
                 </div>
-                <span className="font-sans text-[8px] uppercase tracking-[0.4em] text-white">Concierge</span>
+                <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-white">Concierge</span>
             </button>
 
             {/* The Elegant Drawer Subsystem */}
@@ -282,11 +286,16 @@ export const DigitalConcierge: React.FC = () => {
 
                         {/* The Drawer */}
                         <motion.div 
+                            ref={drawerRef}
+                            role="dialog"
+                            aria-modal="true"
+                            aria-label="Digital Concierge"
+                            tabIndex={-1}
                             initial={{ x: "100%" }}
                             animate={{ x: 0 }}
                             exit={{ x: "100%" }}
                             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-                            className="fixed top-0 right-0 h-[100dvh] w-full md:w-[480px] lg:w-[550px] bg-[#0a0a0a] border-l border-white/5 z-[99999] flex flex-col font-serif text-white shadow-2xl"
+                            className="fixed top-0 right-0 h-[100dvh] w-full md:w-[480px] lg:w-[550px] bg-[#0a0a0a] border-l border-white/5 z-[99999] flex flex-col font-serif text-white shadow-2xl outline-none"
                         >
                             {/* Drawer Header */}
                             <div className="w-full p-6 md:p-8 flex justify-between items-center z-10 border-b border-white/5 bg-[#0a0a0a]">
@@ -296,7 +305,7 @@ export const DigitalConcierge: React.FC = () => {
                                         onClick={clearDossier}
                                         className="font-sans text-[10px] uppercase tracking-[0.4em] text-white/20 hover:text-white transition-colors bg-transparent border-none outline-none"
                                     >
-                                        Wipe
+                                        Clear
                                     </button>
                                     <button 
                                         onClick={() => setIsOpen(false)}
@@ -325,11 +334,22 @@ export const DigitalConcierge: React.FC = () => {
                                             </div>
                                         ) : (
                                             <div className="w-full flex flex-col items-start pr-6">
-                                                <span className="font-sans text-[8px] uppercase tracking-[0.4em] text-white/30 mb-4 block">Concierge Analysis</span>
+                                                <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-white/30 mb-4 block">The Concierge</span>
                                                 {/* Poetic AI Markdown Box */}
                                                 <div className="prose prose-invert prose-p:text-lg md:prose-p:text-xl text-left text-white/70 prose-a:text-white prose-a:border-b prose-a:border-white/30 hover:prose-a:border-white w-full leading-relaxed mb-8">
                                                     <ReactMarkdown>{msg.text}</ReactMarkdown>
                                                 </div>
+
+                                                {/* Inline destination — the client chooses when to view it */}
+                                                {msg.navigateTo && (
+                                                    <Link
+                                                        to={msg.navigateTo}
+                                                        onClick={() => setIsOpen(false)}
+                                                        className="font-sans text-[10px] uppercase tracking-[0.4em] text-white/50 hover:text-white underline decoration-white/20 underline-offset-4 transition-colors duration-500 mb-8"
+                                                    >
+                                                        View the piece &rarr;
+                                                    </Link>
+                                                )}
 
                                                 {/* Product Gallery Injection */}
                                                 {msg.products && msg.products.length > 0 && (
@@ -346,11 +366,11 @@ export const DigitalConcierge: React.FC = () => {
                                                                 <Link to={destination} key={product.id} onClick={() => setIsOpen(false)} className="w-full group relative block flex-shrink-0 animate-fade-in-up">
                                                                     <div className="w-full bg-[#050505] border border-white/10 p-4 mb-4 relative overflow-hidden flex items-center justify-center min-h-[40vh] transition-colors duration-700 group-hover:bg-[#0c0c0c] group-hover:border-white/30">
                                                                         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000 z-10 pointer-events-none"></div>
-                                                                        <img src={product.image} alt={product.title} className="w-full max-h-[45vh] object-contain filter drop-shadow-2xl transition-transform duration-[2s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]" />
+                                                                        <img src={product.image} alt={product.title} loading="lazy" decoding="async" className="w-full max-h-[45vh] object-contain filter drop-shadow-2xl transition-transform duration-[2s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]" />
                                                                     </div>
                                                                     <div className="text-left">
                                                                         <h3 className="font-serif text-2xl text-white mb-2 tracking-wide leading-tight group-hover:text-white/80 transition-colors">{product.title}</h3>
-                                                                        <span className="font-sans text-[9px] uppercase tracking-[0.4em] text-white/50 group-hover:text-white transition-all duration-500 underline decoration-white/20 underline-offset-4">
+                                                                        <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-white/50 group-hover:text-white transition-all duration-500 underline decoration-white/20 underline-offset-4">
                                                                             Discover Piece &rarr;
                                                                         </span>
                                                                     </div>
@@ -366,7 +386,7 @@ export const DigitalConcierge: React.FC = () => {
                                                         <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
                                                         <h3 className="font-serif text-2xl text-white tracking-widest uppercase mb-4">Dossier Transmitted</h3>
                                                         <div className="w-8 h-[1px] bg-white/30 mx-auto mb-4"></div>
-                                                        <p className="font-sans text-[9px] uppercase tracking-[0.3em] text-white/50 leading-relaxed">The Atelier has received your initial specifications. <br/><br/>Casa Matteo Perin will contact you shortly.</p>
+                                                        <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-white/50 leading-relaxed">The Atelier has received your initial specifications. <br/><br/>Casa Matteo Perin will contact you shortly.</p>
                                                     </div>
                                                 )}
                                             </div>
@@ -401,7 +421,7 @@ export const DigitalConcierge: React.FC = () => {
                                         type="text"
                                         value={input}
                                         onChange={(e) => setInput(e.target.value)}
-                                        placeholder="Command the Intelligence..."
+                                        placeholder="Write to the concierge..."
                                         className="flex-1 bg-transparent px-4 py-3 text-white text-lg placeholder-white/20 focus:outline-none font-serif italic tracking-wide"
                                     />
                                     <button 
@@ -409,11 +429,11 @@ export const DigitalConcierge: React.FC = () => {
                                         disabled={!input.trim() || isTyping}
                                         className="px-6 h-12 bg-white text-black flex items-center justify-center disabled:opacity-10 disabled:bg-transparent disabled:text-white transition-all duration-500 hover:bg-[#eaeaea] hover:scale-[1.02] active:scale-95"
                                     >
-                                        <span className="font-sans text-[9px] font-bold leading-none uppercase tracking-[0.2em]">Send</span>
+                                        <span className="font-sans text-[10px] font-bold leading-none uppercase tracking-[0.2em]">Send</span>
                                     </button>
                                 </form>
                                 <div className="text-center mt-3 pointer-events-none">
-                                    <span className="font-sans text-[8px] uppercase tracking-[0.5em] text-white/20">The Concierge Intelligence</span>
+                                    <span className="font-sans text-[10px] uppercase tracking-[0.5em] text-white/20">The Digital Concierge</span>
                                 </div>
                             </div>
                         </motion.div>

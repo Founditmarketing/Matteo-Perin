@@ -2,6 +2,7 @@ node_modules
 .git
 source_images
 source_videos
+source_pdfs
 *.mkv
 *.raw
 *.CR2

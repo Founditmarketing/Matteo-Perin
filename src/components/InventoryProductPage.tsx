@@ -1,24 +1,42 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
+import { slugify } from '../lib/slug';
 import { useCart } from '../context/CartContext';
 import { Product } from '../types';
 import { trackViewItem } from '../lib/analytics';
+import { useModalA11y } from '../lib/useModalA11y';
+import {
+    GroupedProduct,
+    fetchInventoryRows,
+    groupInventoryRows,
+    getImageUrl as getInventoryImageUrl,
+    getPriceRange,
+    isVariationSoldOut,
+} from '../lib/inventory';
 
-interface GroupedProduct {
-    parentName: string;
-    parentImage?: string;
-    parentAdditionalImages?: string;
-    description?: string;
-    gender?: string;
-    variations: any[];
-}
+// Stable numeric id for an inventory variation, derived from its identity
+// (slugified parent name + style name). The cart's duplicate check compares
+// product ids, so the same piece must map to the same id on every add —
+// previously this was Date.now(), which made every add unique and let a
+// one-of-one be added (and charged) twice via Add to Bag then Buy Now.
+const stableVariationId = (parentName: string, styleName: string): number => {
+    const key = slugify(`${parentName} ${styleName}`);
+    let hash = 0;
+    for (let i = 0; i < key.length; i++) {
+        hash = (hash * 31 + key.charCodeAt(i)) >>> 0;
+    }
+    // Offset keeps inventory ids clear of the hand-numbered ids in
+    // constants.ts (e.g. the commission deposit is id 14).
+    return 100000 + (hash % 2000000000);
+};
 
 export const InventoryProductPage: React.FC = () => {
     const { productName } = useParams();
     const navigate = useNavigate();
     const location = useLocation();
     const basePath = location.pathname.startsWith('/shop') ? '/shop' : '/inventory-test-hidden';
-    const { addToCart, setIsCartOpen } = useCart();
+    const { addToCart, setIsCartOpen, cartItems } = useCart();
     
     const [selectedGroup, setSelectedGroup] = useState<GroupedProduct | null>(null);
     const [activeVariation, setActiveVariation] = useState<any | null>(null);
@@ -26,90 +44,21 @@ export const InventoryProductPage: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+    const lightboxRef = React.useRef<HTMLDivElement>(null);
+
+    useModalA11y(isLightboxOpen, () => setIsLightboxOpen(false), lightboxRef);
 
     useEffect(() => {
         const fetchInventory = async () => {
             try {
-                const response = await fetch('/api/inventory');
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const result = await response.json();
-                
-                const grouped: GroupedProduct[] = [];
-                let currentParent: GroupedProduct | null = null;
+                const grouped = groupInventoryRows(await fetchInventoryRows());
 
-                (result.data || []).forEach((row: any) => {
-                    const isRowEmpty = !row.Title && !row.Category && !row.Price && !row.Stock && !row['Main Image Link'];
-                    if (isRowEmpty) return;
-
-                    const hasTitle = row.Title && String(row.Title).trim() !== '';
-                    const hasCategory = row.Category && String(row.Category).trim() !== '';
-                    const hasPrice = row.Price && String(row.Price).trim() !== '';
-
-                    if (hasTitle && !hasCategory && !hasPrice) {
-                        currentParent = {
-                            parentName: row.Title,
-                            parentImage: row['Main Image Link'],
-                            parentAdditionalImages: row['Additional Image Links'],
-                            description: row.Description,
-                            gender: row.Gender,
-                            variations: []
-                        };
-                        grouped.push(currentParent);
-                    } else if (hasCategory || hasPrice || row.Stock) {
-                        if (currentParent) {
-                            const angleWords = ['back', 'front', 'side', 'top', 'bottom', 'internal', 'inside', 'handle', 'zippers', 'pockets', 'logo', 'detail'];
-                            let words = (row.Title || '').trim().split(/\s+/);
-                            while (words.length > 1 && angleWords.includes(words[words.length - 1].toLowerCase().replace(/[^a-z]/g, ''))) {
-                                words.pop();
-                            }
-                            const styleName = words.join(' ');
-
-                            let styleGroup = currentParent.variations.find((v: any) => v.StyleName === styleName);
-                            if (!styleGroup) {
-                                styleGroup = {
-                                    StyleName: styleName,
-                                    Title: styleName,
-                                    Category: row.Category,
-                                    Price: row.Price,
-                                    Stock: row.Stock,
-                                    images: []
-                                };
-                                currentParent.variations.push(styleGroup);
-                            }
-                            
-                            if (row['Main Image Link']) {
-                                styleGroup.images.push({
-                                    Title: row.Title,
-                                    Url: row['Main Image Link']
-                                });
-                            }
-                            if (styleGroup.images.length === 1) {
-                                styleGroup['Main Image Link'] = row['Main Image Link'];
-                            }
-                        } else {
-                            currentParent = {
-                                parentName: 'Other Items',
-                                variations: [{
-                                    StyleName: row.Title,
-                                    Title: row.Title,
-                                    Category: row.Category,
-                                    Price: row.Price,
-                                    Stock: row.Stock,
-                                    images: row['Main Image Link'] ? [{ Title: row.Title, Url: row['Main Image Link'] }] : [],
-                                    'Main Image Link': row['Main Image Link']
-                                }]
-                            };
-                            grouped.push(currentParent);
-                        }
-                    }
-                });
-
-                // Find the specific product that matches the URL parameter
+                // Find the product matching the URL. Compare by slug so both
+                // the new /shop/ostrich-bucket-bag URLs and legacy
+                // /shop/Ostrich%20Bucket%20Bag links resolve to the same page.
                 if (productName) {
-                    const decodedName = decodeURIComponent(productName);
-                    const foundProduct = grouped.find(g => g.parentName === decodedName);
+                    const target = slugify(decodeURIComponent(productName));
+                    const foundProduct = grouped.find(g => slugify(g.parentName) === target);
                     
                     if (foundProduct) {
                         setSelectedGroup(foundProduct);
@@ -147,41 +96,8 @@ export const InventoryProductPage: React.FC = () => {
         });
     }, [selectedGroup, activeVariation]);
 
-    const getImageUrl = (url: string) => {
-        if (!url) return '';
-        const trimmed = url.trim();
-        // Handle standard /d/ID format (both /view and /file paths)
-        let match = trimmed.match(/\/d\/([a-zA-Z0-9_-]+)/);
-        // Handle id=ID format
-        if (!match) {
-            match = trimmed.match(/id=([a-zA-Z0-9_-]+)/);
-        }
-        if (match && match[1]) {
-            // lh3.googleusercontent.com is the most reliable for publicly shared Drive files
-            return `https://lh3.googleusercontent.com/d/${match[1]}=w1200`;
-        }
-        return trimmed;
-    };
-
-    const getPriceRange = (variations: any[]) => {
-        if (!variations || variations.length === 0) return 'Price upon request';
-        const prices = variations
-            .map(v => String(v.Price).replace(/[^0-9.]/g, ''))
-            .filter(v => v !== '')
-            .map(Number);
-        
-        if (prices.length === 0) return 'Price upon request';
-        const min = Math.min(...prices);
-        const max = Math.max(...prices);
-        if (min === max) return `$${min.toLocaleString()}`;
-        return `$${min.toLocaleString()} - $${max.toLocaleString()}`;
-    };
-
-    // Check if a specific variation is out of stock
-    const isVariationSoldOut = (variation: any) => {
-        const stock = String(variation?.Stock || '').trim().toLowerCase();
-        return stock === '0' || stock === 'out of stock' || stock === 'sold out' || stock === 'unavailable';
-    };
+    // Product page serves the larger 1600px rendition through the proxy.
+    const getImageUrl = (url: string) => getInventoryImageUrl(url, 1600);
 
     // Get all images for the current variation for arrow navigation
     const getCurrentImages = () => {
@@ -208,12 +124,18 @@ export const InventoryProductPage: React.FC = () => {
         const price = parseFloat(priceStr) || 0;
         const imgUrl = currentImages[0]?.url || '';
         return {
-            id: Date.now(), // Unique ID for inventory items
+            // Stable across adds so the cart can recognise the same piece
+            id: stableVariationId(selectedGroup.parentName, activeVariation.StyleName || activeVariation.Title || ''),
             title: `${selectedGroup.parentName}${activeVariation.Title !== selectedGroup.parentName ? ' — ' + activeVariation.Title : ''}`,
             category: activeVariation.Category || 'Collection',
             image: imgUrl,
             price,
             gender: (selectedGroup.gender?.toLowerCase() || 'unisex') as 'men' | 'women' | 'unisex',
+            // One-of-one pieces carry stock so the cart can cap quantity
+            stock: (() => {
+                const s = parseInt(String(activeVariation.Stock || '').trim(), 10);
+                return isNaN(s) ? undefined : s;
+            })(),
             // Pass extra info for the webhook to match
             variationTitle: activeVariation.Title,
             styleName: activeVariation.StyleName || activeVariation.Title,
@@ -231,7 +153,12 @@ export const InventoryProductPage: React.FC = () => {
     const handleBuyNow = () => {
         const product = variationToProduct();
         if (product) {
-            addToCart(product);
+            // If the piece is already in the bag (e.g. Add to Bag was clicked
+            // first), don't add a second line — just proceed to checkout.
+            const alreadyInBag = cartItems.some(item => item.id === product.id && !item.customizations);
+            if (!alreadyInBag) {
+                addToCart(product);
+            }
             setIsCartOpen(false);
             navigate('/checkout');
         }
@@ -255,7 +182,7 @@ export const InventoryProductPage: React.FC = () => {
         return (
             <div className="min-h-screen bg-matteo-cream dark:bg-matteo-black py-32 px-6 flex flex-col items-center justify-center">
                 <div className="w-8 h-8 border-2 border-matteo-orange border-t-transparent rounded-full animate-spin mb-4"></div>
-                <p className="font-sans text-xs uppercase tracking-widest text-matteo-charcoal/60 dark:text-white/60">Loading product details...</p>
+                <p className="font-sans text-xs uppercase tracking-widest text-matteo-stone-ink dark:text-white/60">Loading product details...</p>
             </div>
         );
     }
@@ -280,13 +207,67 @@ export const InventoryProductPage: React.FC = () => {
     const currentImages = getCurrentImages();
     const currentSoldOut = isVariationSoldOut(activeVariation);
 
+    const activePrice = parseFloat(String(activeVariation?.Price || '').replace(/[^0-9.]/g, '')) || null;
+    const activeStock = parseInt(String(activeVariation?.Stock || '').trim(), 10);
+    // "One of one" is only claimed when the data backs it: a single colourway
+    // whose stock is exactly 1. A product offered in several colours is a
+    // small series, and the register below says so instead.
+    const isOneOfOne = activeStock === 1 && selectedGroup.variations.length <= 1;
+    // Exotic leathers travel with CITES documentation (see the Authenticity
+    // section on /shipping-returns); detect them from the sheet's own facts.
+    const isExotic = /ostrich|croc|alligator|python/i.test(
+        [selectedGroup.parentName, selectedGroup.description, activeVariation?.Category]
+            .filter(Boolean)
+            .join(' ')
+    );
+    const canonicalUrl = `https://www.matteoperin.com/shop/${slugify(selectedGroup.parentName)}`;
+    const metaDescription = selectedGroup.description
+        ? String(selectedGroup.description).slice(0, 155)
+        : `${selectedGroup.parentName} — ${isOneOfOne ? 'a one-of-one piece' : 'a small series'} handcrafted in Italy, in stock and ready to ship worldwide from the Matteo Perin atelier in Jackson Hole.`;
+    const productJsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'Product',
+        name: selectedGroup.parentName,
+        ...(currentImages.length > 0 ? {
+            image: currentImages.map((img: any) => img.url.startsWith('/') ? `https://www.matteoperin.com${img.url}` : img.url),
+        } : {}),
+        ...(selectedGroup.description ? { description: selectedGroup.description } : {}),
+        brand: { '@type': 'Brand', name: 'Matteo Perin' },
+        url: canonicalUrl,
+        ...(activePrice ? {
+            offers: {
+                '@type': 'Offer',
+                priceCurrency: 'USD',
+                price: activePrice,
+                availability: currentSoldOut ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
+                url: canonicalUrl,
+            },
+        } : {}),
+    };
+
     return (
-        <div className="min-h-screen bg-matteo-cream dark:bg-matteo-black py-24 md:py-32 px-6 md:px-12 lg:px-24 flex flex-col items-center">
+        <div className="min-h-screen bg-matteo-cream dark:bg-matteo-black pt-24 md:pt-32 pb-44 md:pb-32 px-6 md:px-12 lg:px-24 flex flex-col items-center">
+            <Helmet>
+                <title>{`${selectedGroup.parentName} — ${isOneOfOne ? 'One of One, In Stock' : 'In Stock'} | Matteo Perin`}</title>
+                <meta name="description" content={metaDescription} />
+                <link rel="canonical" href={canonicalUrl} />
+                <meta property="og:title" content={`${selectedGroup.parentName} | Matteo Perin`} />
+                <meta property="og:description" content={metaDescription} />
+                <meta property="og:type" content="product" />
+                <meta property="og:url" content={canonicalUrl} />
+                {currentImages[0] && <meta property="og:image" content={currentImages[0].url.startsWith('/') ? `https://www.matteoperin.com${currentImages[0].url}` : currentImages[0].url} />}
+                <script type="application/ld+json">{JSON.stringify(productJsonLd)}</script>
+            </Helmet>
             
             {/* Lightbox Overlay (Must be outside overflow-hidden containers) */}
             {isLightboxOpen && (
                 <div 
-                    className="fixed inset-0 z-[9999999] w-screen h-[100dvh] bg-white dark:bg-black/95 backdrop-blur-md flex items-center justify-center p-4 md:p-12 cursor-zoom-out animate-fade-in-up overflow-hidden"
+                    ref={lightboxRef}
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label={`${selectedGroup.parentName} — enlarged view`}
+                    tabIndex={-1}
+                    className="fixed inset-0 z-[9999999] w-screen h-[100dvh] bg-white dark:bg-black/95 backdrop-blur-md flex items-center justify-center p-4 md:p-12 cursor-zoom-out animate-fade-in-up overflow-hidden outline-none"
                     onClick={() => setIsLightboxOpen(false)}
                 >
                     <button 
@@ -302,14 +283,14 @@ export const InventoryProductPage: React.FC = () => {
                         <>
                             <button
                                 onClick={(e) => { e.stopPropagation(); handlePrevImage(); }}
-                                className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 dark:bg-black/60 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white dark:hover:bg-black/80 shadow-md z-[99999999] transition-all"
+                                className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 w-11 h-11 bg-white/80 dark:bg-black/60 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white dark:hover:bg-black/80 shadow-md z-[99999999] transition-all"
                                 aria-label="Previous image"
                             >
                                 <svg className="w-5 h-5 text-matteo-charcoal dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"/></svg>
                             </button>
                             <button
                                 onClick={(e) => { e.stopPropagation(); handleNextImage(); }}
-                                className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 dark:bg-black/60 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white dark:hover:bg-black/80 shadow-md z-[99999999] transition-all"
+                                className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 w-11 h-11 bg-white/80 dark:bg-black/60 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white dark:hover:bg-black/80 shadow-md z-[99999999] transition-all"
                                 aria-label="Next image"
                             >
                                 <svg className="w-5 h-5 text-matteo-charcoal dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"/></svg>
@@ -326,14 +307,13 @@ export const InventoryProductPage: React.FC = () => {
                         />
                     </div>
 
-                    {/* Lightbox dot indicators */}
+                    {/* Lightbox position indicators (navigation lives on the 44px arrows) */}
                     {currentImages.length > 1 && (
-                        <div className="absolute bottom-6 left-0 right-0 flex justify-center gap-2 z-[99999999]">
+                        <div className="absolute bottom-6 left-0 right-0 flex justify-center gap-2 z-[99999999] pointer-events-none" aria-hidden="true">
                             {currentImages.map((_: any, i: number) => (
-                                <button
+                                <div
                                     key={i}
-                                    onClick={(e) => { e.stopPropagation(); setActiveImageIndex(i); }}
-                                    className={`w-2 h-2 rounded-full transition-all duration-200 ${i === activeImageIndex ? 'bg-matteo-orange w-4' : 'bg-matteo-charcoal/30 dark:bg-white/30 hover:bg-matteo-charcoal/50 dark:hover:bg-white/50'}`}
+                                    className={`w-2 h-2 rounded-full transition-all duration-200 ${i === activeImageIndex ? 'bg-matteo-orange w-4' : 'bg-matteo-charcoal/30 dark:bg-white/30'}`}
                                 />
                             ))}
                         </div>
@@ -345,13 +325,13 @@ export const InventoryProductPage: React.FC = () => {
                 
                 {/* Header Navigation */}
                 <div className="mb-12 flex items-center justify-between">
-                    <button 
-                        onClick={() => navigate(basePath)}
-                        className="font-sans text-[10px] uppercase tracking-widest text-matteo-charcoal/60 dark:text-white/60 hover:text-matteo-orange dark:hover:text-matteo-orange transition-colors flex items-center gap-2 group"
+                    <Link
+                        to={basePath}
+                        className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone-ink dark:text-white/60 hover:text-matteo-orange dark:hover:text-matteo-orange transition-colors flex items-center gap-2 group"
                     >
                         <span className="group-hover:-translate-x-1 transition-transform">←</span>
-                        <span>Back to Collection</span>
-                    </button>
+                        <span>{basePath === '/shop' ? 'Back to the Shop' : 'Back to Collection'}</span>
+                    </Link>
                 </div>
 
                 <div className="w-full flex flex-col lg:flex-row gap-8 lg:gap-16 animate-fade-in-up">
@@ -370,7 +350,7 @@ export const InventoryProductPage: React.FC = () => {
                                         className="w-full h-full object-contain object-center mix-blend-multiply dark:mix-blend-normal animate-fade-in-up cursor-zoom-in p-8"
                                         onError={(e) => {
                                             // Fallback to a placeholder instead of hiding completely so user knows it loaded but failed
-                                            (e.target as HTMLImageElement).src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-300"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>';
+                                            (e.target as HTMLImageElement).src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>';
                                             (e.target as HTMLImageElement).className = "w-1/2 h-1/2 mx-auto object-contain opacity-20";
                                         }}
                                         onClick={() => setIsLightboxOpen(true)}
@@ -395,14 +375,14 @@ export const InventoryProductPage: React.FC = () => {
                                         <>
                                             <button
                                                 onClick={(e) => { e.stopPropagation(); handlePrevImage(); }}
-                                                className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/80 dark:bg-black/60 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover/imgbox:opacity-100 transition-opacity duration-200 hover:bg-white dark:hover:bg-black/80 shadow-md z-10"
+                                                className="absolute left-3 top-1/2 -translate-y-1/2 w-11 h-11 bg-white/80 dark:bg-black/60 backdrop-blur-sm rounded-full flex items-center justify-center opacity-100 md:opacity-0 md:group-hover/imgbox:opacity-100 transition-opacity duration-200 hover:bg-white dark:hover:bg-black/80 shadow-md z-10"
                                                 aria-label="Previous image"
                                             >
                                                 <svg className="w-4 h-4 text-matteo-charcoal dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"/></svg>
                                             </button>
                                             <button
                                                 onClick={(e) => { e.stopPropagation(); handleNextImage(); }}
-                                                className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/80 dark:bg-black/60 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover/imgbox:opacity-100 transition-opacity duration-200 hover:bg-white dark:hover:bg-black/80 shadow-md z-10"
+                                                className="absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 bg-white/80 dark:bg-black/60 backdrop-blur-sm rounded-full flex items-center justify-center opacity-100 md:opacity-0 md:group-hover/imgbox:opacity-100 transition-opacity duration-200 hover:bg-white dark:hover:bg-black/80 shadow-md z-10"
                                                 aria-label="Next image"
                                             >
                                                 <svg className="w-4 h-4 text-matteo-charcoal dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"/></svg>
@@ -413,15 +393,14 @@ export const InventoryProductPage: React.FC = () => {
                                     {/* Image counter & dot indicators */}
                                     {currentImages.length > 1 && (
                                         <div className="absolute bottom-4 left-0 right-0 flex flex-col items-center gap-2 z-10">
-                                            <span className="font-sans text-[9px] uppercase tracking-widest text-matteo-charcoal/50 dark:text-white/50">
+                                            <span className="font-sans text-[10px] uppercase tracking-widest text-matteo-stone-ink dark:text-white/60">
                                                 {activeImageIndex + 1} / {currentImages.length}
                                             </span>
-                                            <div className="flex justify-center gap-1.5">
+                                            <div className="flex justify-center gap-1.5 pointer-events-none" aria-hidden="true">
                                                 {currentImages.map((_: any, i: number) => (
-                                                    <button
+                                                    <div
                                                         key={i}
-                                                        onClick={(e) => { e.stopPropagation(); setActiveImageIndex(i); }}
-                                                        className={`w-1.5 h-1.5 rounded-full transition-all duration-200 ${i === activeImageIndex ? 'bg-matteo-orange w-3' : 'bg-matteo-charcoal/20 dark:bg-white/20 hover:bg-matteo-charcoal/40 dark:hover:bg-white/40'}`}
+                                                        className={`w-1.5 h-1.5 rounded-full transition-all duration-200 ${i === activeImageIndex ? 'bg-matteo-orange w-3' : 'bg-matteo-charcoal/20 dark:bg-white/20'}`}
                                                     />
                                                 ))}
                                             </div>
@@ -438,7 +417,7 @@ export const InventoryProductPage: React.FC = () => {
                     
                     {/* Right Side: Info and Variation Selection */}
                     <div className="w-full lg:w-7/12 flex flex-col py-4">
-                        <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-matteo-orange mb-4 block">
+                        <span className="font-sans text-[10px] uppercase tracking-[0.4em] font-medium text-matteo-orange-ink dark:text-matteo-orange mb-4 block">
                             {activeVariation?.Category || 'Collection'}
                         </span>
                         
@@ -453,7 +432,7 @@ export const InventoryProductPage: React.FC = () => {
                         )}
                         
                         <div className="flex items-center justify-between mb-8 pb-8 border-b border-matteo-charcoal/10 dark:border-white/10">
-                            <span className="font-sans text-lg tracking-widest text-matteo-charcoal/80 dark:text-gray-300">
+                            <span className="font-sans text-lg tracking-widest text-matteo-charcoal/80 dark:text-white/80">
                                 {activeVariation?.Price || getPriceRange(selectedGroup.variations)}
                             </span>
                             {activeVariation?.Stock && (
@@ -470,7 +449,7 @@ export const InventoryProductPage: React.FC = () => {
                         {/* ── COLOR/VARIATION SELECTION — ¼ SIZE SWATCHES ── */}
                         {selectedGroup.variations.length > 0 && (
                             <div className="mb-10 pb-10 border-b border-matteo-charcoal/10 dark:border-white/10">
-                                <h4 className="font-sans text-[10px] uppercase tracking-[0.2em] text-matteo-charcoal/60 dark:text-gray-400 mb-4">
+                                <h4 className="font-sans text-[10px] uppercase tracking-[0.2em] font-medium text-matteo-stone-ink dark:text-white/60 mb-4">
                                     Select Color — {selectedGroup.variations.length} {selectedGroup.variations.length === 1 ? 'option' : 'options'}
                                 </h4>
                                 <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 gap-2">
@@ -501,6 +480,8 @@ export const InventoryProductPage: React.FC = () => {
                                                         <img
                                                             src={thumbUrl}
                                                             alt={v.StyleName || v.Title || `Style ${idx + 1}`}
+                                                            loading="lazy"
+                                                            decoding="async"
                                                             className="w-full h-full object-cover mix-blend-multiply dark:mix-blend-normal"
                                                             onError={(e) => {
                                                                 (e.target as HTMLImageElement).style.display = 'none';
@@ -527,8 +508,8 @@ export const InventoryProductPage: React.FC = () => {
 
                         {selectedGroup.description && (
                             <div className="mb-8">
-                                <h4 className="font-sans text-[10px] uppercase tracking-[0.2em] text-matteo-charcoal/60 dark:text-gray-400 mb-3">Description</h4>
-                                <p className="font-serif text-base leading-relaxed text-matteo-charcoal dark:text-gray-300 whitespace-pre-wrap">
+                                <h4 className="font-sans text-[10px] uppercase tracking-[0.2em] font-medium text-matteo-stone-ink dark:text-white/60 mb-3">Description</h4>
+                                <p className="font-serif text-base leading-relaxed text-matteo-charcoal dark:text-white/80 whitespace-pre-wrap">
                                     {selectedGroup.description}
                                 </p>
                             </div>
@@ -536,19 +517,36 @@ export const InventoryProductPage: React.FC = () => {
                         
                         {selectedGroup.gender && (
                             <div className="mb-8">
-                                <h4 className="font-sans text-[10px] uppercase tracking-[0.2em] text-matteo-charcoal/60 dark:text-gray-400 mb-3">Specification</h4>
-                                <p className="font-serif text-base text-matteo-charcoal dark:text-gray-300">
+                                <h4 className="font-sans text-[10px] uppercase tracking-[0.2em] font-medium text-matteo-stone-ink dark:text-white/60 mb-3">Specification</h4>
+                                <p className="font-serif text-base text-matteo-charcoal dark:text-white/80">
                                     {selectedGroup.gender}
                                 </p>
                             </div>
                         )}
 
+                        {/* ── WHAT ACCOMPANIES YOUR PIECE — mirrors the Authenticity
+                            section on /shipping-returns (ClientServices.tsx) ── */}
+                        <div className="mb-8">
+                            <h4 className="font-sans text-[10px] uppercase tracking-[0.2em] font-medium text-matteo-stone-ink dark:text-white/60 mb-3">What Accompanies Your Piece</h4>
+                            <p className="font-serif text-base leading-relaxed text-matteo-charcoal dark:text-white/80">
+                                Each piece arrives with documentation of its materials and provenance.
+                                {isExotic && ' Exotic leathers are sourced in full compliance with CITES certification, and that documentation travels with the piece.'}
+                            </p>
+                        </div>
+
                         {/* ── ADD TO BAG / CHECKOUT ── */}
                         <div className="mt-4 space-y-4">
+                            {!currentSoldOut && (
+                                <p className="font-serif italic text-lg text-matteo-charcoal/80 dark:text-white/70 pb-2">
+                                    {isOneOfOne
+                                        ? "One of one. When it's acquired, it's gone."
+                                        : 'A small series — each piece cut and finished by hand.'}
+                                </p>
+                            )}
                             {currentSoldOut ? (
                                 <button
                                     disabled
-                                    className="w-full bg-matteo-charcoal/20 dark:bg-white/10 text-matteo-charcoal/40 dark:text-white/30 py-4 font-sans text-[10px] uppercase tracking-[0.2em] cursor-not-allowed"
+                                    className="w-full bg-matteo-charcoal/20 dark:bg-white/10 text-matteo-charcoal/40 dark:text-white/30 py-4 font-sans text-xs uppercase tracking-[0.2em] cursor-not-allowed"
                                 >
                                     Sold Out
                                 </button>
@@ -556,23 +554,56 @@ export const InventoryProductPage: React.FC = () => {
                                 <>
                                     <button
                                         onClick={handleAddToBag}
-                                        className="w-full bg-matteo-charcoal dark:bg-white text-white dark:text-matteo-black py-4 font-sans text-[10px] uppercase tracking-[0.2em] hover:bg-matteo-orange dark:hover:bg-matteo-orange hover:text-white transition-colors duration-300"
+                                        className="w-full bg-matteo-charcoal dark:bg-white text-white dark:text-matteo-black py-4 font-sans text-xs uppercase tracking-[0.2em] hover:bg-matteo-orange dark:hover:bg-matteo-orange hover:text-white transition-colors duration-300"
                                     >
                                         Add to Bag — {activeVariation?.Price || getPriceRange(selectedGroup.variations)}
                                     </button>
                                     <button
                                         onClick={handleBuyNow}
-                                        className="w-full border border-matteo-charcoal/20 dark:border-white/20 text-matteo-charcoal dark:text-white py-4 font-sans text-[10px] uppercase tracking-[0.2em] hover:border-matteo-orange hover:text-matteo-orange transition-colors duration-300"
+                                        className="w-full border border-matteo-charcoal/20 dark:border-white/20 text-matteo-charcoal dark:text-white py-4 font-sans text-xs uppercase tracking-[0.2em] hover:border-matteo-orange hover:text-matteo-orange transition-colors duration-300"
                                     >
                                         Buy Now
                                     </button>
                                 </>
                             )}
-                            <p className="font-sans text-[9px] uppercase tracking-widest text-matteo-charcoal/40 dark:text-white/30 text-center">
-                                Secure checkout via Stripe · Free shipping on orders over $500
-                            </p>
+                            <div className="pt-4 space-y-2 text-center">
+                                <p className="font-sans text-[10px] uppercase tracking-widest font-medium text-matteo-stone-ink dark:text-white/60">
+                                    Complimentary insured delivery, worldwide · 14-day returns
+                                </p>
+                                <p className="font-sans text-[10px] uppercase tracking-widest font-medium text-matteo-stone-ink dark:text-white/60">
+                                    Authenticity guaranteed · Secure checkout · Apple Pay &amp; Google Pay
+                                </p>
+                                <Link to="/shipping-returns" className="inline-block font-sans text-[10px] uppercase tracking-widest text-matteo-orange-ink dark:text-matteo-orange border-b border-matteo-orange/40 pb-0.5 hover:opacity-70 transition-opacity">
+                                    Shipping, Returns &amp; Authenticity
+                                </Link>
+                            </div>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            {/* ── MOBILE BUY BAR — keeps the CTA reachable on small screens ── */}
+            <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-matteo-cream dark:bg-matteo-black border-t border-matteo-charcoal/10 dark:border-white/10">
+                <div className="px-4 py-3 flex items-center justify-between gap-3">
+                    <div className="min-w-0">
+                        <span className="block font-sans text-[10px] uppercase tracking-[0.2em] font-medium text-matteo-stone-ink dark:text-white/60 truncate">
+                            {selectedGroup.parentName}
+                        </span>
+                        <span className="font-serif text-lg text-matteo-charcoal dark:text-white">
+                            {activeVariation?.Price || getPriceRange(selectedGroup.variations)}
+                        </span>
+                    </div>
+                    <button
+                        onClick={handleAddToBag}
+                        disabled={currentSoldOut}
+                        className={`shrink-0 py-3.5 px-6 font-sans text-[11px] uppercase tracking-[0.2em] transition-colors duration-300 ${
+                            currentSoldOut
+                                ? 'bg-matteo-charcoal/20 dark:bg-white/10 text-matteo-charcoal/40 dark:text-white/30 cursor-not-allowed'
+                                : 'bg-matteo-charcoal dark:bg-white text-white dark:text-matteo-black hover:bg-matteo-orange dark:hover:bg-matteo-orange hover:text-white'
+                        }`}
+                    >
+                        {currentSoldOut ? 'Sold Out' : 'Add to Bag'}
+                    </button>
                 </div>
             </div>
         </div>
