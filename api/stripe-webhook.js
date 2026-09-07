@@ -74,6 +74,76 @@ async function sendGa4Purchase({ clientId, transactionId, value, items }) {
   }
 }
 
+// Helper: raise the concierge alarm in HubSpot when a commission deposit
+// lands — a contact with the payer's details and a note that cannot be
+// missed. A $25,000 deposit opens a relationship; it must never arrive
+// silently. Same infrastructure as every lead form on the site.
+async function notifyDepositToHubspot(session) {
+  const hubspotToken = process.env.HUBSPOT_ACCESS_TOKEN;
+  if (!hubspotToken) {
+    console.error('🚨 DEPOSIT PAID but HUBSPOT_ACCESS_TOKEN is not set — concierge was NOT notified');
+    return;
+  }
+  const email = (session.customer_details?.email || '').trim().toLowerCase();
+  const phone = session.customer_details?.phone || '';
+  const name = session.customer_details?.name || '';
+  const amount = session.amount_total ? `$${(session.amount_total / 100).toLocaleString()}` : 'unknown amount';
+  const headers = { 'Authorization': `Bearer ${hubspotToken}`, 'Content-Type': 'application/json' };
+
+  // Upsert the contact (create, fall back to search-and-update on conflict)
+  let contactId = null;
+  try {
+    const createRes = await fetch('https://api.hubapi.com/crm/v3/objects/contacts', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ properties: { email, phone, firstname: name } }),
+    });
+    const createData = await createRes.json();
+    if (createRes.ok) contactId = createData.id;
+    else if (createData.message?.includes('already exists')) {
+      contactId = createData.message.match(/ID: (\d+)/)?.[1] || null;
+      if (contactId && phone) {
+        await fetch(`https://api.hubapi.com/crm/v3/objects/contacts/${contactId}`, {
+          method: 'PATCH',
+          headers,
+          body: JSON.stringify({ properties: { phone } }),
+        }).catch(() => {});
+      }
+    }
+  } catch (err) {
+    console.error('🚨 DEPOSIT contact upsert failed:', err.message);
+  }
+
+  // The note the concierge acts on — attached to the contact when we have
+  // one, logged loudly either way.
+  const noteBody = [
+    `💰 COMMISSION DEPOSIT PAID — ${amount}`,
+    `Item: ${session.metadata?.item_titles || 'Bespoke commission'}`,
+    `Name: ${name || '(not given)'}`,
+    `Email: ${email}`,
+    `Phone: ${phone || '(NOT COLLECTED — reply by email)'}`,
+    `Stripe session: ${session.id}`,
+    ``,
+    `THE SITE PROMISES AN ADVISOR CALL WITHIN 24 HOURS.`,
+  ].join('\n');
+  console.log(`\n${noteBody}\n`);
+  if (contactId) {
+    try {
+      await fetch('https://api.hubapi.com/crm/v3/objects/notes', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          properties: { hs_note_body: noteBody, hs_timestamp: Date.now() },
+          associations: [{ to: { id: contactId }, types: [{ associationCategory: 'HUBSPOT_DEFINED', associationTypeId: 202 }] }],
+        }),
+      });
+      console.log(`📇 Deposit note attached to HubSpot contact ${contactId}`);
+    } catch (err) {
+      console.error('🚨 DEPOSIT note failed:', err.message);
+    }
+  }
+}
+
 // Helper: authenticate with Google Sheets (read/write)
 function getGoogleSheetsClient() {
   const clientEmail = process.env.GOOGLE_CLIENT_EMAIL;
@@ -253,6 +323,26 @@ export default async function handler(req, res) {
 
         if (!lineItems.data || lineItems.data.length === 0) {
           console.log('   No line items found in session');
+          break;
+        }
+
+        // A deposit is a relationship opening, not a stock movement: alert
+        // the concierge, record the conversion, and leave the shelf alone.
+        const isDeposit =
+          session.metadata?.is_deposit === 'true' ||
+          lineItems.data.every((i) => (i.description || '').startsWith('Deposit:'));
+        if (isDeposit) {
+          await notifyDepositToHubspot(session);
+          await sendGa4Purchase({
+            clientId: session.metadata?.ga_client_id,
+            transactionId: session.id,
+            value: session.amount_total ? session.amount_total / 100 : 0,
+            items: lineItems.data.map((i) => ({
+              item_name: i.description || 'Commission deposit',
+              quantity: i.quantity || 1,
+              price: i.amount_total ? i.amount_total / 100 / (i.quantity || 1) : undefined,
+            })),
+          });
           break;
         }
 

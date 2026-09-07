@@ -10,7 +10,6 @@ export const DossierLogin: React.FC = () => {
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [isSignUp, setIsSignUp] = useState(false);
     const navigate = useNavigate();
 
     const handleAuth = async (e: React.FormEvent) => {
@@ -22,34 +21,20 @@ export const DossierLogin: React.FC = () => {
         const currentUrl = (import.meta as any).env.VITE_SUPABASE_URL || 'https://placeholder-dossier-database.supabase.co';
         const currentKey = (import.meta as any).env.VITE_SUPABASE_ANON_KEY || 'placeholder_public_anon_key';
 
-        if (currentUrl === 'https://placeholder-dossier-database.supabase.co') {
-            setError("The Dossier database is not yet linked. Please ensure VITE_SUPABASE_URL is set in your Vercel Environment Variables and redeploy.");
-            setLoading(false);
-            return;
-        }
-
-        if (currentKey === 'placeholder_public_anon_key') {
-            setError("The database connection is open, but the Public Anon Key is missing. Please add VITE_SUPABASE_ANON_KEY in Vercel and redeploy.");
+        if (currentUrl === 'https://placeholder-dossier-database.supabase.co' || currentKey === 'placeholder_public_anon_key') {
+            setError("The Dossier is available by private arrangement. Please write to concierge@matteoperin.com.");
             setLoading(false);
             return;
         }
 
         try {
-            if (isSignUp) {
-                const { error } = await supabase.auth.signUp({
-                    email,
-                    password,
-                });
-                if (error) throw error;
-                setError("Credentials recorded. Please verify your email to access the Dossier.");
-            } else {
-                const { error } = await supabase.auth.signInWithPassword({
-                    email,
-                    password,
-                });
-                if (error) throw error;
-                navigate('/dossier-dashboard');
-            }
+            // Access is by invitation only — the house opens a dossier, never a form.
+            const { error } = await supabase.auth.signInWithPassword({
+                email,
+                password,
+            });
+            if (error) throw error;
+            navigate('/dossier-dashboard');
         } catch (err: any) {
             setError(err.message || 'Authentication failed. Please check your credentials.');
         } finally {
@@ -128,18 +113,18 @@ export const DossierLogin: React.FC = () => {
                             disabled={loading}
                             className="w-full border border-white/40 text-white font-sans text-[10px] uppercase tracking-[0.3em] py-5 hover:bg-white hover:text-black transition-all duration-700 disabled:opacity-50"
                         >
-                            {loading ? "Authenticating..." : (isSignUp ? "Request Access" : "Enter Secure Line")}
+                            {loading ? "Authenticating..." : "Enter Secure Line"}
                         </button>
                     </div>
                 </form>
 
-                <div className="mt-12 text-center pointer-events-auto">
-                    <button 
-                        onClick={() => { setIsSignUp(!isSignUp); setError(null); }}
-                        className="font-sans text-[10px] uppercase tracking-[0.2em] text-white/30 hover:text-white transition-colors border-b border-transparent hover:border-white/30 pb-1"
-                    >
-                        {isSignUp ? "Already a Patron? Authenticate here." : "New Client? Request Dossier setup."}
-                    </button>
+                <div className="mt-12 text-center">
+                    <p className="font-sans text-[10px] uppercase tracking-[0.2em] text-white/30">
+                        Access is by invitation. Write to{' '}
+                        <a href="mailto:concierge@matteoperin.com" className="text-white/50 hover:text-white transition-colors border-b border-white/20 pb-0.5">
+                            concierge@matteoperin.com
+                        </a>
+                    </p>
                 </div>
 
             </motion.div>

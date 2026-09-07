@@ -169,6 +169,9 @@ export default async function handler(req, res) {
       metadata: {
         item_titles: items.map(i => i.title).join(' | '),
         item_count: String(items.length),
+        // The webhook branches on this: a deposit is a relationship opening,
+        // not a stock movement — it alerts the concierge instead.
+        is_deposit: isDeposit ? 'true' : 'false',
         // Forwarded to the Stripe webhook so the GA4 purchase event can be
         // attributed to the same user's view -> cart -> checkout funnel.
         ga_client_id: gaClientId || '',
@@ -189,6 +192,9 @@ export default async function handler(req, res) {
           message: 'Your deposit reserves the commission slot. The remaining balance is invoiced privately before production begins.',
         },
       };
+      // The promised 24-hour advisor call needs a number to dial — a $25,000
+      // deposit must never arrive with only an email address.
+      sessionData.phone_number_collection = { enabled: true };
     }
 
     // Physical orders: Stripe collects the shipping address and phone, and
