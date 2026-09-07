@@ -290,6 +290,11 @@ const AnimatedRoutes = () => {
                     and the orphaned lifestyle page folds into The House. */}
                 <Route path="/contact" element={<Navigate to="/enquire" replace />} />
                 <Route path="/lifestyle" element={<Navigate to="/the-house" replace />} />
+                {/* Legacy Shopify-era paths still indexed by search — land them
+                    where their equity belongs, never as a homepage-shaped 200. */}
+                <Route path="/collections/*" element={<Navigate to="/shop" replace />} />
+                <Route path="/products/*" element={<Navigate to="/shop" replace />} />
+                <Route path="/pages/about" element={<Navigate to="/the-house" replace />} />
                 <Route path="/access" element={<PageTransition><PrivateAccess /></PageTransition>} />
                 <Route path="/vault" element={<PageTransition><Vault /></PageTransition>} />
                 <Route path="/portal" element={<PageTransition><ClientPortal /></PageTransition>} />

@@ -107,7 +107,7 @@ export const Footer: React.FC = () => {
                         <h4 className="font-sans text-[11px] uppercase tracking-[0.25em] font-medium text-matteo-orange mb-6">Explore</h4>
                         <ul className="space-y-4 font-serif text-white/80">
                             <li><Link to="/the-house" onClick={() => window.scrollTo(0, 0)} className="hover:text-white transition-colors block py-1">The House</Link></li>
-                            <li><Link to="/collection" onClick={() => window.scrollTo(0, 0)} className="hover:text-white transition-colors block py-1">Collections</Link></li>
+                            <li><Link to="/collection" onClick={() => window.scrollTo(0, 0)} className="hover:text-white transition-colors block py-1">The Archive</Link></li>
                             <li><Link to="/bespoke" onClick={() => window.scrollTo(0, 0)} className="hover:text-white transition-colors block py-1">Bespoke Process</Link></li>
                             {/* Journal link intentionally removed until the Journal carries real essays — restore alongside ArticleDetail. */}
                             <li><Link to="/bespoke-crocodile-jacket" onClick={() => window.scrollTo(0, 0)} className="hover:text-white transition-colors block py-1">Bespoke Crocodile Jacket</Link></li>
@@ -136,7 +136,7 @@ export const Footer: React.FC = () => {
                                     />
                                     <button
                                         onClick={handleSubscribe}
-                                        className="text-xs uppercase tracking-widest text-matteo-orange hover:text-white transition-colors"
+                                        className="text-xs uppercase tracking-widest text-matteo-orange hover:text-white transition-colors min-h-[44px] px-3 -mr-3"
                                     >
                                         Subscribe
                                     </button>

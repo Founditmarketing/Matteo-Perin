@@ -243,7 +243,7 @@ export const CrocJacketLanding: React.FC = () => {
                 <meta property="og:site_name" content="Matteo Perin" />
                 <meta property="product:price:amount" content="25000" />
                 <meta property="product:price:currency" content="USD" />
-                <meta property="product:availability" content="in stock" />
+                <meta property="product:availability" content="available for order" />
                 <meta property="product:condition" content="new" />
                 <meta property="product:brand" content="Matteo Perin" />
                 <meta property="product:category" content="Clothing > Outerwear > Leather Jackets" />
@@ -254,7 +254,9 @@ export const CrocJacketLanding: React.FC = () => {
                 <script type="application/ld+json">{JSON.stringify({
                     '@context': 'https://schema.org',
                     '@type': 'Product',
-                    name: 'Bespoke Crocodile Jacket',
+                    // The $25,000 is the DEPOSIT — carried in the entity name so a
+                    // rich result can never advertise the garment at the deposit price.
+                    name: 'Deposit: Bespoke Crocodile Jacket Commission',
                     image: GALLERY_IMAGES.map(img => `https://www.matteoperin.com${img.replace(/ /g, '%20')}`),
                     description: 'One-of-one bespoke crocodile jacket. Hand-selected Nile or Porosus crocodile, hand-painted patina, over 100 hours of artisanal labor in Verona, Italy. CITES-certified hides. Limited to 3 commissions per year.',
                     sku: 'MP-CROC-JACKET-001',

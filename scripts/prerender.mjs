@@ -56,6 +56,9 @@ const ROUTES = [
   '/casa',
   '/collection',
   '/shipping-returns',
+  // The advertised privacy link must serve the real policy to crawlers too,
+  // not the homepage shell with a homepage canonical.
+  '/privacy',
   // Journal articles are intentionally NOT prerendered or emitted to the
   // sitemap: /journal/:slug is unpublished (noindex + redirect to /journal)
   // until real essays exist. Restore the slugs here when they do.

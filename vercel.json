@@ -4,7 +4,10 @@
     { "source": "/lifestyle", "destination": "/the-house", "permanent": true },
     { "source": "/furniture", "destination": "/casa", "permanent": true },
     { "source": "/inventory-test-hidden", "destination": "/shop", "permanent": true },
-    { "source": "/inventory-test-hidden/:slug", "destination": "/shop/:slug", "permanent": true }
+    { "source": "/inventory-test-hidden/:slug", "destination": "/shop/:slug", "permanent": true },
+    { "source": "/collections/:path*", "destination": "/shop", "permanent": true },
+    { "source": "/products/:slug", "destination": "/shop", "permanent": true },
+    { "source": "/pages/about", "destination": "/the-house", "permanent": true }
   ],
   "rewrites": [
     { "source": "/assets/(.*)", "destination": "/assets/$1" },

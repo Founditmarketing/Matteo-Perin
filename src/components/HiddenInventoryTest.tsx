@@ -137,11 +137,13 @@ export const HiddenInventoryTest: React.FC = () => {
         <div className={`bg-matteo-cream dark:bg-matteo-black px-6 md:px-16 flex flex-col items-center relative ${isEmbedded ? 'py-20 md:py-28' : 'min-h-screen py-32'}`}>
             {!isEmbedded && (
                 <Helmet>
-                    <title>Shop One-of-One Italian Leather Goods & Luxury Pieces | Matteo Perin</title>
-                    <meta name="description" content="Shop the Current Edit — one-of-one Italian leather bags, exotic leather goods, and luxury outerwear, in stock and ready to ship worldwide from our Jackson Hole atelier. Handcrafted in Italy." />
+                    {/* "one-of-one AND small-series" — the catalog carries stock-2
+                        colorways, so the blanket one-of-one claim would be false */}
+                    <title>Shop One-of-One & Small-Series Italian Leather Goods | Matteo Perin</title>
+                    <meta name="description" content="Shop the Current Edit — one-of-one and small-series Italian leather bags, exotic leather goods, and luxury outerwear, in stock and ready to ship worldwide from our Jackson Hole atelier. Handcrafted in Italy." />
                     <link rel="canonical" href="https://www.matteoperin.com/shop" />
-                    <meta property="og:title" content="Shop One-of-One Italian Leather Goods | Matteo Perin" />
-                    <meta property="og:description" content="One-of-one Italian leather bags, exotic leather goods, and luxury outerwear — in stock, ready to ship worldwide." />
+                    <meta property="og:title" content="Shop One-of-One & Small-Series Italian Leather Goods | Matteo Perin" />
+                    <meta property="og:description" content="One-of-one and small-series Italian leather bags, exotic leather goods, and luxury outerwear — in stock, ready to ship worldwide." />
                     <meta property="og:type" content="website" />
                     <meta property="og:url" content="https://www.matteoperin.com/shop" />
                     {productSchema && (

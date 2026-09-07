@@ -101,7 +101,9 @@ const LookbookItem: React.FC<{
             className={`group relative cursor-pointer lookbook-cursor-target ${colSpan} ${alignmentClass} ${verticalOffset}`}
             onClick={() => setSelectedLook(look)}
         >
-            {isTypographyBreak && index > 0 && viewMode === 'editorial' && (
+            {/* The pull-quote appears ONCE per lookbook (the first break slot) —
+                a line repeated fifteen times down 78 looks stops meaning anything. */}
+            {index === 4 && viewMode === 'editorial' && (
                 /* Below lg the quote sits in flow as a typographic break above the
                    garment; at lg it returns to the floated editorial composition. */
                 <div className="mb-16 lg:absolute lg:-left-[40%] lg:top-1/4 max-w-sm pointer-events-none z-10">

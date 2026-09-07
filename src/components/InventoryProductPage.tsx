@@ -3,6 +3,7 @@ import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { slugify } from '../lib/slug';
 import { useCart } from '../context/CartContext';
+import { useInquiry } from '../context/InquiryContext';
 import { Product } from '../types';
 import { trackViewItem } from '../lib/analytics';
 import { useModalA11y } from '../lib/useModalA11y';
@@ -37,6 +38,7 @@ export const InventoryProductPage: React.FC = () => {
     const location = useLocation();
     const basePath = location.pathname.startsWith('/shop') ? '/shop' : '/inventory-test-hidden';
     const { addToCart, setIsCartOpen, cartItems } = useCart();
+    const { openInquiry } = useInquiry();
     
     const [selectedGroup, setSelectedGroup] = useState<GroupedProduct | null>(null);
     const [activeVariation, setActiveVariation] = useState<any | null>(null);
@@ -566,6 +568,23 @@ export const InventoryProductPage: React.FC = () => {
                                     </button>
                                 </>
                             )}
+                            {/* The concierge path — the shop PDP was the one commercial
+                                surface with no way to ask a human anything. */}
+                            <button
+                                onClick={() =>
+                                    openInquiry(
+                                        {
+                                            id: selectedGroup.parentName,
+                                            title: activeVariation?.Title || selectedGroup.parentName,
+                                            image: getCurrentImages()[0]?.url || '',
+                                        },
+                                        `Regarding the ${activeVariation?.Title || selectedGroup.parentName}, from the shop.`,
+                                    )
+                                }
+                                className="w-full min-h-[44px] font-sans text-[10px] uppercase tracking-[0.2em] text-matteo-charcoal/70 dark:text-white/60 hover:text-matteo-orange dark:hover:text-matteo-orange transition-colors underline underline-offset-4 decoration-matteo-orange/40"
+                            >
+                                Ask about this piece
+                            </button>
                             <div className="pt-4 space-y-2 text-center">
                                 <p className="font-sans text-[10px] uppercase tracking-widest font-medium text-matteo-stone-ink dark:text-white/60">
                                     Complimentary insured delivery, worldwide · 14-day returns

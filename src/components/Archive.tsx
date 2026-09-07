@@ -174,11 +174,13 @@ export const Archive: React.FC<ArchiveProps> = ({ initialGender }) => {
         <div className="bg-matteo-cream dark:bg-matteo-black min-h-screen pt-32 pb-32 transition-colors duration-700 animate-fade-in-up">
 
             <Helmet>
-                <title>The Collection — Luxury Clothing &amp; Exotic Leather in Jackson, WY | Matteo Perin</title>
-                <meta name="description" content="Browse the Matteo Perin collection — bespoke jackets, exotic leather goods, and one-of-a-kind luxury pieces for men and women, handcrafted in Italy and shown at our Jackson Hole atelier on 164 E Deloney Ave." />
+                {/* Archive framing — these are PAST looks and commissions; the
+                    store is /shop, and dated work must never read as stock. */}
+                <title>The Archive — Past Collections &amp; Commissions | Matteo Perin</title>
+                <meta name="description" content="The Matteo Perin archive — past collections, bespoke jackets, and one-of-a-kind commissions for men and women, handcrafted in Italy. Pieces shown here inspired today's commissions; the current edit lives in the shop." />
                 <link rel="canonical" href="https://www.matteoperin.com/collection" />
-                <meta property="og:title" content="The Collection — Luxury Clothing in Jackson, WY | Matteo Perin" />
-                <meta property="og:description" content="Bespoke jackets, exotic leather, and one-of-a-kind luxury pieces, handcrafted in Italy. Shown at the Matteo Perin atelier in Jackson Hole." />
+                <meta property="og:title" content="The Archive — Past Collections &amp; Commissions | Matteo Perin" />
+                <meta property="og:description" content="Past collections and one-of-a-kind commissions, handcrafted in Italy. The current edit lives in the shop." />
                 <meta property="og:type" content="website" />
                 <meta property="og:url" content="https://www.matteoperin.com/collection" />
             </Helmet>

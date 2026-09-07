@@ -300,16 +300,18 @@ export const DigitalConcierge: React.FC<{ initialOpen?: boolean; suppressLaunche
                             {/* Drawer Header */}
                             <div className="w-full p-6 md:p-8 flex justify-between items-center z-10 border-b border-white/5 bg-[#0a0a0a]">
                                 <h2 className="font-serif text-lg tracking-widest font-light text-white/50">Casa Matteo Perin</h2>
-                                <div className="flex items-center gap-6">
-                                    <button 
+                                {/* 44px hit areas via padding; Clear lifted from
+                                    white/20 (~1.75:1) to a readable white/50 */}
+                                <div className="flex items-center gap-2">
+                                    <button
                                         onClick={clearDossier}
-                                        className="font-sans text-[10px] uppercase tracking-[0.4em] text-white/20 hover:text-white transition-colors bg-transparent border-none outline-none"
+                                        className="font-sans text-[10px] uppercase tracking-[0.4em] text-white/50 hover:text-white transition-colors bg-transparent border-none outline-none min-h-[44px] min-w-[44px] px-3"
                                     >
                                         Clear
                                     </button>
-                                    <button 
+                                    <button
                                         onClick={() => setIsOpen(false)}
-                                        className="font-sans text-[10px] uppercase tracking-[0.4em] text-white/50 hover:text-white transition-colors bg-transparent border-none outline-none"
+                                        className="font-sans text-[10px] uppercase tracking-[0.4em] text-white/50 hover:text-white transition-colors bg-transparent border-none outline-none min-h-[44px] min-w-[44px] px-3"
                                     >
                                         Close &times;
                                     </button>

@@ -261,7 +261,7 @@ export const Navigation: React.FC = () => {
             <Link
               to="/enquire"
               onClick={() => setMobileMenuOpen(false)}
-              className="font-sans text-[10px] uppercase tracking-[0.25em] font-medium text-white/70 hover:text-matteo-orange transition-colors"
+              className="font-sans text-[10px] uppercase tracking-[0.25em] font-medium text-white/70 hover:text-matteo-orange transition-colors inline-flex items-center min-h-[44px]"
             >
               Enquire — begin a conversation
             </Link>

@@ -38,15 +38,18 @@ export default async function handler(req, res) {
       return res.status(400).json({ success: false, error: 'A valid email address is required' });
     }
 
-    // Standard HubSpot contact properties
+    // Standard HubSpot contact properties. Marketing consent belongs ONLY to
+    // the newsletter form — asking a question about a jacket is not an opt-in.
     const properties = {
       email,
       firstname,
       lastname,
-      hs_marketable_status: 'true',
-      hs_marketable_reason_id: 'FORM_SUBMISSION',
-      hs_marketable_reason_type: 'FORM_SUBMISSION',
     };
+    if (formType === 'newsletter') {
+      properties.hs_marketable_status = 'true';
+      properties.hs_marketable_reason_id = 'FORM_SUBMISSION';
+      properties.hs_marketable_reason_type = 'FORM_SUBMISSION';
+    }
 
     // Add phone if provided
     if (data.phone) properties.phone = data.phone;
@@ -127,8 +130,10 @@ export default async function handler(req, res) {
       return res.status(502).json({ success: false, error: 'Lead could not be captured' });
     }
 
-    // ─── Step 2: Add to HubSpot static list (for newsletter/subscriber segmentation) ───
-    if (contactId) {
+    // ─── Step 2: Add to HubSpot static list — NEWSLETTER SIGN-UPS ONLY.
+    // An enquiry or registry submission never lands on the marketing list;
+    // the subscriber list is made of people who asked to be on it. ───
+    if (contactId && formType === 'newsletter') {
       const listId = process.env.HUBSPOT_NEWSLETTER_LIST_ID;
       if (listId) {
         try {
