@@ -120,6 +120,18 @@ export const groupInventoryRows = (rows: any[]): GroupedProduct[] => {
     return grouped;
 };
 
+/** Customer-facing style label. The sheet's variation titles carry the
+ *  factory's constant "Beauty" model prefix and a few recurring misspellings
+ *  (Suade, Tope). Display only — cart payloads and checkout price matching
+ *  must keep the raw StyleName/Title exactly as the sheet records them. */
+export const displayStyleName = (styleName: string): string => {
+    return (styleName || '')
+        .trim()
+        .replace(/^Beauty\s+/i, '')
+        .replace(/\bSuade\b/gi, 'Suede')
+        .replace(/\bTope\b/gi, 'Taupe');
+};
+
 /** Google Drive share link -> CDN-cached proxy URL (direct link in dev). */
 export const getImageUrl = (url: string, width: 1200 | 1600 = 1200): string => {
     if (!url) return '';

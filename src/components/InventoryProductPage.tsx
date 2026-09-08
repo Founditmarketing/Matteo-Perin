@@ -14,6 +14,7 @@ import {
     getImageUrl as getInventoryImageUrl,
     getPriceRange,
     isVariationSoldOut,
+    displayStyleName,
 } from '../lib/inventory';
 
 // Stable numeric id for an inventory variation, derived from its identity
@@ -89,7 +90,7 @@ export const InventoryProductPage: React.FC = () => {
         const priceStr = String(activeVariation.Price || '0').replace(/[^0-9.]/g, '');
         trackViewItem({
             id: selectedGroup.parentName,
-            title: `${selectedGroup.parentName}${activeVariation.Title !== selectedGroup.parentName ? ' — ' + activeVariation.Title : ''}`,
+            title: `${selectedGroup.parentName}${activeVariation.Title !== selectedGroup.parentName ? ' — ' + displayStyleName(activeVariation.Title) : ''}`,
             category: activeVariation.Category || 'Collection',
             price: parseFloat(priceStr) || 0,
             variationTitle: activeVariation.Title,
@@ -128,7 +129,9 @@ export const InventoryProductPage: React.FC = () => {
         return {
             // Stable across adds so the cart can recognise the same piece
             id: stableVariationId(selectedGroup.parentName, activeVariation.StyleName || activeVariation.Title || ''),
-            title: `${selectedGroup.parentName}${activeVariation.Title !== selectedGroup.parentName ? ' — ' + activeVariation.Title : ''}`,
+            // Display title only — the raw variationTitle/styleName below are
+            // what the checkout server matches for trusted prices.
+            title: `${selectedGroup.parentName}${activeVariation.Title !== selectedGroup.parentName ? ' — ' + displayStyleName(activeVariation.Title) : ''}`,
             category: activeVariation.Category || 'Collection',
             image: imgUrl,
             price,
@@ -429,7 +432,7 @@ export const InventoryProductPage: React.FC = () => {
                         
                         {activeVariation && activeVariation.Title && activeVariation.Title !== selectedGroup.parentName && (
                             <h2 className="font-serif text-xl md:text-2xl mb-4 text-matteo-charcoal/70 dark:text-white/70">
-                                {activeVariation.Title}
+                                {displayStyleName(activeVariation.Title)}
                             </h2>
                         )}
                         
@@ -451,9 +454,16 @@ export const InventoryProductPage: React.FC = () => {
                         {/* ── COLOR/VARIATION SELECTION — ¼ SIZE SWATCHES ── */}
                         {selectedGroup.variations.length > 0 && (
                             <div className="mb-10 pb-10 border-b border-matteo-charcoal/10 dark:border-white/10">
-                                <h4 className="font-sans text-[10px] uppercase tracking-[0.2em] font-medium text-matteo-stone-ink dark:text-white/60 mb-4">
+                                <h4 className="font-sans text-[10px] uppercase tracking-[0.2em] font-medium text-matteo-stone-ink dark:text-white/60 mb-1.5">
                                     Select Color — {selectedGroup.variations.length} {selectedGroup.variations.length === 1 ? 'option' : 'options'}
                                 </h4>
+                                {/* The chosen colour written out — a swatch alone
+                                    (and its hover tooltip) is invisible on touch. */}
+                                {activeVariation && (
+                                    <p className="font-serif italic text-[15px] text-matteo-charcoal dark:text-white/85 mb-4">
+                                        {displayStyleName(activeVariation.StyleName || activeVariation.Title || '')}
+                                    </p>
+                                )}
                                 <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 gap-2">
                                     {selectedGroup.variations.map((v, idx) => {
                                         const isActive = v === activeVariation;
@@ -471,7 +481,7 @@ export const InventoryProductPage: React.FC = () => {
                                                     setActiveImageIndex(0);
                                                 }}
                                                 className={`group/swatch flex flex-col items-center gap-1 transition-all duration-200 ${isSoldOut ? 'opacity-40' : ''}`}
-                                                title={`${v.StyleName || v.Title || `Style ${idx + 1}`}${isSoldOut ? ' — Sold Out' : ''}`}
+                                                title={`${displayStyleName(v.StyleName || v.Title || '') || `Style ${idx + 1}`}${isSoldOut ? ' — Sold Out' : ''}`}
                                             >
                                                 <div className={`w-full aspect-square overflow-hidden border-2 transition-all duration-200 relative ${
                                                     isActive
@@ -481,7 +491,7 @@ export const InventoryProductPage: React.FC = () => {
                                                     {thumbUrl ? (
                                                         <img
                                                             src={thumbUrl}
-                                                            alt={v.StyleName || v.Title || `Style ${idx + 1}`}
+                                                            alt={displayStyleName(v.StyleName || v.Title || '') || `Style ${idx + 1}`}
                                                             loading="lazy"
                                                             decoding="async"
                                                             className="w-full h-full object-cover mix-blend-multiply dark:mix-blend-normal"

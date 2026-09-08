@@ -59,10 +59,16 @@ const ROUTES = [
   // The advertised privacy link must serve the real policy to crawlers too,
   // not the homepage shell with a homepage canonical.
   '/privacy',
+  // Footer-advertised concierge form — public and indexable.
+  '/private-client',
   // Journal articles are intentionally NOT prerendered or emitted to the
   // sitemap: /journal/:slug is unpublished (noindex + redirect to /journal)
   // until real essays exist. Restore the slugs here when they do.
 ];
+
+// Rendered so crawlers get the page's own noindex meta instead of an
+// indexable homepage shell — but never listed in the sitemap.
+const NOINDEX_PRERENDER = ['/dossier'];
 
 // Live inventory API used to render real products (names, prices, schema)
 // into the prerendered /shop and /shop/<product> HTML.
@@ -150,7 +156,7 @@ async function run() {
   if (productRoutes.length > 0) {
     console.log(`[prerender] discovered ${productRoutes.length} product route(s) from live inventory`);
   }
-  const allRoutes = [...ROUTES, ...productRoutes];
+  const allRoutes = [...ROUTES, ...NOINDEX_PRERENDER, ...productRoutes];
 
   async function renderRoute(route) {
     const page = await browser.newPage();
@@ -273,7 +279,7 @@ async function run() {
   await server.close();
   console.log(`[prerender] done — ${succeeded}/${allRoutes.length} routes prerendered.`);
 
-  writeSitemap(renderedRoutes);
+  writeSitemap(renderedRoutes.filter((r) => !NOINDEX_PRERENDER.includes(r)));
 }
 
 // Regenerate sitemap.xml from the routes that actually rendered, so product
