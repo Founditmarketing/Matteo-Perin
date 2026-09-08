@@ -1,10 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Four Proposals — Matteo Perin</title>
+<title>Cinque proposte — Matteo Perin</title>
+<!-- GA4 — same property as the site, so the visit shows in analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HEBJ5FMBVQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-HEBJ5FMBVQ');
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
@@ -19,8 +27,13 @@ body { margin:0; background:var(--cream); color:var(--charcoal); font-family:'Pl
 .wrap { max-width:1040px; margin:0 auto; padding:0 24px; }
 img { max-width:100%; display:block; }
 
-header.page { padding:72px 0 40px; }
+header.page { padding:56px 0 40px; }
+.topline { display:flex; justify-content:space-between; align-items:baseline; gap:16px; }
+.lang { font-family:'Montserrat',system-ui,sans-serif; font-size:11px; letter-spacing:.18em; text-transform:uppercase; }
+.lang button { background:none; border:none; cursor:pointer; font:inherit; color:var(--stone-ink); padding:6px 4px; }
+.lang button.on { color:var(--orange-ink); font-weight:500; border-bottom:1px solid var(--orange); }
 h1 { font-weight:400; font-size:clamp(34px,6vw,58px); line-height:1.08; margin:16px 0 20px; }
+.steps-line { font-family:'Montserrat',system-ui,sans-serif; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--orange-ink); margin:0 0 18px; }
 .lede { font-style:italic; font-size:17px; line-height:1.65; color:var(--stone-ink); max-width:36em; margin:0; }
 
 .untouched { border-top:1px solid rgba(28,28,28,.12); border-bottom:1px solid rgba(28,28,28,.12); padding:34px 0 30px; margin:44px 0 0; }
@@ -69,6 +82,7 @@ h2 { font-weight:400; font-size:clamp(26px,4vw,38px); margin:6px 0 10px; }
 .croc-pair .frame { aspect-ratio:1/1; background:#111; }
 .steps { display:flex; justify-content:center; gap:28px; margin-bottom:28px; flex-wrap:wrap; }
 .steps span { font-family:'Montserrat',system-ui,sans-serif; font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:rgba(255,255,255,.65); }
+.madein { text-align:center; margin:30px 0 0; font-family:'Montserrat',system-ui,sans-serif; font-size:10px; letter-spacing:.28em; text-transform:uppercase; font-weight:500; color:var(--orange); }
 
 .human { display:grid; gap:20px; }
 @media (min-width:820px) { .human { grid-template-columns:7fr 5fr; align-items:end; gap:32px; } }
@@ -88,6 +102,20 @@ h2 { font-weight:400; font-size:clamp(26px,4vw,38px); margin:6px 0 10px; }
 .row div p:last-child { font-family:'Montserrat',system-ui,sans-serif; font-size:9.5px; letter-spacing:.18em; text-transform:uppercase; color:var(--stone-ink); margin-top:3px; }
 .board .send { margin-top:16px; font-family:'Montserrat',system-ui,sans-serif; font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:var(--charcoal); border-bottom:1px solid var(--orange); display:inline-block; padding-bottom:3px; }
 
+.cards { display:grid; gap:20px; }
+@media (min-width:720px) { .cards { grid-template-columns:1fr 1fr; align-items:start; gap:28px; } }
+.card { background:#fff; padding:26px; }
+.card .c-label { font-family:'Montserrat',system-ui,sans-serif; font-size:9px; letter-spacing:.22em; text-transform:uppercase; color:var(--stone-ink); margin-bottom:16px; }
+.spec { border-top:1px solid rgba(28,28,28,.1); }
+.spec div { display:flex; justify-content:space-between; gap:16px; padding:11px 0; border-bottom:1px solid rgba(28,28,28,.1); }
+.spec span:first-child { font-family:'Montserrat',system-ui,sans-serif; font-size:9.5px; letter-spacing:.18em; text-transform:uppercase; color:var(--stone-ink); }
+.spec span:last-child { font-size:15px; text-align:right; }
+.spec .hl span { color:var(--orange-ink); }
+.spec .hl span:last-child { font-style:italic; }
+.homeline { text-align:center; padding:26px 0 10px; }
+.homeline .eyebrow { display:block; margin-bottom:10px; color:var(--orange-ink); }
+.homeline p { font-size:20px; font-style:italic; margin:0; }
+
 .verdict { margin-top:32px; display:flex; flex-wrap:wrap; align-items:center; gap:12px; }
 .v-btn { font-family:'Montserrat',system-ui,sans-serif; font-size:11px; letter-spacing:.2em; text-transform:uppercase; font-weight:500; padding:14px 26px; cursor:pointer; border:1px solid var(--charcoal); background:transparent; color:var(--charcoal); transition:all .2s; min-height:44px; }
 .v-btn.approve.sel { background:var(--orange-ink); border-color:var(--orange-ink); color:#fff; }
@@ -96,9 +124,12 @@ h2 { font-weight:400; font-size:clamp(26px,4vw,38px); margin:6px 0 10px; }
 .v-note::placeholder { color:var(--stone); }
 
 .sendbar { position:sticky; bottom:0; background:var(--black); padding:16px 0; z-index:50; }
-.sendbar .wrap { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+.sendbar .wrap { display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; }
 .sendbar p { color:rgba(255,255,255,.65); font-style:italic; font-size:14px; margin:0; }
-.sendbar a { font-family:'Montserrat',system-ui,sans-serif; font-size:11px; letter-spacing:.2em; text-transform:uppercase; font-weight:500; color:#fff; background:var(--orange-ink); padding:14px 26px; text-decoration:none; display:inline-block; }
+.sendbar .actions { display:flex; gap:10px; flex-wrap:wrap; }
+.sendbar a, .sendbar button.copy { font-family:'Montserrat',system-ui,sans-serif; font-size:11px; letter-spacing:.2em; text-transform:uppercase; font-weight:500; padding:14px 22px; text-decoration:none; display:inline-block; cursor:pointer; }
+.sendbar a { color:#fff; background:var(--orange-ink); border:1px solid var(--orange-ink); }
+.sendbar button.copy { color:rgba(255,255,255,.85); background:transparent; border:1px solid rgba(255,255,255,.35); }
 
 footer.page { padding:48px 0 72px; }
 footer.page p { font-style:italic; font-size:13px; color:var(--stone-ink); max-width:38em; line-height:1.6; }
@@ -108,213 +139,426 @@ footer.page p { font-style:italic; font-size:13px; color:var(--stone-ink); max-w
 
 <header class="page">
   <div class="wrap">
-    <span class="eyebrow">Quattro proposte · For Matteo Perin · Private — not on the site</span>
-    <h1>Four proposals<br>for your site.</h1>
-    <p style="font-family:'Montserrat',system-ui,sans-serif; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--orange-ink); margin:0 0 18px;">1 · Look&ensp;&ensp;&ensp;2 · Approve or Decline&ensp;&ensp;&ensp;3 · Send from the black bar</p>
-    <p class="lede">We built all four ideas with your own photographs, laid out as they would really appear — so you can see them, not imagine them. One thing runs through all four: the work leads. Each proposal shows the site today first, then the change. Nothing changes until you say yes.</p>
+    <div class="topline">
+      <span class="eyebrow" data-t="topline"></span>
+      <span class="lang"><button id="lang-it" type="button">Italiano</button> · <button id="lang-en" type="button">English</button></span>
+    </div>
+    <h1 data-t="h1"></h1>
+    <p class="steps-line" data-t="stepsLine"></p>
+    <p class="lede" data-t="lede"></p>
 
     <div class="untouched">
-      <span class="eyebrow">First — what does not change</span>
+      <span class="eyebrow" data-t="untouchedHead"></span>
       <ul>
-        <li>The site's opening.</li>
-        <li>The homepage order you approved in July.</li>
-        <li>The three-plate wardrobe chapter on The House.</li>
-        <li>The lookbook Index — every look stays one tap away.</li>
-        <li>Every photograph on this page is from the house archive. Nothing was generated.</li>
+        <li data-t="u1"></li>
+        <li data-t="u2"></li>
+        <li data-t="u3"></li>
+        <li data-t="u4"></li>
+        <li data-t="u5"></li>
       </ul>
     </div>
   </div>
 </header>
 
-<!-- ── 01 · THE LOOKBOOK, EDITED ── -->
-<section class="proposal" data-id="lookbook" data-title="The lookbook, edited">
+<!-- ── 01 · THE LOOKBOOK ── -->
+<section class="proposal" data-id="lookbook">
   <div class="wrap">
-    <div class="p-head"><span class="p-num">01</span><span class="eyebrow">The Lookbook</span></div>
-    <h2>The lookbook, edited.</h2>
-    <p class="p-what">The lookbook would open with a few chosen looks, arranged as a short story — instead of 78 photographs, all equal, each under a number.</p>
+    <div class="p-head"><span class="p-num">01</span><span class="eyebrow" data-t="p1eyebrow"></span></div>
+    <h2 data-t="p1h2"></h2>
+    <p class="p-what" data-t="p1what"></p>
 
     <div class="today">
       <div>
-        <div class="t-label">Today — on the site</div>
-        <img class="shot" src="today-lookbook-v2.jpg" alt="The lookbook as it stands: numbered looks, one after another" loading="lazy">
+        <div class="t-label" data-t="todayLabel"></div>
+        <img class="shot" src="today-lookbook-v2.jpg" alt="" loading="lazy">
       </div>
-      <p class="t-note">78 photographs, one after another, each under a number — a list, not a story.</p>
+      <p class="t-note" data-t="p1note"></p>
     </div>
     <div class="arrow">↓</div>
 
     <div class="mock">
-      <div class="mock-label">Proposed — made from your photographs</div>
+      <div class="mock-label" data-t="proposedLabel"></div>
 
       <div class="arr statement">
-        <h3>The dinner jacket.</h3>
-        <div class="frame"><img src="/assets/Finals/250409_MatteoPerin_LookBook_Spring25_MLook12_004-md.webp" alt="Navy double-breasted dinner jacket with black satin peak lapels, white shirt and black bow tie" loading="lazy"></div>
-        <p class="cap">A navy double-breasted dinner jacket with black satin peak lapels, closed over a white shirt and black bow tie, with burgundy tasselled loafers.</p>
+        <h3 data-t="p1a1h"></h3>
+        <div class="frame"><img src="/assets/Finals/250409_MatteoPerin_LookBook_Spring25_MLook12_004-md.webp" alt="" loading="lazy"></div>
+        <p class="cap" data-t="p1a1cap"></p>
       </div>
 
       <div class="arr">
-        <h3>Corduroy, two ways.</h3>
+        <h3 data-t="p1a2h"></h3>
         <div class="pair">
-          <div class="frame"><img src="/assets/Finals/250409_MatteoPerin_LookBook_Spring25_MLook19_004-Copy1-md.webp" alt="Dark brown corduroy suit with peak lapels over an orange V-neck" loading="lazy"></div>
-          <div class="frame offset"><img src="/assets/Finals/250409_MatteoPerin_LookBook_Spring25_WLook32_014-md.webp" alt="Burnt-orange corduroy double-breasted jacket over wide cargo-pocket trousers" loading="lazy"></div>
+          <div class="frame"><img src="/assets/Finals/250409_MatteoPerin_LookBook_Spring25_MLook19_004-Copy1-md.webp" alt="" loading="lazy"></div>
+          <div class="frame offset"><img src="/assets/Finals/250409_MatteoPerin_LookBook_Spring25_WLook32_014-md.webp" alt="" loading="lazy"></div>
         </div>
-        <p class="cap">One ribbed cloth, cut two ways. Left, a dark brown suit with peak lapels over an orange V-neck; right, a burnt-orange double-breasted jacket over wide cargo-pocket trousers.</p>
+        <p class="cap" data-t="p1a2cap"></p>
       </div>
 
       <div class="arr">
-        <h3>The fringe jacket, twice.</h3>
+        <h3 data-t="p1a3h"></h3>
         <div class="pair">
-          <div class="frame"><img src="/assets/Finals/250409_MatteoPerin_LookBook_Spring25_WLook21_006-md.webp" alt="White leather fringe jacket worn open, mid-step, over washed-black wide jeans" loading="lazy"></div>
-          <div class="frame offset"><img src="/assets/Finals/250409_MatteoPerin_LookBook_Spring25_WLook21_022-md.webp" alt="The same white fringe jacket buttoned, photographed square to the camera" loading="lazy"></div>
+          <div class="frame"><img src="/assets/Finals/250409_MatteoPerin_LookBook_Spring25_WLook21_006-md.webp" alt="" loading="lazy"></div>
+          <div class="frame offset"><img src="/assets/Finals/250409_MatteoPerin_LookBook_Spring25_WLook21_022-md.webp" alt="" loading="lazy"></div>
         </div>
-        <p class="cap">The same white leather jacket in two frames — worn open, then buttoned and facing the camera, the fringe falling from shoulder, placket and cuff.</p>
+        <p class="cap" data-t="p1a3cap"></p>
       </div>
 
-      <div class="receipt">We looked at all 78 photographs to choose these five.</div>
+      <div class="receipt" data-t="p1receipt"></div>
     </div>
 
     <div class="verdict">
-      <button class="v-btn approve" type="button">Approve</button>
-      <button class="v-btn decline" type="button">Decline</button>
-      <input class="v-note" type="text" placeholder="A note, if you like…" maxlength="300">
+      <button class="v-btn approve" type="button" data-t="btnApprove"></button>
+      <button class="v-btn decline" type="button" data-t="btnDecline"></button>
+      <input class="v-note" type="text" maxlength="300">
     </div>
   </div>
 </section>
 
 <!-- ── 02 · STEP CLOSER ── -->
-<section class="proposal" data-id="croc" data-title="Step closer — the crocodile sequence">
+<section class="proposal" data-id="croc">
   <div class="wrap">
-    <div class="p-head"><span class="p-num">02</span><span class="eyebrow">The Signature Commission</span></div>
-    <h2>Step closer.</h2>
-    <p class="p-what">Three photographs, one order: the piece worn, then the skin up close, then the construction. Shown here with the crocodile jacket. Later, the same order can show bags and Casa pieces.</p>
+    <div class="p-head"><span class="p-num">02</span><span class="eyebrow" data-t="p2eyebrow"></span></div>
+    <h2 data-t="p2h2"></h2>
+    <p class="p-what" data-t="p2what"></p>
 
     <div class="today">
       <div>
-        <div class="t-label">Today — on the site</div>
-        <img class="shot" src="today-croc.jpg" alt="The crocodile commission section as it stands today" loading="lazy">
+        <div class="t-label" data-t="todayLabel"></div>
+        <img class="shot" src="today-croc.jpg" alt="" loading="lazy">
       </div>
-      <p class="t-note">Today: one photograph at a time, next to the facts. The skin and the construction are never seen together.</p>
+      <p class="t-note" data-t="p2note"></p>
     </div>
     <div class="arrow">↓</div>
 
     <div class="dark">
-      <div class="mock-label">Proposed — three views, one sequence</div>
-      <div class="steps"><span>The piece worn</span><span>The surface</span><span>The construction</span></div>
+      <div class="mock-label" data-t="p2mockLabel"></div>
+      <div class="steps"><span data-t="p2s1"></span><span data-t="p2s2"></span><span data-t="p2s3"></span></div>
       <div class="croc-hero">
-        <div class="frame"><img src="/assets/croc-jacket/matteo_croc-md.webp" alt="The cream crocodile jacket worn at the water's edge at dusk" loading="lazy"></div>
-        <p class="cap">The jacket worn — cream crocodile, brass zip on orange tape, the wheel embroidered at the shoulder.</p>
+        <div class="frame"><img src="/assets/croc-jacket/matteo_croc-md.webp" alt="" loading="lazy"></div>
+        <p class="cap" data-t="p2cap1"></p>
       </div>
       <div class="croc-pair">
         <div>
-          <div class="frame"><img src="/assets/croc-jacket/white_croc_hero.png" alt="The crocodile hide up close" loading="lazy"></div>
-          <p class="cap">The hide up close — square scales tightening into a ridged center row.</p>
+          <div class="frame"><img src="/assets/croc-jacket/white_croc_hero.png" alt="" loading="lazy"></div>
+          <p class="cap" data-t="p2cap2"></p>
         </div>
         <div>
-          <div class="frame"><img src="croc-construction-v2.jpg" alt="The stand collar's snap, the brass zip on orange tape, and the raglan seams" loading="lazy"></div>
-          <p class="cap">The stand collar's snap, the brass zip on orange tape, and the raglan seams where two scale patterns meet.</p>
+          <div class="frame"><img src="croc-construction-v2.jpg" alt="" loading="lazy"></div>
+          <p class="cap" data-t="p2cap3"></p>
         </div>
       </div>
-      <p style="text-align:center; margin:30px 0 0; font-family:'Montserrat',system-ui,sans-serif; font-size:10px; letter-spacing:.28em; text-transform:uppercase; font-weight:500; color:var(--orange);">Handcrafted in Italy</p>
+      <p class="madein" data-t="p2madein"></p>
     </div>
 
     <div class="verdict">
-      <button class="v-btn approve" type="button">Approve</button>
-      <button class="v-btn decline" type="button">Decline</button>
-      <input class="v-note" type="text" placeholder="A note, if you like…" maxlength="300">
+      <button class="v-btn approve" type="button" data-t="btnApprove"></button>
+      <button class="v-btn decline" type="button" data-t="btnDecline"></button>
+      <input class="v-note" type="text" maxlength="300">
     </div>
   </div>
 </section>
 
 <!-- ── 03 · THE PERSON AND THE PLACE ── -->
-<section class="proposal" data-id="human" data-title="The person and the place (homepage)">
+<section class="proposal" data-id="human">
   <div class="wrap">
-    <div class="p-head"><span class="p-num">03</span><span class="eyebrow">The Homepage</span></div>
-    <h2>The person and the place.</h2>
-    <p class="p-what">A small homepage section: a fitting in progress, the storefront on Deloney Avenue beside it, and a link to The House. It replaces the quotation shown here — the homepage does not get longer.</p>
+    <div class="p-head"><span class="p-num">03</span><span class="eyebrow" data-t="p3eyebrow"></span></div>
+    <h2 data-t="p3h2"></h2>
+    <p class="p-what" data-t="p3what"></p>
 
     <div class="today">
       <div>
-        <div class="t-label">Today — what it would replace</div>
-        <img class="shot" src="today-interlude.jpg" alt="The homepage quotation interlude as it stands today" loading="lazy">
+        <div class="t-label" data-t="p3todayLabel"></div>
+        <img class="shot" src="today-interlude.jpg" alt="" loading="lazy">
       </div>
-      <p class="t-note">The words are yours and they stay elsewhere on the site — but here a visitor sees only a sentence. A fitting shows it.</p>
+      <p class="t-note" data-t="p3note"></p>
     </div>
     <div class="arrow">↓</div>
 
     <div class="mock">
-      <div class="mock-label">Proposed — in its place</div>
+      <div class="mock-label" data-t="p3mockLabel"></div>
       <div class="human">
         <div>
-          <div class="frame a"><img src="/assets/house/bespoke-fitting-bw-md.webp" alt="Pinning the shoulder of a basted garment during a fitting" loading="lazy"></div>
-          <p class="cap">A fitting in progress — pinning the shoulder of a basted shell.</p>
+          <div class="frame a"><img src="/assets/house/bespoke-fitting-bw-md.webp" alt="" loading="lazy"></div>
+          <p class="cap" data-t="p3cap1"></p>
         </div>
         <div>
-          <div class="frame b"><img src="/assets/house/storefront-corner-md.webp" alt="The Matteo Perin storefront on East Deloney Avenue" loading="lazy"></div>
+          <div class="frame b"><img src="/assets/house/storefront-corner-md.webp" alt="" loading="lazy"></div>
           <p class="cap">164 East Deloney Avenue, Jackson, Wyoming.</p>
         </div>
       </div>
       <div class="human-copy">
-        <p>The clothes are made for you, on you.</p>
-        <p class="cap">A small label, two lines, and a quiet link to The House — no biography, no long paragraph.</p>
+        <p data-t="p3line"></p>
+        <p class="cap" data-t="p3cap2"></p>
       </div>
     </div>
 
     <div class="verdict">
-      <button class="v-btn approve" type="button">Approve</button>
-      <button class="v-btn decline" type="button">Decline</button>
-      <input class="v-note" type="text" placeholder="A note, if you like…" maxlength="300">
+      <button class="v-btn approve" type="button" data-t="btnApprove"></button>
+      <button class="v-btn decline" type="button" data-t="btnDecline"></button>
+      <input class="v-note" type="text" maxlength="300">
     </div>
   </div>
 </section>
 
 <!-- ── 04 · YOUR SELECTION ── -->
-<section class="proposal" data-id="selection" data-title="Your selection (private selection board)">
+<section class="proposal" data-id="selection">
   <div class="wrap">
-    <div class="p-head"><span class="p-num">04</span><span class="eyebrow">A New Feature</span></div>
-    <h2>Your selection.</h2>
-    <p class="p-what">This does not exist on the site today. While browsing, a visitor sets pieces aside — the way garments are set aside during a private appointment — then sends the whole selection to you as one message. It stays separate from the shopping bag: buying a piece and asking about a commission are different things.</p>
+    <div class="p-head"><span class="p-num">04</span><span class="eyebrow" data-t="p4eyebrow"></span></div>
+    <h2 data-t="p4h2"></h2>
+    <p class="p-what" data-t="p4what"></p>
 
     <div class="mock">
-      <div class="mock-label">Sketch — how it would look</div>
+      <div class="mock-label" data-t="p4mockLabel"></div>
       <div class="board">
-        <div class="bar"><b>Your Selection</b><i>3 pieces</i></div>
-        <div class="row"><div class="th"><img src="/assets/Finals/250409_MatteoPerin_LookBook_Spring25_MLook12_004-sm.webp" alt="" loading="lazy"></div><div><p>Look 12 — the dinner jacket</p><p>Men's Lookbook</p></div></div>
-        <div class="row"><div class="th"><img src="/assets/croc-jacket/matteo_croc-sm.webp" alt="" loading="lazy"></div><div><p>The crocodile jacket</p><p>Signature Commission</p></div></div>
-        <div class="row"><div class="th"><img src="/assets/Finals/250409_MatteoPerin_LookBook_Spring25_WLook21_022-sm.webp" alt="" loading="lazy"></div><div><p>Look 21 — the fringe jacket</p><p>Women's Lookbook</p></div></div>
-        <span class="send">Begin the conversation</span>
+        <div class="bar"><b data-t="p4boardTitle"></b><i data-t="p4boardCount"></i></div>
+        <div class="row"><div class="th"><img src="/assets/Finals/250409_MatteoPerin_LookBook_Spring25_MLook12_004-sm.webp" alt="" loading="lazy"></div><div><p data-t="p4r1a"></p><p data-t="p4r1b"></p></div></div>
+        <div class="row"><div class="th"><img src="/assets/croc-jacket/matteo_croc-sm.webp" alt="" loading="lazy"></div><div><p data-t="p4r2a"></p><p data-t="p4r2b"></p></div></div>
+        <div class="row"><div class="th"><img src="/assets/Finals/250409_MatteoPerin_LookBook_Spring25_WLook21_022-sm.webp" alt="" loading="lazy"></div><div><p data-t="p4r3a"></p><p data-t="p4r3b"></p></div></div>
+        <span class="send" data-t="p4send"></span>
       </div>
-      <p class="cap" style="margin-top:18px;">A sketch, not a finished design. If you approve, we build it properly, with the same care as the rest.</p>
+      <p class="cap" style="margin-top:18px;" data-t="p4cap"></p>
     </div>
 
     <div class="verdict">
-      <button class="v-btn approve" type="button">Approve</button>
-      <button class="v-btn decline" type="button">Decline</button>
-      <input class="v-note" type="text" placeholder="A note, if you like…" maxlength="300">
+      <button class="v-btn approve" type="button" data-t="btnApprove"></button>
+      <button class="v-btn decline" type="button" data-t="btnDecline"></button>
+      <input class="v-note" type="text" maxlength="300">
+    </div>
+  </div>
+</section>
+
+<!-- ── 05 · MADE IN ITALY ── -->
+<section class="proposal" data-id="madeinitaly">
+  <div class="wrap">
+    <div class="p-head"><span class="p-num">05</span><span class="eyebrow">Made in Italy</span></div>
+    <h2 data-t="p5h2"></h2>
+    <p class="p-what" data-t="p5what"></p>
+
+    <div class="mock">
+      <div class="mock-label" data-t="p4mockLabel"></div>
+      <div class="cards">
+        <div class="card">
+          <div class="c-label" data-t="p5cardA"></div>
+          <p style="margin:0 0 2px; font-size:19px;">The Double-Zip Travel Case</p>
+          <p style="margin:0 0 16px; font-size:15px; color:var(--stone-ink);">$1,350</p>
+          <div class="spec">
+            <div><span data-t="p5specColor"></span><span>Black, gold zip</span></div>
+            <div class="hl"><span>Made in</span><span>Italy</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="c-label" data-t="p5cardB"></div>
+          <div class="homeline">
+            <span class="eyebrow">Made in Italy</span>
+            <p data-t="p5homeline"></p>
+          </div>
+        </div>
+      </div>
+      <p class="cap" style="margin-top:18px;" data-t="p5cap"></p>
+    </div>
+
+    <div class="verdict">
+      <button class="v-btn approve" type="button" data-t="btnApprove"></button>
+      <button class="v-btn decline" type="button" data-t="btnDecline"></button>
+      <input class="v-note" type="text" maxlength="300">
     </div>
   </div>
 </section>
 
 <div class="sendbar">
   <div class="wrap">
-    <p id="tally">Nothing marked yet — press Approve or Decline on each proposal.</p>
-    <a id="send" href="#" style="display:none;">Send your answers</a>
+    <p id="tally"></p>
+    <div class="actions">
+      <button class="copy" id="copybtn" type="button" style="display:none;"></button>
+      <a id="send" href="#" style="display:none;"></a>
+    </div>
   </div>
 </div>
 
 <footer class="page">
   <div class="wrap">
-    <p>Made in September 2026, entirely from your own archive. This page is private — not in search engines, not linked from anywhere. Nothing on matteoperin.com changes until you approve it.</p>
+    <p data-t="footer"></p>
   </div>
 </footer>
 
 <script>
 (function () {
+  var T = {
+    it: {
+      topline: 'Cinque proposte · Per Matteo Perin · Privato — non sul sito',
+      h1: 'Cinque proposte\nper il tuo sito.',
+      stepsLine: '1 · Guarda  2 · Approva o Rifiuta  3 · Invia dalla barra nera',
+      lede: 'Abbiamo costruito tutte e cinque le idee con le tue fotografie, impaginate come apparirebbero davvero — così puoi vederle, non immaginarle. Un filo le unisce tutte: il lavoro viene prima. Ogni proposta mostra prima il sito com’è oggi, poi il cambiamento. Ognuna vale da sola — approvane una, o tutte e cinque. Ciò che approvi, lo costruiamo e te lo mostriamo qui prima che tocchi il sito.',
+      untouchedHead: 'Prima di tutto — cosa non cambia',
+      u1: 'L’apertura del sito.',
+      u2: 'L’ordine della homepage che hai approvato a luglio.',
+      u3: 'Il capitolo del guardaroba su The House.',
+      u4: 'L’Indice del lookbook — ogni look resta a un tocco.',
+      u5: 'Ogni fotografia in questa pagina viene dal tuo archivio. Niente è stato generato.',
+      todayLabel: 'Oggi — sul sito',
+      proposedLabel: 'Proposta — fatta con le tue fotografie',
+      btnApprove: 'Approva', btnDecline: 'Rifiuta',
+      notePh: 'Una nota, se vuoi…',
+      p1eyebrow: 'Il Lookbook', p1h2: 'Il lookbook, curato.',
+      p1what: 'Il lookbook si aprirebbe con pochi look scelti, disposti come un racconto breve — invece di 78 fotografie, tutte uguali, ognuna sotto un numero.',
+      p1note: '78 fotografie, una dopo l’altra, ognuna sotto un numero — un elenco, non un racconto.',
+      p1a1h: 'Lo smoking.',
+      p1a1cap: 'Uno smoking blu a doppiopetto con revers a lancia in raso nero, chiuso su camicia bianca e papillon nero, con mocassini bordeaux con nappine.',
+      p1a2h: 'Velluto a coste, in due modi.',
+      p1a2cap: 'Un solo tessuto a coste, tagliato in due modi. A sinistra, un abito marrone scuro con revers a lancia sopra una maglia arancione con scollo a V; a destra, una giacca doppiopetto arancione bruciato su pantaloni ampi con tasche cargo.',
+      p1a3h: 'La giacca con le frange, due volte.',
+      p1a3cap: 'La stessa giacca di pelle bianca in due scatti — aperta, poi abbottonata e rivolta alla camera, le frange che scendono da spalla, abbottonatura e polsi.',
+      p1receipt: 'Abbiamo guardato tutte le 78 fotografie per scegliere queste cinque.',
+      p2eyebrow: 'La Commissione', p2h2: 'Da vicino.',
+      p2what: 'Tre fotografie, un ordine: il capo indossato, poi la pelle da vicino, poi la costruzione. Qui con la giacca di coccodrillo. Più avanti, lo stesso ordine può mostrare borse e pezzi Casa.',
+      p2note: 'Oggi: una fotografia alla volta, accanto ai dati. La pelle e la costruzione non si vedono mai insieme.',
+      p2mockLabel: 'Proposta — tre viste, una sequenza',
+      p2s1: 'Il capo indossato', p2s2: 'La superficie', p2s3: 'La costruzione',
+      p2cap1: 'La giacca indossata — coccodrillo crema, zip in ottone su nastro arancione, la ruota ricamata sulla spalla.',
+      p2cap2: 'La pelle da vicino — squame quadrate che si stringono in una fila centrale a rilievo.',
+      p2cap3: 'Il bottone del collo, la zip in ottone su nastro arancione e le cuciture raglan dove si incontrano due trame di squame.',
+      p2madein: 'Fatto a mano in Italia',
+      p3eyebrow: 'La Homepage', p3h2: 'La persona e il luogo.',
+      p3what: 'Una piccola sezione in homepage: una prova in corso, accanto la vetrina di Deloney Avenue, e un collegamento a The House. Sostituisce la citazione mostrata qui — la homepage non si allunga.',
+      p3todayLabel: 'Oggi — cosa sostituirebbe',
+      p3note: 'Le parole sono tue e restano altrove nel sito — ma qui il visitatore vede solo una frase. Una prova la mostra.',
+      p3mockLabel: 'Proposta — al suo posto',
+      p3cap1: 'Una prova in corso — si appunta la spalla di una tela imbastita.',
+      p3line: 'I vestiti sono fatti per te, su di te.',
+      p3cap2: 'Una piccola etichetta, due righe e un collegamento discreto a The House — niente biografia, niente paragrafi lunghi.',
+      p4eyebrow: 'Una Funzione Nuova', p4h2: 'La tua selezione.',
+      p4what: 'Oggi questo non esiste sul sito. Mentre guarda, il visitatore mette da parte dei pezzi — come si mettono da parte i capi durante un appuntamento privato — poi ti invia l’intera selezione come un solo messaggio. Resta separata dalla shopping bag: comprare un pezzo e chiedere di una commissione sono cose diverse.',
+      p4mockLabel: 'Bozza — come apparirebbe',
+      p4boardTitle: 'La tua selezione', p4boardCount: '3 pezzi',
+      p4r1a: 'Look 12 — lo smoking', p4r1b: 'Lookbook Uomo',
+      p4r2a: 'La giacca di coccodrillo', p4r2b: 'Commissione',
+      p4r3a: 'Look 21 — la giacca con le frange', p4r3b: 'Lookbook Donna',
+      p4send: 'Inizia la conversazione',
+      p4cap: 'Una bozza, non un progetto finito. Se approvi, la costruiamo per bene, con la stessa cura del resto.',
+      p5h2: 'Made in Italy, scritto dove è vero.',
+      p5what: 'Il sito mostra l’Italia; lo dice raramente. Una riga discreta Made in Italy in homepage, e una riga nei dettagli di ogni prodotto — solo sui pezzi che confermi tu. La tua approvazione qui è anche la conferma da cui partiamo.',
+      p5cardA: 'Su una pagina prodotto', p5cardB: 'In homepage',
+      p5specColor: 'Colore',
+      p5homeline: 'Made in Italy. Indossato nel mondo.',
+      p5cap: 'Due righe, nessuna decorazione. Segniamo solo i pezzi la cui origine confermi.',
+      tallyEmpty: 'Ancora niente — premi Approva o Rifiuta su ogni proposta.',
+      tallyCount: '{n} su 5.',
+      sendBtn: 'Invia le tue risposte', copyBtn: 'Copia le risposte', copied: 'Copiato ✓',
+      mailSubject: 'Matteo Perin — risposte alle cinque proposte',
+      mailHead: 'Le mie risposte alle cinque proposte:',
+      markA: 'APPROVATA', markD: 'RIFIUTATA', markN: 'senza risposta',
+      titles: { lookbook: 'Il lookbook, curato', croc: 'Da vicino — la sequenza del coccodrillo', human: 'La persona e il luogo (homepage)', selection: 'La tua selezione', madeinitaly: 'Made in Italy, scritto dove è vero' },
+      footer: 'Fatta a settembre 2026, interamente dal tuo archivio. Questa pagina è privata — non è nei motori di ricerca, non è collegata da nessuna parte. Nulla su matteoperin.com cambia finché non lo approvi.',
+      docTitle: 'Cinque proposte — Matteo Perin',
+    },
+    en: {
+      topline: 'Five proposals · For Matteo Perin · Private — not on the site',
+      h1: 'Five proposals\nfor your site.',
+      stepsLine: '1 · Look  2 · Approve or Decline  3 · Send from the black bar',
+      lede: 'We built all five ideas with your own photographs, laid out as they would really appear — so you can see them, not imagine them. One thing runs through them all: the work leads. Each proposal shows the site today first, then the change, and each stands alone — approve one, or all five. What you approve, we build and show you here before it touches the site.',
+      untouchedHead: 'First — what does not change',
+      u1: 'The site’s opening.',
+      u2: 'The homepage order you approved in July.',
+      u3: 'The wardrobe chapter on The House.',
+      u4: 'The lookbook Index — every look stays one tap away.',
+      u5: 'Every photograph on this page is from your archive. Nothing was generated.',
+      todayLabel: 'Today — on the site',
+      proposedLabel: 'Proposed — made from your photographs',
+      btnApprove: 'Approve', btnDecline: 'Decline',
+      notePh: 'A note, if you like…',
+      p1eyebrow: 'The Lookbook', p1h2: 'The lookbook, edited.',
+      p1what: 'The lookbook would open with a few chosen looks, arranged as a short story — instead of 78 photographs, all equal, each under a number.',
+      p1note: '78 photographs, one after another, each under a number — a list, not a story.',
+      p1a1h: 'The dinner jacket.',
+      p1a1cap: 'A navy double-breasted dinner jacket with black satin peak lapels, closed over a white shirt and black bow tie, with burgundy tasselled loafers.',
+      p1a2h: 'Corduroy, two ways.',
+      p1a2cap: 'One ribbed cloth, cut two ways. Left, a dark brown suit with peak lapels over an orange V-neck; right, a burnt-orange double-breasted jacket over wide cargo-pocket trousers.',
+      p1a3h: 'The fringe jacket, twice.',
+      p1a3cap: 'The same white leather jacket in two frames — worn open, then buttoned and facing the camera, the fringe falling from shoulder, placket and cuff.',
+      p1receipt: 'We looked at all 78 photographs to choose these five.',
+      p2eyebrow: 'The Commission', p2h2: 'Step closer.',
+      p2what: 'Three photographs, one order: the piece worn, then the skin up close, then the construction. Shown here with the crocodile jacket. Later, the same order can show bags and Casa pieces.',
+      p2note: 'Today: one photograph at a time, next to the facts. The skin and the construction are never seen together.',
+      p2mockLabel: 'Proposed — three views, one sequence',
+      p2s1: 'The piece worn', p2s2: 'The surface', p2s3: 'The construction',
+      p2cap1: 'The jacket worn — cream crocodile, brass zip on orange tape, the wheel embroidered at the shoulder.',
+      p2cap2: 'The hide up close — square scales tightening into a ridged center row.',
+      p2cap3: 'The collar snap, the brass zip on orange tape, and the raglan seams where two scale patterns meet.',
+      p2madein: 'Handcrafted in Italy',
+      p3eyebrow: 'The Homepage', p3h2: 'The person and the place.',
+      p3what: 'A small homepage section: a fitting in progress, the storefront on Deloney Avenue beside it, and a link to The House. It replaces the quotation shown here — the homepage does not get longer.',
+      p3todayLabel: 'Today — what it would replace',
+      p3note: 'The words are yours and they stay elsewhere on the site — but here a visitor sees only a sentence. A fitting shows it.',
+      p3mockLabel: 'Proposed — in its place',
+      p3cap1: 'A fitting in progress — pinning the shoulder of a basted garment.',
+      p3line: 'The clothes are made for you, on you.',
+      p3cap2: 'A small label, two lines, and a quiet link to The House — no biography, no long paragraph.',
+      p4eyebrow: 'A New Feature', p4h2: 'Your selection.',
+      p4what: 'This does not exist on the site today. While browsing, a visitor sets pieces aside — the way garments are set aside during a private appointment — then sends the whole selection to you as one message. It stays separate from the shopping bag: buying a piece and asking about a commission are different things.',
+      p4mockLabel: 'Sketch — how it would look',
+      p4boardTitle: 'Your Selection', p4boardCount: '3 pieces',
+      p4r1a: 'Look 12 — the dinner jacket', p4r1b: 'Men’s Lookbook',
+      p4r2a: 'The crocodile jacket', p4r2b: 'Commission',
+      p4r3a: 'Look 21 — the fringe jacket', p4r3b: 'Women’s Lookbook',
+      p4send: 'Begin the conversation',
+      p4cap: 'A sketch, not a finished design. If you approve, we build it properly, with the same care as the rest.',
+      p5h2: 'Made in Italy, written where it is true.',
+      p5what: 'The site shows Italy; it rarely says it. A quiet Made in Italy line on the homepage, and a line in each product’s details — only on the pieces you confirm. Your approval here is also the confirmation we build from.',
+      p5cardA: 'On a product page', p5cardB: 'On the homepage',
+      p5specColor: 'Color',
+      p5homeline: 'Made in Italy. Worn in the world.',
+      p5cap: 'Two lines, no decoration. We mark only the pieces whose origin you confirm.',
+      tallyEmpty: 'Nothing marked yet — press Approve or Decline on each proposal.',
+      tallyCount: '{n} of 5 marked.',
+      sendBtn: 'Send your answers', copyBtn: 'Copy my answers', copied: 'Copied ✓',
+      mailSubject: 'Matteo Perin — answers on the five proposals',
+      mailHead: 'My answers on the five proposals:',
+      markA: 'APPROVED', markD: 'DECLINED', markN: 'no answer',
+      titles: { lookbook: 'The lookbook, edited', croc: 'Step closer — the crocodile sequence', human: 'The person and the place (homepage)', selection: 'Your selection', madeinitaly: 'Made in Italy, written where it is true' },
+      footer: 'Made in September 2026, entirely from your own archive. This page is private — not in search engines, not linked from anywhere. Nothing on matteoperin.com changes until you approve it.',
+      docTitle: 'Five Proposals — Matteo Perin',
+    },
+  };
+
+  var lang = 'it';
+  try { lang = localStorage.getItem('mp-lang') || 'it'; } catch (e) {}
+  if (lang !== 'it' && lang !== 'en') lang = 'it';
+
   var sections = Array.prototype.slice.call(document.querySelectorAll('section.proposal'));
   var state = {};
   try { state = JSON.parse(localStorage.getItem('mp-verdicts') || '{}'); } catch (e) { state = {}; }
 
   function save() { try { localStorage.setItem('mp-verdicts', JSON.stringify(state)); } catch (e) {} }
 
+  function applyLang() {
+    var t = T[lang];
+    document.documentElement.lang = lang;
+    document.title = t.docTitle;
+    document.querySelectorAll('[data-t]').forEach(function (el) {
+      var key = el.getAttribute('data-t');
+      if (!(key in t)) return;
+      if (key === 'h1') { el.innerHTML = t[key].replace('\n', '<br>'); }
+      else { el.textContent = t[key]; }
+    });
+    document.querySelectorAll('.v-note').forEach(function (n) { n.placeholder = t.notePh; });
+    document.getElementById('lang-it').classList.toggle('on', lang === 'it');
+    document.getElementById('lang-en').classList.toggle('on', lang === 'en');
+    render();
+  }
+
+  function answersText() {
+    var t = T[lang];
+    var lines = sections.map(function (s) {
+      var id = s.getAttribute('data-id');
+      var v = state[id] || {};
+      var mark = v.verdict === 'approve' ? t.markA : v.verdict === 'decline' ? t.markD : t.markN;
+      return '- ' + t.titles[id] + ': ' + mark + (v.note ? ' — "' + v.note + '"' : '');
+    });
+    return t.mailHead + '\n\n' + lines.join('\n') + '\n\n— Matteo';
+  }
+
   function render() {
+    var t = T[lang];
     var done = 0;
     sections.forEach(function (s) {
       var id = s.getAttribute('data-id');
@@ -325,23 +569,18 @@ footer.page p { font-style:italic; font-size:13px; color:var(--stone-ink); max-w
     });
     var tally = document.getElementById('tally');
     var send = document.getElementById('send');
+    var copy = document.getElementById('copybtn');
     if (done === 0) {
-      tally.textContent = 'Nothing marked yet — press Approve or Decline on each proposal.';
+      tally.textContent = t.tallyEmpty;
       send.style.display = 'none';
+      copy.style.display = 'none';
     } else {
-      tally.textContent = done + ' of ' + sections.length + ' marked.';
+      tally.textContent = t.tallyCount.replace('{n}', done);
       send.style.display = 'inline-block';
-      var lines = sections.map(function (s) {
-        var id = s.getAttribute('data-id');
-        var title = s.getAttribute('data-title');
-        var v = state[id] || {};
-        var mark = v.verdict === 'approve' ? 'APPROVED' : v.verdict === 'decline' ? 'DECLINED' : 'no answer';
-        return '- ' + title + ': ' + mark + (v.note ? ' — "' + v.note + '"' : '');
-      });
-      var body = 'My answers on the four proposals:\n\n' + lines.join('\n') + '\n\n— Matteo';
-      send.href = 'mailto:trevorruby@gmail.com?subject=' +
-        encodeURIComponent('Matteo Perin — answers on the four proposals') +
-        '&body=' + encodeURIComponent(body);
+      send.textContent = t.sendBtn;
+      copy.style.display = 'inline-block';
+      copy.textContent = t.copyBtn;
+      send.href = 'mailto:trevorruby@gmail.com?subject=' + encodeURIComponent(t.mailSubject) + '&body=' + encodeURIComponent(answersText());
     }
   }
 
@@ -366,7 +605,31 @@ footer.page p { font-style:italic; font-size:13px; color:var(--stone-ink); max-w
     });
   });
 
-  render();
+  document.getElementById('lang-it').addEventListener('click', function () {
+    lang = 'it'; try { localStorage.setItem('mp-lang', 'it'); } catch (e) {} applyLang();
+  });
+  document.getElementById('lang-en').addEventListener('click', function () {
+    lang = 'en'; try { localStorage.setItem('mp-lang', 'en'); } catch (e) {} applyLang();
+  });
+
+  // Copy fallback for phones with no configured mail app.
+  document.getElementById('copybtn').addEventListener('click', function () {
+    var t = T[lang];
+    var text = answersText();
+    var btn = this;
+    function ok() { btn.textContent = t.copied; setTimeout(function () { btn.textContent = t.copyBtn; }, 2200); }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(ok, function () { fallback(); });
+    } else { fallback(); }
+    function fallback() {
+      var ta = document.createElement('textarea');
+      ta.value = text; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); ok(); } catch (e) {}
+      document.body.removeChild(ta);
+    }
+  });
+
+  applyLang();
 })();
 </script>
 </body>
