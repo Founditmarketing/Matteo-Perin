@@ -68,8 +68,7 @@ h2 { font-weight:400; font-size:clamp(26px,4vw,38px); margin:6px 0 10px; }
 @media (min-width:720px) { .croc-pair { gap:24px; } }
 .croc-pair .frame { aspect-ratio:1/1; background:#111; }
 .steps { display:flex; justify-content:center; gap:28px; margin-bottom:28px; flex-wrap:wrap; }
-.steps span { font-family:'Montserrat',system-ui,sans-serif; font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:rgba(255,255,255,.45); }
-.steps span.on { color:var(--orange); }
+.steps span { font-family:'Montserrat',system-ui,sans-serif; font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:rgba(255,255,255,.65); }
 
 .human { display:grid; gap:20px; }
 @media (min-width:820px) { .human { grid-template-columns:7fr 5fr; align-items:end; gap:32px; } }
@@ -83,7 +82,8 @@ h2 { font-weight:400; font-size:clamp(26px,4vw,38px); margin:6px 0 10px; }
 .board .bar b { font-family:'Montserrat',system-ui,sans-serif; font-size:10px; letter-spacing:.22em; text-transform:uppercase; font-weight:500; }
 .board .bar i { font-style:normal; color:var(--orange-ink); font-family:'Montserrat',system-ui,sans-serif; font-size:10px; letter-spacing:.22em; }
 .row { display:flex; gap:14px; align-items:center; padding:10px 0; }
-.row .th { width:52px; height:66px; background:var(--sand); flex:none; }
+.row .th { width:52px; height:66px; background:var(--sand); flex:none; overflow:hidden; }
+.row .th img { width:100%; height:100%; object-fit:cover; display:block; }
 .row div p { margin:0; font-size:15px; }
 .row div p:last-child { font-family:'Montserrat',system-ui,sans-serif; font-size:9.5px; letter-spacing:.18em; text-transform:uppercase; color:var(--stone-ink); margin-top:3px; }
 .board .send { margin-top:16px; font-family:'Montserrat',system-ui,sans-serif; font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:var(--charcoal); border-bottom:1px solid var(--orange); display:inline-block; padding-bottom:3px; }
@@ -109,13 +109,14 @@ footer.page p { font-style:italic; font-size:13px; color:var(--stone-ink); max-w
 <header class="page">
   <div class="wrap">
     <span class="eyebrow">Quattro proposte · For Matteo Perin · Private — not on the site</span>
-    <h1>Four proposals,<br>built to be seen.</h1>
-    <p class="lede">Rather than describe ideas, we built them — with your photographs, composed the way they would actually appear. The thread through all four: the work leads. Made in Italy, worn in the world. Each begins with the site as it stands today, so you can judge the change, not imagine it. Mark each Approve or Decline, add a note if you like, and send your verdicts from the bar at the bottom. Nothing changes without your word.</p>
+    <h1>Four proposals<br>for your site.</h1>
+    <p style="font-family:'Montserrat',system-ui,sans-serif; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--orange-ink); margin:0 0 18px;">1 · Look&ensp;&ensp;&ensp;2 · Approve or Decline&ensp;&ensp;&ensp;3 · Send from the black bar</p>
+    <p class="lede">We built all four ideas with your own photographs, laid out as they would really appear — so you can see them, not imagine them. One thing runs through all four: the work leads. Each proposal shows the site today first, then the change. Nothing changes until you say yes.</p>
 
     <div class="untouched">
-      <span class="eyebrow">First — what stays untouched</span>
+      <span class="eyebrow">First — what does not change</span>
       <ul>
-        <li>The site's opening — no proposal here touches it.</li>
+        <li>The site's opening.</li>
         <li>The homepage order you approved in July.</li>
         <li>The three-plate wardrobe chapter on The House.</li>
         <li>The lookbook Index — every look stays one tap away.</li>
@@ -130,24 +131,24 @@ footer.page p { font-style:italic; font-size:13px; color:var(--stone-ink); max-w
   <div class="wrap">
     <div class="p-head"><span class="p-num">01</span><span class="eyebrow">The Lookbook</span></div>
     <h2>The lookbook, edited.</h2>
-    <p class="p-what">The editorial view would open with a short, chosen story instead of giving all 78 photographs equal weight under a number.</p>
+    <p class="p-what">The lookbook would open with a few chosen looks, arranged as a short story — instead of 78 photographs, all equal, each under a number.</p>
 
     <div class="today">
       <div>
         <div class="t-label">Today — on the site</div>
-        <img class="shot" src="today-lookbook.jpg" alt="The lookbook as it stands: numbered looks, each with equal weight" loading="lazy">
+        <img class="shot" src="today-lookbook-v2.jpg" alt="The lookbook as it stands: numbered looks, one after another" loading="lazy">
       </div>
-      <p class="t-note">Seventy-eight frames, one after another, each carrying only a number. Beautiful photographs presented like an inventory.</p>
+      <p class="t-note">78 photographs, one after another, each under a number — a list, not a story.</p>
     </div>
     <div class="arrow">↓</div>
 
     <div class="mock">
-      <div class="mock-label">Proposed — composed from your frames</div>
+      <div class="mock-label">Proposed — made from your photographs</div>
 
       <div class="arr statement">
-        <h3>The statement.</h3>
+        <h3>The dinner jacket.</h3>
         <div class="frame"><img src="/assets/Finals/250409_MatteoPerin_LookBook_Spring25_MLook12_004-md.webp" alt="Navy double-breasted dinner jacket with black satin peak lapels, white shirt and black bow tie" loading="lazy"></div>
-        <p class="cap">A navy double-breasted dinner jacket with black satin peak lapels, closed over a white shirt and black bow tie, ending in burgundy tasselled loafers.</p>
+        <p class="cap">A navy double-breasted dinner jacket with black satin peak lapels, closed over a white shirt and black bow tie, with burgundy tasselled loafers.</p>
       </div>
 
       <div class="arr">
@@ -156,19 +157,19 @@ footer.page p { font-style:italic; font-size:13px; color:var(--stone-ink); max-w
           <div class="frame"><img src="/assets/Finals/250409_MatteoPerin_LookBook_Spring25_MLook19_004-Copy1-md.webp" alt="Dark brown corduroy suit with peak lapels over an orange V-neck" loading="lazy"></div>
           <div class="frame offset"><img src="/assets/Finals/250409_MatteoPerin_LookBook_Spring25_WLook32_014-md.webp" alt="Burnt-orange corduroy double-breasted jacket over wide cargo-pocket trousers" loading="lazy"></div>
         </div>
-        <p class="cap">One ribbed cloth cut two ways — a dark brown peak-lapel suit worn over an orange V-neck beside a burnt-orange double-breasted jacket falling to wide cargo-pocket trousers.</p>
+        <p class="cap">One ribbed cloth, cut two ways. Left, a dark brown suit with peak lapels over an orange V-neck; right, a burnt-orange double-breasted jacket over wide cargo-pocket trousers.</p>
       </div>
 
       <div class="arr">
-        <h3>The close.</h3>
+        <h3>The fringe jacket, twice.</h3>
         <div class="pair">
           <div class="frame"><img src="/assets/Finals/250409_MatteoPerin_LookBook_Spring25_WLook21_006-md.webp" alt="White leather fringe jacket worn open, mid-step, over washed-black wide jeans" loading="lazy"></div>
           <div class="frame offset"><img src="/assets/Finals/250409_MatteoPerin_LookBook_Spring25_WLook21_022-md.webp" alt="The same white fringe jacket buttoned, photographed square to the camera" loading="lazy"></div>
         </div>
-        <p class="cap">The same white leather jacket in two frames — open and mid-step, then buttoned square to the camera, the fringe hanging still along collar, placket and cuff.</p>
+        <p class="cap">The same white leather jacket in two frames — worn open, then buttoned and facing the camera, the fringe falling from shoulder, placket and cuff.</p>
       </div>
 
-      <div class="receipt">All 78 frames in both books were viewed to choose these six.</div>
+      <div class="receipt">We looked at all 78 photographs to choose these five.</div>
     </div>
 
     <div class="verdict">
@@ -184,23 +185,23 @@ footer.page p { font-style:italic; font-size:13px; color:var(--stone-ink); max-w
   <div class="wrap">
     <div class="p-head"><span class="p-num">02</span><span class="eyebrow">The Signature Commission</span></div>
     <h2>Step closer.</h2>
-    <p class="p-what">One repeatable way of revealing craft: the piece worn, then the surface, then the construction. Shown with the crocodile jacket; the same treatment could later carry bags and Casa pieces.</p>
+    <p class="p-what">Three photographs, one order: the piece worn, then the skin up close, then the construction. Shown here with the crocodile jacket. Later, the same order can show bags and Casa pieces.</p>
 
     <div class="today">
       <div>
         <div class="t-label">Today — on the site</div>
         <img class="shot" src="today-croc.jpg" alt="The crocodile commission section as it stands today" loading="lazy">
       </div>
-      <p class="t-note">The commission today: one photograph at a time beside the facts. The material and the making never share a single view.</p>
+      <p class="t-note">Today: one photograph at a time, next to the facts. The skin and the construction are never seen together.</p>
     </div>
     <div class="arrow">↓</div>
 
     <div class="dark">
       <div class="mock-label">Proposed — three views, one sequence</div>
-      <div class="steps"><span class="on">Worn</span><span>The surface</span><span>The construction</span></div>
+      <div class="steps"><span>The piece worn</span><span>The surface</span><span>The construction</span></div>
       <div class="croc-hero">
-        <div class="frame"><img src="/assets/croc-jacket/matteo_croc.jpg" alt="The cream crocodile jacket worn at the water's edge at dusk" loading="lazy"></div>
-        <p class="cap">The jacket worn at the water's edge — cream crocodile, orange zip tape, the wheel embroidered at the shoulder.</p>
+        <div class="frame"><img src="/assets/croc-jacket/matteo_croc-md.webp" alt="The cream crocodile jacket worn at the water's edge at dusk" loading="lazy"></div>
+        <p class="cap">The jacket worn — cream crocodile, brass zip on orange tape, the wheel embroidered at the shoulder.</p>
       </div>
       <div class="croc-pair">
         <div>
@@ -208,7 +209,7 @@ footer.page p { font-style:italic; font-size:13px; color:var(--stone-ink); max-w
           <p class="cap">The hide up close — square scales tightening into a ridged center row.</p>
         </div>
         <div>
-          <div class="frame"><img src="croc-construction.jpg" alt="The stand collar's snap, the brass zip on orange tape, and the raglan seams" loading="lazy"></div>
+          <div class="frame"><img src="croc-construction-v2.jpg" alt="The stand collar's snap, the brass zip on orange tape, and the raglan seams" loading="lazy"></div>
           <p class="cap">The stand collar's snap, the brass zip on orange tape, and the raglan seams where two scale patterns meet.</p>
         </div>
       </div>
@@ -228,14 +229,14 @@ footer.page p { font-style:italic; font-size:13px; color:var(--stone-ink); max-w
   <div class="wrap">
     <div class="p-head"><span class="p-num">03</span><span class="eyebrow">The Homepage</span></div>
     <h2>The person and the place.</h2>
-    <p class="p-what">A compact homepage section — a fitting in progress as the dominant image, the door on Deloney Avenue beside it, and a route to The House. It replaces the quotation pause below; the page does not grow by a single section.</p>
+    <p class="p-what">A small homepage section: a fitting in progress, the storefront on Deloney Avenue beside it, and a link to The House. It replaces the quotation shown here — the homepage does not get longer.</p>
 
     <div class="today">
       <div>
         <div class="t-label">Today — what it would replace</div>
         <img class="shot" src="today-interlude.jpg" alt="The homepage quotation interlude as it stands today" loading="lazy">
       </div>
-      <p class="t-note">The words are yours and they stay in the house voice elsewhere — but this pause tells a visitor nothing they can see. A fitting shows what the sentence says.</p>
+      <p class="t-note">The words are yours and they stay elsewhere on the site — but here a visitor sees only a sentence. A fitting shows it.</p>
     </div>
     <div class="arrow">↓</div>
 
@@ -243,17 +244,17 @@ footer.page p { font-style:italic; font-size:13px; color:var(--stone-ink); max-w
       <div class="mock-label">Proposed — in its place</div>
       <div class="human">
         <div>
-          <div class="frame a"><img src="/assets/house/bespoke-fitting-bw-md.webp" alt="Matteo pinning the shoulder of a basted waistcoat on a client" loading="lazy"></div>
+          <div class="frame a"><img src="/assets/house/bespoke-fitting-bw-md.webp" alt="Pinning the shoulder of a basted garment during a fitting" loading="lazy"></div>
           <p class="cap">A fitting in progress — pinning the shoulder of a basted shell.</p>
         </div>
         <div>
           <div class="frame b"><img src="/assets/house/storefront-corner-md.webp" alt="The Matteo Perin storefront on East Deloney Avenue" loading="lazy"></div>
-          <p class="cap">164 E Deloney Ave, Jackson, Wyoming.</p>
+          <p class="cap">164 East Deloney Avenue, Jackson, Wyoming.</p>
         </div>
       </div>
       <div class="human-copy">
         <p>The clothes are made for you, on you.</p>
-        <p class="cap">Eyebrow, two lines, and a quiet link to The House — no biography, no philosophy paragraph.</p>
+        <p class="cap">A small label, two lines, and a quiet link to The House — no biography, no long paragraph.</p>
       </div>
     </div>
 
@@ -270,18 +271,18 @@ footer.page p { font-style:italic; font-size:13px; color:var(--stone-ink); max-w
   <div class="wrap">
     <div class="p-head"><span class="p-num">04</span><span class="eyebrow">A New Feature</span></div>
     <h2>Your selection.</h2>
-    <p class="p-what">Nothing like this exists on the site today. A discreet board where a visitor sets pieces aside while browsing — the way garments are set aside during a private appointment — then sends the whole selection as one conversation. Kept separate from the shopping bag: buying an available piece and discussing a commission are different acts.</p>
+    <p class="p-what">This does not exist on the site today. While browsing, a visitor sets pieces aside — the way garments are set aside during a private appointment — then sends the whole selection to you as one message. It stays separate from the shopping bag: buying a piece and asking about a commission are different things.</p>
 
     <div class="mock">
-      <div class="mock-label">Sketch — the drawer, opened</div>
+      <div class="mock-label">Sketch — how it would look</div>
       <div class="board">
         <div class="bar"><b>Your Selection</b><i>3 pieces</i></div>
-        <div class="row"><div class="th"></div><div><p>Look 12 — the dinner jacket</p><p>Men's Lookbook</p></div></div>
-        <div class="row"><div class="th"></div><div><p>The crocodile jacket</p><p>Signature Commission</p></div></div>
-        <div class="row"><div class="th"></div><div><p>Look 21 — the fringe jacket</p><p>Women's Lookbook</p></div></div>
+        <div class="row"><div class="th"><img src="/assets/Finals/250409_MatteoPerin_LookBook_Spring25_MLook12_004-sm.webp" alt="" loading="lazy"></div><div><p>Look 12 — the dinner jacket</p><p>Men's Lookbook</p></div></div>
+        <div class="row"><div class="th"><img src="/assets/croc-jacket/matteo_croc-sm.webp" alt="" loading="lazy"></div><div><p>The crocodile jacket</p><p>Signature Commission</p></div></div>
+        <div class="row"><div class="th"><img src="/assets/Finals/250409_MatteoPerin_LookBook_Spring25_WLook21_022-sm.webp" alt="" loading="lazy"></div><div><p>Look 21 — the fringe jacket</p><p>Women's Lookbook</p></div></div>
         <span class="send">Begin the conversation</span>
       </div>
-      <p class="cap" style="margin-top:18px;">A sketch, not a finished design — approving this approves building it properly, with the same care as the rest.</p>
+      <p class="cap" style="margin-top:18px;">A sketch, not a finished design. If you approve, we build it properly, with the same care as the rest.</p>
     </div>
 
     <div class="verdict">
@@ -294,14 +295,14 @@ footer.page p { font-style:italic; font-size:13px; color:var(--stone-ink); max-w
 
 <div class="sendbar">
   <div class="wrap">
-    <p id="tally">No verdicts yet — mark each proposal above.</p>
-    <a id="send" href="#" style="display:none;">Send your verdicts</a>
+    <p id="tally">Nothing marked yet — press Approve or Decline on each proposal.</p>
+    <a id="send" href="#" style="display:none;">Send your answers</a>
   </div>
 </div>
 
 <footer class="page">
   <div class="wrap">
-    <p>Composed September 2026, entirely from the house's own archive. This page is private — unlisted, invisible to search, linked from nowhere. Nothing on matteoperin.com changes until you approve it and it is built.</p>
+    <p>Made in September 2026, entirely from your own archive. This page is private — not in search engines, not linked from anywhere. Nothing on matteoperin.com changes until you approve it.</p>
   </div>
 </footer>
 
@@ -325,7 +326,7 @@ footer.page p { font-style:italic; font-size:13px; color:var(--stone-ink); max-w
     var tally = document.getElementById('tally');
     var send = document.getElementById('send');
     if (done === 0) {
-      tally.textContent = 'No verdicts yet — mark each proposal above.';
+      tally.textContent = 'Nothing marked yet — press Approve or Decline on each proposal.';
       send.style.display = 'none';
     } else {
       tally.textContent = done + ' of ' + sections.length + ' marked.';
@@ -334,12 +335,12 @@ footer.page p { font-style:italic; font-size:13px; color:var(--stone-ink); max-w
         var id = s.getAttribute('data-id');
         var title = s.getAttribute('data-title');
         var v = state[id] || {};
-        var mark = v.verdict === 'approve' ? 'APPROVED' : v.verdict === 'decline' ? 'DECLINED' : 'no verdict';
+        var mark = v.verdict === 'approve' ? 'APPROVED' : v.verdict === 'decline' ? 'DECLINED' : 'no answer';
         return '- ' + title + ': ' + mark + (v.note ? ' — "' + v.note + '"' : '');
       });
-      var body = 'My verdicts on the four proposals:\n\n' + lines.join('\n') + '\n\n— Matteo';
+      var body = 'My answers on the four proposals:\n\n' + lines.join('\n') + '\n\n— Matteo';
       send.href = 'mailto:trevorruby@gmail.com?subject=' +
-        encodeURIComponent('Matteo Perin — proposal verdicts') +
+        encodeURIComponent('Matteo Perin — answers on the four proposals') +
         '&body=' + encodeURIComponent(body);
     }
   }
