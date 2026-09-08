@@ -15,25 +15,38 @@
 }
 * { box-sizing:border-box; }
 body { margin:0; background:var(--cream); color:var(--charcoal); font-family:'Playfair Display',Georgia,serif; -webkit-font-smoothing:antialiased; }
-.sans { font-family:'Montserrat',system-ui,sans-serif; }
 .eyebrow { font-family:'Montserrat',system-ui,sans-serif; font-size:10px; letter-spacing:.25em; text-transform:uppercase; font-weight:500; color:var(--orange-ink); }
 .wrap { max-width:1040px; margin:0 auto; padding:0 24px; }
 img { max-width:100%; display:block; }
 
-header.page { padding:72px 0 48px; border-bottom:1px solid rgba(28,28,28,.1); }
+header.page { padding:72px 0 40px; }
 h1 { font-weight:400; font-size:clamp(34px,6vw,58px); line-height:1.08; margin:16px 0 20px; }
-.lede { font-style:italic; font-size:17px; line-height:1.6; color:var(--stone-ink); max-width:34em; margin:0; }
+.lede { font-style:italic; font-size:17px; line-height:1.65; color:var(--stone-ink); max-width:36em; margin:0; }
+
+.untouched { border-top:1px solid rgba(28,28,28,.12); border-bottom:1px solid rgba(28,28,28,.12); padding:34px 0 30px; margin:44px 0 0; }
+.untouched .eyebrow { color:var(--stone-ink); display:block; margin-bottom:16px; }
+.untouched ul { list-style:none; margin:0; padding:0; max-width:44em; }
+.untouched li { font-style:italic; font-size:15.5px; line-height:1.6; color:var(--charcoal); padding:7px 0 7px 26px; position:relative; }
+.untouched li::before { content:""; position:absolute; left:0; top:17px; width:14px; height:1px; background:var(--orange); }
 
 section.proposal { padding:72px 0 56px; border-bottom:1px solid rgba(28,28,28,.1); }
 .p-head { display:flex; align-items:baseline; gap:16px; margin-bottom:8px; }
 .p-num { font-size:22px; color:var(--orange); }
 h2 { font-weight:400; font-size:clamp(26px,4vw,38px); margin:6px 0 10px; }
-.p-what { font-style:italic; font-size:15px; line-height:1.6; color:var(--stone-ink); max-width:40em; margin:0 0 36px; }
+.p-what { font-style:italic; font-size:15px; line-height:1.6; color:var(--stone-ink); max-width:40em; margin:0 0 30px; }
+
+.today { display:grid; gap:10px; margin:0 0 14px; }
+@media (min-width:760px) { .today { grid-template-columns:minmax(0,420px) 1fr; gap:28px; align-items:center; } }
+.today .shot { border:1px solid rgba(28,28,28,.18); }
+.today .t-label { font-family:'Montserrat',system-ui,sans-serif; font-size:9px; letter-spacing:.22em; text-transform:uppercase; color:var(--stone-ink); margin-bottom:8px; }
+.today .t-note { font-style:italic; font-size:14px; line-height:1.6; color:var(--stone-ink); max-width:24em; }
+.arrow { text-align:center; color:var(--orange); font-size:22px; line-height:1; margin:18px 0; }
 
 .mock { background:var(--sand); padding:28px; }
 @media (min-width:720px) { .mock { padding:44px; } }
 .mock-label { font-family:'Montserrat',system-ui,sans-serif; font-size:9px; letter-spacing:.22em; text-transform:uppercase; color:var(--stone-ink); margin-bottom:20px; }
 .cap { font-style:italic; font-size:13px; line-height:1.55; color:var(--stone-ink); margin-top:10px; }
+.receipt { font-family:'Montserrat',system-ui,sans-serif; font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--stone-ink); margin-top:22px; }
 .arr { margin-bottom:44px; }
 .arr:last-child { margin-bottom:0; }
 .arr h3 { font-weight:400; font-style:italic; font-size:21px; margin:0 0 14px; }
@@ -54,7 +67,7 @@ h2 { font-weight:400; font-size:clamp(26px,4vw,38px); margin:6px 0 10px; }
 .croc-pair { display:grid; grid-template-columns:1fr 1fr; gap:14px; max-width:720px; margin:0 auto; }
 @media (min-width:720px) { .croc-pair { gap:24px; } }
 .croc-pair .frame { aspect-ratio:1/1; background:#111; }
-.steps { display:flex; justify-content:center; gap:28px; margin-bottom:28px; }
+.steps { display:flex; justify-content:center; gap:28px; margin-bottom:28px; flex-wrap:wrap; }
 .steps span { font-family:'Montserrat',system-ui,sans-serif; font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:rgba(255,255,255,.45); }
 .steps span.on { color:var(--orange); }
 
@@ -95,9 +108,20 @@ footer.page p { font-style:italic; font-size:13px; color:var(--stone-ink); max-w
 
 <header class="page">
   <div class="wrap">
-    <span class="eyebrow">Prepared for Matteo Perin · Private — not on the site</span>
+    <span class="eyebrow">Quattro proposte · For Matteo Perin · Private — not on the site</span>
     <h1>Four proposals,<br>built to be seen.</h1>
-    <p class="lede">Everything below is composed from photographs already in the house archive — nothing generated, nothing live. Mark each one Approve or Decline, add a note if you like, then send your verdicts from the bar at the bottom.</p>
+    <p class="lede">Rather than describe ideas, we built them — with your photographs, composed the way they would actually appear. Each begins with the site as it stands today, so you can judge the change, not imagine it. Mark each Approve or Decline, add a note if you like, and send your verdicts from the bar at the bottom. Nothing changes without your word.</p>
+
+    <div class="untouched">
+      <span class="eyebrow">First — what stays untouched</span>
+      <ul>
+        <li>The Verona opening. Exactly as it is; no proposal here touches it.</li>
+        <li>The homepage order you approved in July.</li>
+        <li>The three-plate wardrobe chapter on The House.</li>
+        <li>The lookbook Index — every look stays one tap away.</li>
+        <li>Every photograph on this page is from the house archive. Nothing was generated.</li>
+      </ul>
+    </div>
   </div>
 </header>
 
@@ -106,10 +130,19 @@ footer.page p { font-style:italic; font-size:13px; color:var(--stone-ink); max-w
   <div class="wrap">
     <div class="p-head"><span class="p-num">01</span><span class="eyebrow">The Lookbook</span></div>
     <h2>The lookbook, edited.</h2>
-    <p class="p-what">The editorial view would open with a short, chosen story — three arrangements, six frames — instead of giving all 78 photographs equal weight. The Index view keeps every look, exactly as now.</p>
+    <p class="p-what">The editorial view would open with a short, chosen story instead of giving all 78 photographs equal weight under a number.</p>
+
+    <div class="today">
+      <div>
+        <div class="t-label">Today — on the site</div>
+        <img class="shot" src="today-lookbook.jpg" alt="The lookbook as it stands: numbered looks, each with equal weight" loading="lazy">
+      </div>
+      <p class="t-note">Seventy-eight frames, one after another, each carrying only a number. Beautiful photographs presented like an inventory.</p>
+    </div>
+    <div class="arrow">↓</div>
 
     <div class="mock">
-      <div class="mock-label">Composition — as it would appear</div>
+      <div class="mock-label">Proposed — composed from your frames</div>
 
       <div class="arr statement">
         <h3>The statement.</h3>
@@ -134,6 +167,8 @@ footer.page p { font-style:italic; font-size:13px; color:var(--stone-ink); max-w
         </div>
         <p class="cap">The same white leather jacket in two frames — open and mid-step, then buttoned square to the camera, the fringe hanging still along collar, placket and cuff.</p>
       </div>
+
+      <div class="receipt">All 78 frames in both books were viewed to choose these six.</div>
     </div>
 
     <div class="verdict">
@@ -149,14 +184,23 @@ footer.page p { font-style:italic; font-size:13px; color:var(--stone-ink); max-w
   <div class="wrap">
     <div class="p-head"><span class="p-num">02</span><span class="eyebrow">The Signature Commission</span></div>
     <h2>Step closer.</h2>
-    <p class="p-what">One repeatable way of revealing craft: the complete piece, then the surface, then the construction. Shown here with the crocodile jacket's existing twelve views edited to three — the same treatment could later carry bags and Casa pieces.</p>
+    <p class="p-what">One repeatable way of revealing craft: the piece worn, then the surface, then the construction. Shown with the crocodile jacket; the same treatment could later carry bags and Casa pieces.</p>
+
+    <div class="today">
+      <div>
+        <div class="t-label">Today — on the site</div>
+        <img class="shot" src="today-croc.jpg" alt="The crocodile commission section as it stands today" loading="lazy">
+      </div>
+      <p class="t-note">The commission today: one photograph at a time beside the facts. The material and the making never share a single view.</p>
+    </div>
+    <div class="arrow">↓</div>
 
     <div class="dark">
-      <div class="mock-label">Composition — as it would appear</div>
-      <div class="steps"><span class="on">The silhouette</span><span>The surface</span><span>The construction</span></div>
+      <div class="mock-label">Proposed — three views, one sequence</div>
+      <div class="steps"><span class="on">Worn</span><span>The surface</span><span>The construction</span></div>
       <div class="croc-hero">
-        <div class="frame"><img src="/assets/croc-jacket/matteo_croc_new_1.jpg" alt="The cream crocodile jacket worn over a pale blue rollneck, in profile against a grey studio ground" loading="lazy"></div>
-        <p class="cap">The jacket worn — cream crocodile over a pale blue rollneck, orange zip tape, the wheel embroidered at the shoulder.</p>
+        <div class="frame"><img src="/assets/croc-jacket/matteo_croc.jpg" alt="The cream crocodile jacket worn at the water's edge at dusk" loading="lazy"></div>
+        <p class="cap">The jacket worn at the water's edge — cream crocodile, orange zip tape, the wheel embroidered at the shoulder.</p>
       </div>
       <div class="croc-pair">
         <div>
@@ -183,10 +227,19 @@ footer.page p { font-style:italic; font-size:13px; color:var(--stone-ink); max-w
   <div class="wrap">
     <div class="p-head"><span class="p-num">03</span><span class="eyebrow">The Homepage</span></div>
     <h2>The person and the place.</h2>
-    <p class="p-what">A compact homepage section: a fitting in progress as the dominant image, the door on Deloney Avenue beside it, and a route to The House. It would replace the abstract quotation pause — the page would not grow.</p>
+    <p class="p-what">A compact homepage section — a fitting in progress as the dominant image, the door on Deloney Avenue beside it, and a route to The House. It replaces the quotation pause below; the page does not grow by a single section.</p>
+
+    <div class="today">
+      <div>
+        <div class="t-label">Today — what it would replace</div>
+        <img class="shot" src="today-interlude.jpg" alt="The homepage quotation interlude as it stands today" loading="lazy">
+      </div>
+      <p class="t-note">The words are yours and they stay in the house voice elsewhere — but this pause tells a visitor nothing they can see. A fitting shows what the sentence says.</p>
+    </div>
+    <div class="arrow">↓</div>
 
     <div class="mock">
-      <div class="mock-label">Composition — as it would appear</div>
+      <div class="mock-label">Proposed — in its place</div>
       <div class="human">
         <div>
           <div class="frame a"><img src="/assets/house/bespoke-fitting-bw-md.webp" alt="Matteo pinning the shoulder of a basted waistcoat on a client" loading="lazy"></div>
@@ -216,7 +269,7 @@ footer.page p { font-style:italic; font-size:13px; color:var(--stone-ink); max-w
   <div class="wrap">
     <div class="p-head"><span class="p-num">04</span><span class="eyebrow">A New Feature</span></div>
     <h2>Your selection.</h2>
-    <p class="p-what">A discreet board where a visitor sets aside looks and pieces while browsing — like setting garments aside during a private appointment — then sends the whole selection as one conversation. Separate from the shopping bag: buying a piece and discussing a commission are different acts.</p>
+    <p class="p-what">Nothing like this exists on the site today. A discreet board where a visitor sets pieces aside while browsing — the way garments are set aside during a private appointment — then sends the whole selection as one conversation. Kept separate from the shopping bag: buying an available piece and discussing a commission are different acts.</p>
 
     <div class="mock">
       <div class="mock-label">Sketch — the drawer, opened</div>
@@ -227,7 +280,7 @@ footer.page p { font-style:italic; font-size:13px; color:var(--stone-ink); max-w
         <div class="row"><div class="th"></div><div><p>Look 21 — the fringe jacket</p><p>Women's Lookbook</p></div></div>
         <span class="send">Begin the conversation</span>
       </div>
-      <p class="cap" style="margin-top:18px;">A sketch, not a finished design — approving this approves building it properly.</p>
+      <p class="cap" style="margin-top:18px;">A sketch, not a finished design — approving this approves building it properly, with the same care as the rest.</p>
     </div>
 
     <div class="verdict">
@@ -247,7 +300,7 @@ footer.page p { font-style:italic; font-size:13px; color:var(--stone-ink); max-w
 
 <footer class="page">
   <div class="wrap">
-    <p>Every photograph on this page is from the house's own archive. Nothing here changes matteoperin.com until it is approved and built.</p>
+    <p>Composed September 2026, entirely from the house's own archive. This page is private — unlisted, invisible to search, linked from nowhere. Nothing on matteoperin.com changes until you approve it and it is built.</p>
   </div>
 </footer>
 
